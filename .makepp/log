@@ -1,0 +1,49 @@
+3/usr/bin/makepp
+VERSION2.0.98.55.34.0x86_64-linux-gnu-thread-multi
+DEBUG0
+LOAD558a61661d98Makeppfile558a60f4ac50/home/rishabhd/systemC558a60f4ac50
+TRY558a61661d98
+USEdefault rule
+DEPEND558a61661d98
+UP_TO_DATE558a61661d98
+LOAD_INCL558a6167b798makepp_builtin_rules.mk558a60c66030/usr/share/makepp558a61661d98
+LOAD_END558a61661d98
+TRY558a616632f0all558a60f4ac50
+USEdefault rule
+DEPEND558a616632f0558a616637b8dirs558a60f4ac50558a6167bab0router_tb558a6167b9a8/home/rishabhd/systemC/build
+TRY558a616637b8
+USE/home/rishabhd/systemC/Makeppfile:27
+SCAN_INFO558a616637b8
+LEX_RULE558a616637b8info not cached
+PARSEmkdir -p build558a60f4ac50/home/rishabhd/systemC/Makeppfile:27
+LOAD_DEFAULT558a616a6e98remote-cli558a616a6c70/home/rishabhd/.cursor-server/bin/0781e811de386a0c5bcb07ceb259df8ff8246a50/bin
+LOAD_INCL558a6167b798558a616aa0a0makepp_default_makefile.mk558a60c66030
+LOAD_END558a616aa0a0
+LOAD_DEFAULT558a616bb208bin558a616aa898/home/rishabhd/.local
+LOAD_INCL558a6167b798558a616aa0a0
+LOAD_END558a616aa0a0
+TRY558a616ceb08mkdir558a616cea30/usr/bin
+USEdefault rule
+DEPEND558a616ceb08
+UP_TO_DATE558a616ceb08
+DEPEND558a616637b8558a616ceb08
+BUILD_PHONY558a616637b8
+SUCCESS/home/rishabhd/systemC/Makeppfile:27558a616637b8
+TRY558a6167bab0
+USE/home/rishabhd/systemC/Makeppfile:39
+SCAN_INFO558a6167bab0
+LEX_RULE558a6167bab0info not cached
+PARSEg++ -o build/router_tb  -L/opt/systemc/lib -lsystemc -lpthread558a60f4ac50/home/rishabhd/systemC/Makeppfile:39
+TRY558a616f8c80g++558a616cea30
+USEdefault rule
+DEPEND558a616f8c80
+UP_TO_DATE558a616f8c80
+DEPEND558a6167bab0558a616f8c80558a617488a0libsystemc.so558a6172a110/opt/systemc/lib
+TRY558a617488a0
+USEdefault rule
+DEPEND558a617488a0
+UP_TO_DATE558a617488a0
+BUILD_NONE558a6167bab0
+*** error: Failed to build target `/home/rishabhd/systemC/build/router_tb' [1]
+RULE_FAILED/home/rishabhd/systemC/Makeppfile:39
+N_FILES011
