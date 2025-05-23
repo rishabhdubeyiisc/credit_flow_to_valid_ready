@@ -1,0 +1,26 @@
+{
+  "signal": [
+    {"name": "system_clk", "wave": "p................."},
+    {"name": "reset_n", "wave": "01................."},
+    {},
+    {"name": "credit[2:0]", "wave": "x7070707070707070.", "data": ["7", "0", "7", "0", "7", "0", "7", "0", "7", "0"]},
+    {"name": "credit[0]", "wave": "x1010101010101010."},
+    {"name": "credit[1]", "wave": "x1010101010101010."},
+    {"name": "credit[2]", "wave": "x1010101010101010."},
+    {},
+    {"name": "raw_valid", "wave": "01................"},
+    {"name": "raw_tlp.data", "wave": "x.=.=.=.=.=.=.=.=.", "data": ["1", "2", "3", "4", "5", "6", "7", "8"]},
+    {"name": "raw_tlp.thread_id", "wave": "x.=.=.=.=.=.=.=.=.", "data": ["0", "1", "0", "1", "0", "1", "0", "1"]}
+  ],
+  "config": {
+    "hscale": 1.5
+  },
+  "head": {
+    "text": "Credit-Based Flow Control between RC and EP",
+    "tick": 0
+  },
+  "foot": {
+    "text": "EP issues credits (7=binary 111) and RC responds with data packets",
+    "tock": 16
+  }
+} 

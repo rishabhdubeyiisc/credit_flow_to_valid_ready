@@ -1,5 +1,6 @@
 #include <systemc.h>
 #include <iomanip>
+#include <queue>  // For std::queue
 
 // Simple Raw TLP packet
 struct RawTLP {
@@ -46,29 +47,29 @@ SC_MODULE(iRC) {
         }
         
         while (true) {
-            // Check for credit pulse on any bit
-            sc_uint<3> credits = credit_in.read();
-            bool credit_received = false;
-            
-            for (int i = 0; i < 3; i++) {
-                if (credits[i]) {
-                    // Credit pulse received for thread i
-                    credit_counter[i]++;
-                    credit_received = true;
-                }
-            }
-            
-            if (credit_received) {
-                credit_event.notify(); // Notify the sender thread
-            }
-            
-            // Wait for next event (clock edge or credit change)
-            wait();
+            // Only sample credits on positive clock edge to prevent multiple detections
+            wait(clk.posedge_event());
             
             if (!reset_n.read()) {
                 // Reset state
                 for (int i = 0; i < 3; i++) {
                     credit_counter[i] = 0;
+                }
+            } else {
+                // Sample credit pulse on any bit
+                sc_uint<3> credits = credit_in.read();
+                bool credit_received = false;
+                
+                for (int i = 0; i < 3; i++) {
+                    if (credits[i]) {
+                        // Credit pulse received for thread i
+                        credit_counter[i]++;
+                        credit_received = true;
+                    }
+                }
+                
+                if (credit_received) {
+                    credit_event.notify(); // Notify the sender thread
                 }
             }
         }
@@ -77,21 +78,17 @@ SC_MODULE(iRC) {
     // Thread for sending TLPs
     void sender_thread() {
         // Initialize
-        packet_seq = 0;
+        packet_seq = 1;
         raw_valid.write(false);
         
         while (true) {
-            // Wait for the next clock edge
-            wait(clk.posedge_event());
+            // Reset valid signal by default
+            raw_valid.write(false);
             
             if (!reset_n.read()) {
                 // Reset state
-                packet_seq = 0;
-                raw_valid.write(false);
+                packet_seq = 1;
             } else {
-                // Reset valid signal by default
-                raw_valid.write(false);
-                
                 // Try to send a packet if we have credits for any thread
                 // Round-robin between threads with available credits
                 static int current_thread = 0;
@@ -112,6 +109,8 @@ SC_MODULE(iRC) {
                         // Consume one credit for this thread
                         credit_counter[thread_to_try]--;
                         
+                        // Print packet sent and remaining credits (now removed print)
+                        
                         // Increment packet sequence
                         packet_seq++;
                         
@@ -122,19 +121,18 @@ SC_MODULE(iRC) {
                         break;
                     }
                 }
-                
-                // If we didn't send a packet, wait for credit event
-                if (!raw_valid.read()) {
-                    wait(credit_event | clk.posedge_event());
-                }
             }
+            
+            // Wait for next clock edge or credit event
+            // This is the only wait in the loop
+            wait(clk.posedge_event() | credit_event);
         }
     }
 
     SC_CTOR(iRC) {
         // Register the threads
         SC_THREAD(credit_monitor_thread);
-        sensitive << clk.pos() << credit_in;
+        sensitive << clk.pos() << credit_in;;  // Only sensitive to clock edges
         
         SC_THREAD(sender_thread);
         sensitive << clk.pos() << credit_event;
@@ -150,31 +148,28 @@ SC_MODULE(iEP) {
 
     sc_out<sc_uint<3>>  credit_out;  // 3-bit credit bus for 3 threads
 
-    // FIFOs for each thread with capacity
-    sc_fifo<RawTLP>     fifo0;
-    sc_fifo<RawTLP>     fifo1;
-    sc_fifo<RawTLP>     fifo2;
+    // Standard C++ queues for each thread
+    std::queue<RawTLP>     fifo0;
+    std::queue<RawTLP>     fifo1;
+    std::queue<RawTLP>     fifo2;
     
     // Internal state
-    unsigned int fifo_used[3];
-    static const unsigned int FIFO_CAPACITY = 16;
+    static const unsigned int FIFO_CAPACITY = 8;
     sc_event fifo_state_changed[3]; // Events to signal FIFO state changes for each thread
 
     // Thread for receiving TLPs
     void receiver_thread() {
-        // Initialize
-        for (int i = 0; i < 3; i++) {
-            fifo_used[i] = 0;
-        }
-        
         while (true) {
             // Wait for the next clock edge
             wait(clk.posedge_event());
             
             if (!reset_n.read()) {
-                // Reset state
+                // Reset state - clear all FIFOs
+                while (!fifo0.empty()) fifo0.pop();
+                while (!fifo1.empty()) fifo1.pop();
+                while (!fifo2.empty()) fifo2.pop();
+                
                 for (int i = 0; i < 3; i++) {
-                    fifo_used[i] = 0;
                     fifo_state_changed[i].notify();
                 }
             } else {
@@ -185,26 +180,25 @@ SC_MODULE(iEP) {
                     
                     // Ensure valid thread_id
                     if (thread_id < 3) {
-                        // Try to add to the appropriate FIFO
-                        if (fifo_used[thread_id] < FIFO_CAPACITY) {
-                            bool pushed = false;
+                        bool pushed = false;
+                        
+                        // Select the correct FIFO based on thread_id
+                        if (thread_id == 0 && fifo0.size() < FIFO_CAPACITY) {
+                            fifo0.push(pkt);
+                            pushed = true;
+                        } else if (thread_id == 1 && fifo1.size() < FIFO_CAPACITY) {
+                            fifo1.push(pkt);
+                            pushed = true;
+                        } else if (thread_id == 2 && fifo2.size() < FIFO_CAPACITY) {
+                            fifo2.push(pkt);
+                            pushed = true;
+                        }
+                        
+                        if (pushed) {
+                            // Debug print for packet reception (now removed print)
                             
-                            // Select the correct FIFO based on thread_id
-                            if (thread_id == 0) {
-                                pushed = fifo0.nb_write(pkt);
-                            } else if (thread_id == 1) {
-                                pushed = fifo1.nb_write(pkt);
-                            } else if (thread_id == 2) {
-                                pushed = fifo2.nb_write(pkt);
-                            }
-                            
-                            if (pushed) {
-                                // Track FIFO usage
-                                fifo_used[thread_id]++;
-                                
-                                // Notify FIFO state changed
-                                fifo_state_changed[thread_id].notify();
-                            }
+                            // Notify FIFO state changed
+                            fifo_state_changed[thread_id].notify();
                         }
                     }
                 }
@@ -216,6 +210,9 @@ SC_MODULE(iEP) {
     void credit_generator_thread() {
         // Initialize
         credit_out.write(0);
+        
+        // Track total credits issued per thread
+        unsigned int credits_issued[3] = {0, 0, 0};
         
         while (true) {
             // Wait for the next clock edge or any FIFO state change
@@ -229,6 +226,10 @@ SC_MODULE(iEP) {
             if (!reset_n.read()) {
                 // Reset state
                 credit_out.write(0);
+                for (int i = 0; i < 3; i++) {
+                    credits_issued[i] = 0;
+                }
+                // Reset print (now removed)
             } else {
                 // Default - no credit pulse on any bit
                 credit_out.write(0);
@@ -236,31 +237,43 @@ SC_MODULE(iEP) {
                 // Check each FIFO and generate credit if there is space
                 sc_uint<3> credits = 0;
                 
+                // Get current FIFO usage
+                unsigned int fifo_used[3];
+                fifo_used[0] = fifo0.size();
+                fifo_used[1] = fifo1.size();
+                fifo_used[2] = fifo2.size();
+                
                 for (int i = 0; i < 3; i++) {
-                    if (fifo_used[i] < FIFO_CAPACITY) {
-                        // FIFO i has space, set its credit bit
-                        credits[i] = 1;
+                    // Calculate available space in the FIFO
+                    unsigned int available_space = FIFO_CAPACITY - fifo_used[i];
+                    
+                    // Only issue credits if:
+                    // 1. There is space in the FIFO
+                    // 2. Total credits issued won't exceed FIFO capacity
+                    // 3. Total outstanding credits per thread is capped
+                    if (available_space > 0 && credits_issued[i] < FIFO_CAPACITY) {
+                        // Ensure we're not issuing more credits than what fits in FIFO
+                        if (credits_issued[i] - fifo_used[i] < available_space) {
+                            // FIFO i has space, set its credit bit
+                            credits[i] = 1;
+                            credits_issued[i]++;
+                        }
                     }
                 }
                 
-                // If any credits are available, send a pulse
+                // If any credits are available, send a pulse - ensure one-cycle pulse
                 if (credits != 0) {
-                    // Generate credit pulse - one clock cycle
+                    // Generate credit pulse - exactly one clock cycle
                     credit_out.write(credits);  // Send pulse
                     wait(clk.posedge_event());  // Wait one cycle
                     credit_out.write(0);        // End pulse
-                } else {
-                    // No space in any FIFO, wait for a FIFO state change
-                    wait(fifo_events);
                 }
             }
         }
     }
 
-    // Constructor with explicit initialization of FIFOs
-    SC_CTOR(iEP)
-    : fifo0(FIFO_CAPACITY), fifo1(FIFO_CAPACITY), fifo2(FIFO_CAPACITY)
-    {
+    // Constructor 
+    SC_CTOR(iEP) {
         // Register the threads
         SC_THREAD(receiver_thread);
         sensitive << clk.pos();
@@ -272,22 +285,21 @@ SC_MODULE(iEP) {
 
 // Top-level sc_main
 int sc_main(int argc, char* argv[]) {
-    sc_clock           ep_clk("ep_clk", 100, SC_NS);      
-    sc_clock           rc_clk("rc_clk", 100, SC_NS);        
+    sc_clock           system_clk("system_clk", 100, SC_NS);  // Single common clock
     sc_signal<bool>    reset_n;
     sc_signal<sc_uint<3>> credit;  // 3-bit credit bus
     sc_signal<bool>    raw_valid;
     sc_signal<RawTLP>  raw_tlp;
 
     iRC rc("iRC");
-    rc.clk(rc_clk);    // Connect RC to faster clock
+    rc.clk(system_clk);  // Connect RC to common clock
     rc.reset_n(reset_n);
     rc.credit_in(credit);
     rc.raw_valid(raw_valid);
     rc.raw_tlp(raw_tlp);
 
     iEP ep("iEP");
-    ep.clk(ep_clk);    // Connect EP to slower clock
+    ep.clk(system_clk);  // Connect EP to common clock
     ep.reset_n(reset_n);
     ep.raw_valid(raw_valid);
     ep.raw_tlp(raw_tlp);
@@ -295,8 +307,7 @@ int sc_main(int argc, char* argv[]) {
 
     sc_trace_file* tf = sc_create_vcd_trace_file("irc_iep_flow");
     tf->set_time_unit(1, SC_NS);
-    sc_trace(tf, ep_clk,             "ep_clk");
-    sc_trace(tf, rc_clk,             "rc_clk");
+    sc_trace(tf, system_clk,         "system_clk");  // Trace the common clock
     sc_trace(tf, reset_n,            "reset_n");
     sc_trace(tf, raw_valid,          "raw_valid");
     sc_trace(tf, raw_tlp,            "raw_tlp");  // This will now use our custom tracing function
