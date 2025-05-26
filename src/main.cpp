@@ -4,7 +4,7 @@
 #include <iostream>  // For std::cout
 
 // Global control for FIFO popping
-bool g_enable_popping = true;
+bool g_enable_popping = false;
 
 // Simple Raw TLP packet
 struct RawTLP {
@@ -38,11 +38,21 @@ SC_MODULE(Threaded_Queue) {
 
     static const unsigned int FIFO_CAPACITY = 8;
     sc_fifo<RawTLP> fifo;
-    unsigned int credits_issued;
+    
+    // Credit state registers
+    unsigned int credits_current;
+    unsigned int credits_next;
+    
+    // Credit update flags
+    bool credit_inc;
+    bool credit_dec;
 
     void process_thread() {
         credit_out.write(false);
-        credits_issued = 0;
+        credits_current = 0;
+        credits_next = 0;
+        credit_inc = false;
+        credit_dec = false;
 
         while (true) {
             wait(); // clock edge
@@ -50,7 +60,10 @@ SC_MODULE(Threaded_Queue) {
             if (!reset_n.read()) {
                 RawTLP dummy;
                 while (fifo.nb_read(dummy)) {}  // Clear the FIFO
-                credits_issued = 0;
+                credits_current = 0;
+                credits_next = 0;
+                credit_inc = false;
+                credit_dec = false;
                 credit_out.write(false);
                 continue;
             }
@@ -59,19 +72,20 @@ SC_MODULE(Threaded_Queue) {
             if (valid_in.read() && fifo.num_free() > 0) {
                 RawTLP pkt = raw_tlp_in.read();
                 fifo.write(pkt);
-                std::cout << sc_time_stamp() << ": Enqueued packet - Thread " << pkt.thread_id 
-                          << " Data=" << pkt.data 
-                          << " FIFO free=" << fifo.num_free() 
-                          << " Credits=" << credits_issued << "\n";
             }
 
             // Issue credit if space available and credits not maxed out
-            if (credits_issued < FIFO_CAPACITY && fifo.num_free() > 0) {
-                credits_issued++;
+            if (credits_current < FIFO_CAPACITY && fifo.num_free() > 0) {
+                credit_inc = true;
+                credits_next = credits_current + 1;
+                std::cout << sc_time_stamp() 
+                          << " Process thread requesting credit increment - Current=" << credits_current 
+                          << " Next=" << credits_next 
+                          << std::endl;
                 credit_out.write(true);
-                std::cout << sc_time_stamp() << ": Issued credit - Total credits=" << credits_issued << "\n";
                 wait();  // credit pulse width = 1 clock cycle
                 credit_out.write(false);
+                credit_inc = false;
             }
         }
     }
@@ -87,17 +101,48 @@ SC_MODULE(Threaded_Queue) {
                 continue;
             }
 
-            // Pop every 4th cycle when enabled and FIFO has data
+            // Pop every cycle when enabled and FIFO has data
             if (g_enable_popping && fifo.num_available() > 0) {
-                if (pop_counter == 3) {  // Pop on count 3 (25% of the time)
+                if (pop_counter == 3) {  // Pop on every non-zero counter
                     RawTLP pkt = fifo.read();
-                    std::cout << sc_time_stamp() << ": Popped packet with data=" << pkt.data << "\n";
 
-                    // Decrement credits_issued since space freed
-                    if (credits_issued > 0) credits_issued--;
+                    // Decrement credits since space freed
+                    if (credits_current > 0) {
+                        credit_dec = true;
+                        credits_next = credits_current - 1;
+                        std::cout << sc_time_stamp() 
+                                  << " Popper thread requesting credit decrement - Current=" << credits_current 
+                                  << " Next=" << credits_next 
+                                  << std::endl;
+                    }
                 }
                 pop_counter = (pop_counter + 1) % 4;  // Cycle counter 0-3
             }
+        }
+    }
+
+    void credit_update() {
+        if (!reset_n.read()) {
+            credits_current = 0;
+            credits_next = 0;
+            credit_inc = false;
+            credit_dec = false;
+        } else {
+            // Update credit state
+            if (credit_inc && !credit_dec) {
+                credits_current = credits_next;
+            } else if (!credit_inc && credit_dec) {
+                credits_current = credits_next;
+            } else if (credit_inc && credit_dec) {
+                std::cout << sc_time_stamp() 
+                          << " Credit contention detected - Current=" << credits_current 
+                          << " Next=" << credits_next 
+                          << " (Process wants to inc, Popper wants to dec)" 
+                          << std::endl;
+            }
+            // Reset flags
+            credit_inc = false;
+            credit_dec = false;
         }
     }
 
@@ -107,6 +152,10 @@ SC_MODULE(Threaded_Queue) {
 
         SC_THREAD(popper_thread);
         sensitive << clk.pos();
+        
+        // Add credit update method
+        SC_METHOD(credit_update);
+        sensitive << clk.pos() << reset_n;
     }
 };
 

@@ -51,6 +51,22 @@ struct RawTLP {
 };
 ```
 
+### Threaded_Queue Module
+
+The Threaded_Queue module implements credit-based flow control for a single thread and includes:
+
+- **Process Thread**: Handles incoming packets and credit generation
+- **Popper Thread**: Manages FIFO consumption and credit decrement
+- **Credit Update Method**: Synchronizes credit state changes
+- **Credit Contention Handling**: Resolves simultaneous credit increment/decrement requests
+
+**Key Features**:
+- FIFO capacity of 8 packets per thread
+- Credit state tracking with current and next values
+- Deterministic FIFO popping every 4th cycle when enabled
+- Detailed logging of credit state changes
+- Contention detection and resolution
+
 ### iRC (Root Complex)
 
 The iRC module acts as a sender of TLPs and includes:
@@ -70,17 +86,35 @@ The iRC module acts as a sender of TLPs and includes:
 The iEP module acts as a receiver of TLPs and includes:
 
 - **Receiver Thread**: Processes incoming TLPs and routes them to appropriate thread FIFOs
-- **Per-Thread FIFOs**: Separate `sc_fifo<RawTLP>` for each thread (capacity: 8 packets)
+- **Per-Thread FIFOs**: Separate Threaded_Queue instances for each thread
 - **Credit Generator Thread**: Issues credits when FIFO space is available
 - **Smart Credit Management**: Prevents over-issuing credits beyond FIFO capacity
-- **Deterministic FIFO Popping**: Configurable consumer behavior with deterministic timing
 
 **Key Features**:
-- FIFO capacity of 8 packets per thread
+- Thread-specific credit management
 - Credit generation only when actual FIFO space is available
 - Prevents credit over-subscription through careful accounting
 - Deterministic FIFO popping every 4th cycle when enabled
-- Global control for FIFO popping behavior
+
+## Credit Management
+
+The system implements sophisticated credit management:
+
+1. **Credit State**:
+   - `credits_current`: Current credit count
+   - `credits_next`: Next credit count after update
+   - `credit_inc`: Flag for credit increment request
+   - `credit_dec`: Flag for credit decrement request
+
+2. **Credit Update Rules**:
+   - If `credit_inc && !credit_dec`: Increment credits
+   - If `!credit_inc && credit_dec`: Decrement credits
+   - If `credit_inc && credit_dec`: Maintain current credits (contention)
+
+3. **Contention Handling**:
+   - Detects simultaneous increment/decrement requests
+   - Logs contention events for analysis
+   - Maintains credit stability during contention
 
 ## Signal Interface
 
@@ -109,23 +143,24 @@ When disabled:
 - FIFOs retain their packets
 - Useful for testing credit flow without packet consumption
 
-## Timing Diagrams
+## Logging System
 
-The project includes WaveDrom timing diagrams to visualize the credit-based flow control:
+The simulation includes comprehensive logging:
 
-### Credit Flow Waveform
+1. **Credit State Changes**:
+   - Process thread credit increment requests
+   - Popper thread credit decrement requests
+   - Credit contention detection
 
-The `credit_flow_waveform.json` file contains a WaveDrom timing diagram showing:
-- System clock and reset sequence
-- Credit bus behavior (showing values 0 and 7 representing different thread combinations)
-- Individual credit bits for threads 0, 1, and 2
-- Raw valid signal and TLP data flow
-- Thread ID patterns in the transmitted packets
+2. **Log Format**:
+   ```
+   <timestamp> <thread> <action> - Current=<credits_current> Next=<credits_next>
+   ```
 
-To view the timing diagram:
-1. Copy the contents of `credit_flow_waveform.json`
-2. Paste into [WaveDrom Editor](https://wavedrom.com/editor.html)
-3. Observe the credit-based flow control timing relationships
+3. **Contention Logs**:
+   ```
+   <timestamp> Credit contention detected - Current=<credits_current> Next=<credits_next>
+   ```
 
 ## Building and Running
 
@@ -154,7 +189,9 @@ make clean && make
 ./build/sim
 ```
 
-This will execute the simulation and generate a VCD waveform file named `irc_iep_flow.vcd`.
+This will execute the simulation and generate:
+- VCD waveform file: `irc_iep_flow.vcd`
+- Detailed logs in the `logs` directory
 
 ### Complete Workflow
 
@@ -175,104 +212,44 @@ Here's a step-by-step guide to run and analyze the simulation:
    gtkwave irc_iep_flow.vcd
    ```
 
-4. **Analyze using the analysis tools** (see [Analysis Tools](#analysis-tools) section)
-
-## Simulation Output
-
-The simulation generates multiple outputs:
-
-- **Primary VCD**: `irc_iep_flow.vcd` - Current simulation results
-- **Reference VCD**: `waves/irc_iep_flow_tansparent_3threads.vcd` - Reference implementation for comparison
-- **Timing Analysis**: WaveDrom-compatible timing diagrams
-
-The simulation:
-- Applies a reset for 20ns
-- Runs for 20μs to demonstrate sustained credit-based flow control
-- Uses a single 100MHz system clock for both RC and EP modules
-
-Key signals to observe:
-- `raw_valid` - When data is being transmitted
-- `raw_tlp.data` - Sequential packet data values
-- `raw_tlp.thread_id` - Thread routing information
-- `credit[2:0]` - Multi-bit credit bus from EP to RC
+4. **Analyze the logs**:
+   ```bash
+   cat logs/simulation.log
+   ```
 
 ## Analysis Tools
 
-This project includes a set of analysis tools to help understand and compare simulation behavior.
+The project includes several tools for analysis:
 
-### Available Tools
+1. **Waveform Analysis**:
+   - GTKWave for viewing VCD files
+   - WaveDrom timing diagrams
 
-The tools are located in the `analysis_tools/` directory:
+2. **Log Analysis**:
+   - Credit state changes
+   - Contention detection
+   - Thread activity
 
-- `analyze_vcd.py`: Python script to parse VCD files and extract key metrics
-- `analyze_baseline.sh`: Script to capture baseline behavior for future comparison
-- `compare_with_baseline.sh`: Script to compare current behavior against the baseline
+3. **Performance Metrics**:
+   - Credit utilization
+   - FIFO occupancy
+   - Thread throughput
 
-### Analyzing Simulation Results
+## Future Improvements
 
-#### Establishing a Baseline
+Planned enhancements include:
 
-Before making changes to the code, capture a baseline for comparison:
+1. **Enhanced Logging**:
+   - JSON-formatted logs for easier parsing
+   - Performance metrics extraction
 
-```bash
-./analysis_tools/analyze_baseline.sh
-```
+2. **Advanced Credit Management**:
+   - Dynamic credit allocation
+   - Priority-based scheduling
 
-This will:
-1. Build and run the simulation
-2. Save the VCD file to the `baseline/` directory
-3. Analyze the VCD file and generate metrics
-4. Save a summary report to `baseline/irc_iep_flow.vcd.summary.txt`
-
-#### Comparing with Baseline
-
-After making changes to the code, compare the new behavior to the baseline:
-
-```bash
-./analysis_tools/compare_with_baseline.sh
-```
-
-This will:
-1. Build and run the simulation with your changes
-2. Save the VCD file to the `current/` directory
-3. Analyze the current behavior
-4. Compare key metrics between baseline and current runs
-5. Display a detailed comparison report
-
-### Key Metrics
-
-The analysis tools extract and compare these important metrics:
-
-1. **Credit Flow Metrics**:
-   - Total credit changes: Number of transitions in the credit signal
-   - Credit pulse count: Number of non-zero credit values
-   - Credit value distribution: Which threads received credits
-
-2. **Data Flow Metrics**:
-   - Valid transitions: Number of transitions in the valid signal
-   - Valid pulse count: Number of packets sent
-   - Thread distribution: Distribution of packets sent per thread
-
-### Interpreting Results
-
-- **Credit changes**: More credit changes indicate more active credit flow control
-- **Credit distribution**: Shows which threads are receiving credits (e.g., '111' means all threads)
-- **Valid pulses**: Indicates the number of packets successfully transferred
-- **Thread distribution**: Shows which threads were used to send packets
-
-When changes affect flow control behavior, you'll typically see differences in:
-- Credit pulse patterns
-- The ratio of credits to valid pulses
-- Thread utilization distribution
-
-## Flow Control Mechanics
-
-1. **Initialization**: EP starts with empty FIFOs, issues initial credits for all threads
-2. **Credit Reception**: RC monitors credit pulses and updates per-thread credit counters
-3. **Packet Transmission**: RC uses round-robin arbitration among threads with available credits
-4. **Credit Consumption**: Each transmitted packet consumes exactly one credit
-5. **FIFO Management**: EP tracks FIFO occupancy and generates credits when space becomes available
-6. **Backpressure**: When FIFOs fill up, EP stops issuing credits, naturally throttling RC transmission
+3. **Testing Framework**:
+   - Automated test cases
+   - Coverage analysis
 
 ## Clock Domain Architecture
 
