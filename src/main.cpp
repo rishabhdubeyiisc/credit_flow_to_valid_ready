@@ -1,6 +1,10 @@
 #include <systemc.h>
 #include <iomanip>
 #include <queue>  // For std::queue
+#include <iostream>  // For std::cout
+
+// Global control for FIFO popping
+bool g_enable_popping = true;
 
 // Simple Raw TLP packet
 struct RawTLP {
@@ -25,6 +29,87 @@ void sc_trace(sc_trace_file* tf, const RawTLP& tlp, const std::string& name) {
     sc_trace(tf, tlp.thread_id, name + ".thread_id");
 }
 
+SC_MODULE(Threaded_Queue) {
+    sc_in<bool> clk;
+    sc_in<bool> reset_n;
+    sc_in<RawTLP> raw_tlp_in;
+    sc_in<bool> valid_in;
+    sc_out<bool> credit_out;
+
+    static const unsigned int FIFO_CAPACITY = 8;
+    sc_fifo<RawTLP> fifo;
+    unsigned int credits_issued;
+
+    void process_thread() {
+        credit_out.write(false);
+        credits_issued = 0;
+
+        while (true) {
+            wait(); // clock edge
+
+            if (!reset_n.read()) {
+                RawTLP dummy;
+                while (fifo.nb_read(dummy)) {}  // Clear the FIFO
+                credits_issued = 0;
+                credit_out.write(false);
+                continue;
+            }
+
+            // Enqueue packet if valid and space available
+            if (valid_in.read() && fifo.num_free() > 0) {
+                RawTLP pkt = raw_tlp_in.read();
+                fifo.write(pkt);
+                std::cout << sc_time_stamp() << ": Enqueued packet - Thread " << pkt.thread_id 
+                          << " Data=" << pkt.data 
+                          << " FIFO free=" << fifo.num_free() 
+                          << " Credits=" << credits_issued << "\n";
+            }
+
+            // Issue credit if space available and credits not maxed out
+            if (credits_issued < FIFO_CAPACITY && fifo.num_free() > 0) {
+                credits_issued++;
+                credit_out.write(true);
+                std::cout << sc_time_stamp() << ": Issued credit - Total credits=" << credits_issued << "\n";
+                wait();  // credit pulse width = 1 clock cycle
+                credit_out.write(false);
+            }
+        }
+    }
+
+    void popper_thread() {
+        unsigned int pop_counter = 0;  // Counter for deterministic popping
+        
+        while (true) {
+            wait(); // clock edge
+
+            if (!reset_n.read()) {
+                pop_counter = 0;
+                continue;
+            }
+
+            // Pop every 4th cycle when enabled and FIFO has data
+            if (g_enable_popping && fifo.num_available() > 0) {
+                if (pop_counter == 3) {  // Pop on count 3 (25% of the time)
+                    RawTLP pkt = fifo.read();
+                    std::cout << sc_time_stamp() << ": Popped packet with data=" << pkt.data << "\n";
+
+                    // Decrement credits_issued since space freed
+                    if (credits_issued > 0) credits_issued--;
+                }
+                pop_counter = (pop_counter + 1) % 4;  // Cycle counter 0-3
+            }
+        }
+    }
+
+    SC_CTOR(Threaded_Queue) : fifo(FIFO_CAPACITY) {
+        SC_THREAD(process_thread);
+        sensitive << clk.pos();
+
+        SC_THREAD(popper_thread);
+        sensitive << clk.pos();
+    }
+};
+
 // iRC: Root Complex module (sender)
 SC_MODULE(iRC) {
     sc_in<bool>         clk;
@@ -47,7 +132,6 @@ SC_MODULE(iRC) {
         }
         
         while (true) {
-            // Only sample credits on positive clock edge to prevent multiple detections
             wait(clk.posedge_event());
             
             if (!reset_n.read()) {
@@ -62,14 +146,14 @@ SC_MODULE(iRC) {
                 
                 for (int i = 0; i < 3; i++) {
                     if (credits[i]) {
-                        // Credit pulse received for thread i
+                        // Credit pulse received for thread i+1 (since threads are 1-3)
                         credit_counter[i]++;
                         credit_received = true;
                     }
                 }
                 
                 if (credit_received) {
-                    credit_event.notify(); // Notify the sender thread
+                    credit_event.notify();
                 }
             }
         }
@@ -91,13 +175,13 @@ SC_MODULE(iRC) {
             } else {
                 // Try to send a packet if we have credits for any thread
                 // Round-robin between threads with available credits
-                static int current_thread = 0;
+                static int current_thread = 1;  // Start from thread 1
                 
                 // Try each thread starting from current_thread
                 for (int i = 0; i < 3; i++) {
-                    int thread_to_try = (current_thread + i) % 3;
+                    int thread_to_try = ((current_thread - 1 + i) % 3) + 1;  // Map 0-2 to 1-3
                     
-                    if (credit_counter[thread_to_try] > 0) {
+                    if (credit_counter[thread_to_try - 1] > 0) {  // Adjust index for credit_counter
                         // Create and send a packet for this thread
                         RawTLP pkt;
                         pkt.data = packet_seq;
@@ -107,15 +191,14 @@ SC_MODULE(iRC) {
                         raw_valid.write(true);
                         
                         // Consume one credit for this thread
-                        credit_counter[thread_to_try]--;
-                        
-                        // Print packet sent and remaining credits (now removed print)
+                        credit_counter[thread_to_try - 1]--;  // Adjust index for credit_counter
                         
                         // Increment packet sequence
                         packet_seq++;
                         
                         // Update round-robin pointer
-                        current_thread = (thread_to_try + 1) % 3;
+                        current_thread = thread_to_try + 1;
+                        if (current_thread > 3) current_thread = 1;
                         
                         // We've sent a packet, exit the loop
                         break;
@@ -124,7 +207,6 @@ SC_MODULE(iRC) {
             }
             
             // Wait for next clock edge or credit event
-            // This is the only wait in the loop
             wait(clk.posedge_event() | credit_event);
         }
     }
@@ -145,141 +227,48 @@ SC_MODULE(iEP) {
     sc_in<bool>         reset_n;
     sc_in<bool>         raw_valid;
     sc_in<RawTLP>       raw_tlp;
+    sc_out<sc_uint<3>>  credit_out;
 
-    sc_out<sc_uint<3>>  credit_out;  // 3-bit credit bus for 3 threads
+    Threaded_Queue* threaded_queues[3];
+    sc_signal<bool> credit_signals[3];
+    sc_signal<RawTLP> tlp_signals[3];
 
-    // Standard C++ queues for each thread
-    std::queue<RawTLP>     fifo0;
-    std::queue<RawTLP>     fifo1;
-    std::queue<RawTLP>     fifo2;
-    
-    // Internal state
-    static const unsigned int FIFO_CAPACITY = 8;
-    sc_event fifo_state_changed[3]; // Events to signal FIFO state changes for each thread
-
-    // Thread for receiving TLPs
-    void receiver_thread() {
+    void credit_combine_thread() {
         while (true) {
-            // Wait for the next clock edge
             wait(clk.posedge_event());
-            
-            if (!reset_n.read()) {
-                // Reset state - clear all FIFOs
-                while (!fifo0.empty()) fifo0.pop();
-                while (!fifo1.empty()) fifo1.pop();
-                while (!fifo2.empty()) fifo2.pop();
-                
-                for (int i = 0; i < 3; i++) {
-                    fifo_state_changed[i].notify();
-                }
-            } else {
-                // Check for incoming packet
-                if (raw_valid.read()) {
-                    RawTLP pkt = raw_tlp.read();
-                    unsigned int thread_id = pkt.thread_id.to_uint();
-                    
-                    // Ensure valid thread_id
-                    if (thread_id < 3) {
-                        bool pushed = false;
-                        
-                        // Select the correct FIFO based on thread_id
-                        if (thread_id == 0 && fifo0.size() < FIFO_CAPACITY) {
-                            fifo0.push(pkt);
-                            pushed = true;
-                        } else if (thread_id == 1 && fifo1.size() < FIFO_CAPACITY) {
-                            fifo1.push(pkt);
-                            pushed = true;
-                        } else if (thread_id == 2 && fifo2.size() < FIFO_CAPACITY) {
-                            fifo2.push(pkt);
-                            pushed = true;
-                        }
-                        
-                        if (pushed) {
-                            // Debug print for packet reception (now removed print)
-                            
-                            // Notify FIFO state changed
-                            fifo_state_changed[thread_id].notify();
-                        }
-                    }
-                }
-            }
-        }
-    }
-    
-    // Thread for generating credit pulses
-    void credit_generator_thread() {
-        // Initialize
-        credit_out.write(0);
-        
-        // Track total credits issued per thread
-        unsigned int credits_issued[3] = {0, 0, 0};
-        
-        while (true) {
-            // Wait for the next clock edge or any FIFO state change
-            sc_event_or_list fifo_events;
+            sc_uint<3> combined_credits = 0;
             for (int i = 0; i < 3; i++) {
-                fifo_events |= fifo_state_changed[i];
+                combined_credits[i] = credit_signals[i].read();
             }
-            
-            wait(clk.posedge_event() | fifo_events);
-            
-            if (!reset_n.read()) {
-                // Reset state
-                credit_out.write(0);
-                for (int i = 0; i < 3; i++) {
-                    credits_issued[i] = 0;
-                }
-                // Reset print (now removed)
-            } else {
-                // Default - no credit pulse on any bit
-                credit_out.write(0);
-                
-                // Check each FIFO and generate credit if there is space
-                sc_uint<3> credits = 0;
-                
-                // Get current FIFO usage
-                unsigned int fifo_used[3];
-                fifo_used[0] = fifo0.size();
-                fifo_used[1] = fifo1.size();
-                fifo_used[2] = fifo2.size();
-                
-                for (int i = 0; i < 3; i++) {
-                    // Calculate available space in the FIFO
-                    unsigned int available_space = FIFO_CAPACITY - fifo_used[i];
-                    
-                    // Only issue credits if:
-                    // 1. There is space in the FIFO
-                    // 2. Total credits issued won't exceed FIFO capacity
-                    // 3. Total outstanding credits per thread is capped
-                    if (available_space > 0 && credits_issued[i] < FIFO_CAPACITY) {
-                        // Ensure we're not issuing more credits than what fits in FIFO
-                        if (credits_issued[i] - fifo_used[i] < available_space) {
-                            // FIFO i has space, set its credit bit
-                            credits[i] = 1;
-                            credits_issued[i]++;
-                        }
-                    }
-                }
-                
-                // If any credits are available, send a pulse - ensure one-cycle pulse
-                if (credits != 0) {
-                    // Generate credit pulse - exactly one clock cycle
-                    credit_out.write(credits);  // Send pulse
-                    wait(clk.posedge_event());  // Wait one cycle
-                    credit_out.write(0);        // End pulse
-                }
-            }
+            credit_out.write(combined_credits);
         }
     }
 
-    // Constructor 
     SC_CTOR(iEP) {
-        // Register the threads
-        SC_THREAD(receiver_thread);
-        sensitive << clk.pos();
+        for (int i = 0; i < 3; i++) {
+            threaded_queues[i] = new Threaded_Queue(sc_gen_unique_name("threaded_queue"));
+            threaded_queues[i]->clk(clk);
+            threaded_queues[i]->reset_n(reset_n);
+            threaded_queues[i]->raw_tlp_in(tlp_signals[i]);
+            threaded_queues[i]->valid_in(raw_valid);
+            threaded_queues[i]->credit_out(credit_signals[i]);
+        }
+
+        SC_METHOD(input_router);
+        sensitive << clk.pos() << reset_n << raw_valid << raw_tlp;
         
-        SC_THREAD(credit_generator_thread);
-        sensitive << clk.pos() << fifo_state_changed[0] << fifo_state_changed[1] << fifo_state_changed[2];
+        SC_THREAD(credit_combine_thread);
+        sensitive << clk.pos() << reset_n << credit_signals[0] << credit_signals[1] << credit_signals[2];
+    }
+
+    void input_router() {
+        if (raw_valid.read()) {
+            RawTLP pkt = raw_tlp.read();
+            unsigned int thread_id = pkt.thread_id.to_uint();
+            if (thread_id >= 1 && thread_id <= 3) {  // Check for threads 1-3
+                tlp_signals[thread_id - 1].write(pkt);  // Adjust index for tlp_signals
+            }
+        }
     }
 };
 

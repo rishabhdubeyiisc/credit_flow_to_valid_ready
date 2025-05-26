@@ -7,7 +7,7 @@ This project implements a SystemC simulation of credit-based flow control betwee
 The simulation models the data flow between an RC (sender) and EP (receiver) using credit-based flow control, where:
 
 - The RC sends Transaction Layer Packets (TLPs) to the EP
-- The EP grants credits to the RC for each supported thread (3 threads: 0, 1, 2)
+- The EP grants credits to the RC for each supported thread (3 threads: 1, 2, 3)
 - The RC can only send packets when it has available credits for a specific thread
 - Both modules operate on a common system clock for simplified timing analysis
 
@@ -16,23 +16,29 @@ The simulation models the data flow between an RC (sender) and EP (receiver) usi
 The system consists of two main modules operating on a shared clock domain:
 
 ```
-+-----+                       +-----+
-| iRC |                       | iEP |
-|     |   raw_valid           |     |
-|     |---------------------->|     |
-|     |                       |     |
-|     |   raw_tlp             |     |
-|     |---------------------->|     |
-|     |   (data + thread_id)  |     |
-|     |                       |     |
-|     |   credit[2:0]         |     |
-|     |<----------------------|     |
-|     |                       |     |
-+-----+                       +-----+
-   ^                             ^
-   |                             |
-   |_____ system_clk (100MHz) ____|
++-----------+               +-----------+
+|    iRC    |               |    iEP    |
+|           |   raw_valid   |           |
+|           |-------------->|  +-----+  |
+|           |               |  | TQ1 |  |
+|           |   raw_tlp     |  +-----+  |
+|           |-------------->|           |
+|           |   (data +     |  +-----+  |
+|           |    thread_id) |  | TQ2 |  |
+|           |   credit_out  |  +-----+  |
+|           |<--------------|           |
+|           |   (pulsed     |  +-----+  |
+|           |    per thread)|  | TQ3 |  |
++-----------+               |  +-----+  |
+    ^                       +-----------+
+    |                            ^
+    |                            |
+    |_____ system_clk (100MHz) __|
 ```
+
+Where:
+- TQ1, TQ2, TQ3: Threaded_Queue modules for threads 1, 2, and 3
+- credit_out: Single bit that pulses for each thread when credits are available
 
 ## Module Descriptions
 
@@ -41,7 +47,7 @@ The system consists of two main modules operating on a shared clock domain:
 ```cpp
 struct RawTLP {
     sc_uint<32>   data;       // 32-bit data field
-    sc_uint<2>    thread_id;  // thread identifier (0-2)
+    sc_uint<2>    thread_id;  // thread identifier (1-3)
 };
 ```
 
@@ -50,7 +56,7 @@ struct RawTLP {
 The iRC module acts as a sender of TLPs and includes:
 
 - **Credit Monitor Thread**: Tracks incoming credit pulses for each of the 3 threads
-- **Credit Counters**: Maintains separate credit counts for threads 0, 1, and 2
+- **Credit Counters**: Maintains separate credit counts for threads 1, 2, and 3
 - **Sender Thread**: Implements round-robin arbitration between threads with available credits
 - **Packet Generation**: Creates sequential packets with incrementing data values
 
@@ -64,14 +70,17 @@ The iRC module acts as a sender of TLPs and includes:
 The iEP module acts as a receiver of TLPs and includes:
 
 - **Receiver Thread**: Processes incoming TLPs and routes them to appropriate thread FIFOs
-- **Per-Thread FIFOs**: Separate `std::queue<RawTLP>` for each thread (capacity: 8 packets)
+- **Per-Thread FIFOs**: Separate `sc_fifo<RawTLP>` for each thread (capacity: 8 packets)
 - **Credit Generator Thread**: Issues credits when FIFO space is available
 - **Smart Credit Management**: Prevents over-issuing credits beyond FIFO capacity
+- **Deterministic FIFO Popping**: Configurable consumer behavior with deterministic timing
 
 **Key Features**:
 - FIFO capacity of 8 packets per thread
 - Credit generation only when actual FIFO space is available
 - Prevents credit over-subscription through careful accounting
+- Deterministic FIFO popping every 4th cycle when enabled
+- Global control for FIFO popping behavior
 
 ## Signal Interface
 
@@ -82,6 +91,23 @@ The iEP module acts as a receiver of TLPs and includes:
 | credit[2:0] | 3     | EP → RC   | 3-bit credit bus (one bit per thread)  |
 | system_clk  | 1     | -         | Common 100MHz clock for both modules   |
 | reset_n     | 1     | -         | Active-low reset signal                |
+
+## FIFO Popping Control
+
+The simulation includes a global control for FIFO popping behavior:
+
+```cpp
+bool g_enable_popping = false;  // Global control for FIFO popping
+```
+
+When enabled:
+- FIFOs are popped deterministically every 4th cycle
+- This provides a consistent 25% popping rate
+- Helps in predictable testing and analysis
+
+When disabled:
+- FIFOs retain their packets
+- Useful for testing credit flow without packet consumption
 
 ## Timing Diagrams
 
