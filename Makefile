@@ -2,8 +2,9 @@ CXX = g++
 CXXFLAGS = -Wall -g -std=c++17
 SYSTEMC_INC ?= /opt/systemc/include
 SYSTEMC_LIB ?= /opt/systemc/lib
+# default pre-processor flags (include dirs)
+CPPFLAGS = -I$(SYSTEMC_INC)
 
-INCLUDES = -I$(SYSTEMC_INC)
 LDFLAGS = -L$(SYSTEMC_LIB)
 LIBS = -lsystemc -lpthread
 
@@ -18,10 +19,12 @@ $(BUILD_DIR)/$(TARGET): $(OBJS)
 
 $(BUILD_DIR)/%.o: src/%.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR)
+	rm -rf src/*.o build
+	rm -f logs
 	rm -f irc_iep_flow.vcd
+	rm -f irc_tx_flow.vcd
 
 .PHONY: clean 
