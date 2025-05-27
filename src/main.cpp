@@ -2,6 +2,7 @@
 #include <iomanip>
 #include <queue>  // For std::queue
 #include <iostream>  // For std::cout
+#include <string>
 
 // Global control for FIFO popping
 bool g_enable_popping = true;
@@ -127,8 +128,8 @@ SC_MODULE(Threaded_Queue) {
 SC_MODULE(iRC) {
     sc_in<bool>         clk;
     sc_in<bool>         reset_n;
+    
     sc_in<sc_uint<3>>   credit_in;  // 3-bit credit bus for 3 threads
-
     sc_out<bool>        raw_valid;
     sc_out<RawTLP>      raw_tlp;
 
@@ -169,7 +170,6 @@ SC_MODULE(iRC) {
                     credit_event.notify();
                 }
             }
-            wait(1, SC_NS);
         }
     }
 
@@ -477,12 +477,18 @@ SC_MODULE(TX) {
 SC_MODULE(RX) {
     sc_in<bool>         clk;
     sc_in<bool>         reset_n;
+
     sc_in<bool>         valid_in;
     sc_in<RawTLP>       tlp_in;
     sc_out<bool>        ready_out;
 
-    static const unsigned int RX_FIFO_CAPACITY = 1024;  // Large FIFO
-    sc_fifo<RawTLP> fifo;
+    sc_out<bool>        raw_valid_out;
+    sc_out<RawTLP>      raw_tlp_out;
+    sc_in<sc_uint<3>>   credit_in;
+
+    static const unsigned int RX_FIFO_CAPACITY = 1024;
+    sc_fifo<RawTLP> fifos[3];
+    int credit_counter[3];
 
     void receiver_thread() {
         while (true) {
@@ -493,33 +499,65 @@ SC_MODULE(RX) {
                 continue;
             }
 
-            // Only ready to accept data if FIFO has space and popping is enabled
-            ready_out.write(fifo.num_free() > 0 && g_enable_popping);
+            // Ready when all per-thread FIFOs have space
+            bool space=false;
+            for(int i=0;i<3;++i) space |= (fifos[i].num_free()>0);
+            ready_out.write(space);
 
-            // Accept data if valid and FIFO has space
-            if (valid_in.read() && fifo.num_free() > 0) {
+            if (valid_in.read()) {
                 RawTLP pkt = tlp_in.read();
-                fifo.write(pkt);
-                std::cout << sc_time_stamp() << " RX: Received seq_num=" << pkt.seq_num << " tid=" << pkt.thread_id << " (occ=" << fifo.num_available() << "/" << RX_FIFO_CAPACITY << ")" << std::endl;
+                int tid = pkt.thread_id.to_uint()-1;
+                if(tid>=0 && tid<3 && fifos[tid].num_free()>0){
+                    fifos[tid].write(pkt);
+                    std::cout<<sc_time_stamp()<<" RX: enqueue seq="<<pkt.seq_num<<" tid="<<pkt.thread_id<<" (occ="<<fifos[tid].num_available()<<")"<<std::endl;
+                }
             }
-            wait(1, SC_NS);
         }
     }
 
-    SC_CTOR(RX) : fifo(RX_FIFO_CAPACITY) {
+    void credit_monitor_thread(){
+        while(true){
+            wait(clk.posedge_event());
+            if(!reset_n.read()){
+                for(int i=0;i<3;++i) credit_counter[i]=0;
+                continue;
+            }
+            sc_uint<3> c=credit_in.read();
+            for(int i=0;i<3;++i){ if(c[i]) credit_counter[i]++; }
+        }
+    }
+
+    void transmitter_thread(){
+        raw_valid_out.write(false);
+        int rr=0;
+        while(true){
+            wait(clk.posedge_event());
+            raw_valid_out.write(false);
+            if(!reset_n.read()) continue;
+            for(int i=0;i<3;++i){
+                int q=(rr+i)%3;
+                if(credit_counter[q]>0 && fifos[q].num_available()>0){
+                    RawTLP pkt=fifos[q].read();
+                    raw_tlp_out.write(pkt);
+                    raw_valid_out.write(true);
+                    credit_counter[q]--; rr=(q+1)%3; break;
+                }
+            }
+        }
+    }
+
+    SC_CTOR(RX) : fifos{sc_fifo<RawTLP>(RX_FIFO_CAPACITY),sc_fifo<RawTLP>(RX_FIFO_CAPACITY),sc_fifo<RawTLP>(RX_FIFO_CAPACITY)} {
         SC_THREAD(receiver_thread);
         sensitive << clk.pos() << reset_n << valid_in << tlp_in;
+        SC_THREAD(credit_monitor_thread);
+        sensitive << clk.pos();
+        SC_THREAD(transmitter_thread);
+        sensitive << clk.pos();
     }
 };
 
 // Top-level sc_main
 int sc_main(int argc, char* argv[]) {
-    // Scan cmd-line for run-time trace flag
-    for(int i=1;i<argc;++i){
-#ifdef PACKET_TRACE
-        if(std::string(argv[i])=="--trace-off") g_pkt_trace=false;
-#endif
-    }
 
     sc_clock           system_clk("system_clk", 100, SC_NS);  // Single common clock
     sc_signal<bool>    reset_n;
@@ -562,6 +600,9 @@ int sc_main(int argc, char* argv[]) {
     sc_signal<bool>    TX2RX_valid;
     sc_signal<RawTLP>  TX2RX_tlp;
     sc_signal<bool>    RX2TX_ready;
+    sc_signal<bool>    RX2EP_valid;
+    sc_signal<RawTLP>  RX2EP_tlp;
+    sc_signal<sc_uint<3>> credit_RX2EP;
 
     // Create and connect TX topology
     iRC rc_tx("iRC_tx");
@@ -588,6 +629,17 @@ int sc_main(int argc, char* argv[]) {
     rx.valid_in(TX2RX_valid);
     rx.tlp_in(TX2RX_tlp);
     rx.ready_out(RX2TX_ready);
+    rx.raw_valid_out(RX2EP_valid);
+    rx.raw_tlp_out(RX2EP_tlp);
+    rx.credit_in(credit_RX2EP);
+
+    // iEP instance after RX (consumes TX path)
+    iEP ep_rx("iEP_after_RX");
+    ep_rx.clk(system_clk);
+    ep_rx.reset_n(reset_n);
+    ep_rx.raw_valid(RX2EP_valid);
+    ep_rx.raw_tlp(RX2EP_tlp);
+    ep_rx.credit_out(credit_RX2EP);
 
     // Trace TX topology signals
     sc_trace(tf_tx, system_clk, "system_clk");
@@ -598,6 +650,9 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf_tx, TX2RX_valid, "TX2RX_valid");
     sc_trace(tf_tx, TX2RX_tlp, "TX2RX_tlp");
     sc_trace(tf_tx, RX2TX_ready, "RX2TX_ready");
+    sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
+    sc_trace(tf_tx, RX2EP_tlp, "RX2EP_tlp");
+    sc_trace(tf_tx, credit_RX2EP, "credit_RX2EP");
 
     // Initial values
     reset_n.write(false);
