@@ -1,0 +1,8 @@
+.vscode/
+.makepp/
+# build artifacts
+build/
+*.o
+# generated waveforms and logs
+*.vcd
+logs/ 
