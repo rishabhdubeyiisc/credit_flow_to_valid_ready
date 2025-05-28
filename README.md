@@ -1,88 +1,65 @@
-# Credit-Based Flow-Control Demo (iRC / TX / iEP / RX)
+# Credit-Based Flow-Control & Valid/Ready Demo
 
-This SystemC simulation now contains **two independent data paths** so you can compare classic credit-based flow control with a conventional valid/ready handshake.
+SystemC simulation illustrating two independent data-transport topologies built from the same building blocks:
+
+1. *Pure credit-based link*
+   iRC (root complex) ➜ iEP (endpoint)
+
+2. *Hybrid link using ready/valid in the middle*
+   iRC_tx (root complex) ➜ TX (credit FIFO front-end + ready/valid transmitter) ➜ RX (wide FIFO consumer) ➜ iEP_after_RX (per-thread consumer)
+
+The two paths share the same clock and run side-by-side so you can directly compare latency, throughput, back-pressure behaviour and waveform size.
 
 ```
- (iRC) ─raw_valid / raw_tlp──▶  (iEP)
-                    ▲                ▲
-                    └─ credit[2:0] ──┘
+                credits[2:0]
+        ┌───────────────────────────────┐
+        │                               │
+ iRC ──▶│ raw_valid/tlp     iEP         │
+        └───────────────────────────────┘
 
- (iRC_tx) ─raw_valid / raw_tlp─▶ (TX) ─valid / ready─▶ (RX)
-                       ▲                    ▲
-                       └─ credit[2:0] ─────┘
+
+ iRC_tx ─raw_valid/tlp─▶ TX ─valid/ready─▶ RX ─raw_valid/tlp─▶ iEP_after_RX
+                 ▲          ▲                    ▲                 ▲
+                 └─credit───┘                    └─credit[2:0]─────┘
 ```
 
-* `iRC` and `iRC_tx` are identical three-thread senders; they differ only in the sink they feed.
-* `iEP` and `TX` each contain **three** thread FIFOs (`Threaded_Queue`, depth = 8).
-* `RX` has one large FIFO (depth = 1024) and provides back-pressure via `ready_out`.
+## Module cheat-sheet
+* **iRC / iRC_tx** – round-robin sender, maintains one credit counter per thread and prints `Send seq=n tid=t` on every packet.
+* **Threaded_Queue** – core building block used by iEP, TX and RX. Holds one FIFO (depth 8) per logical thread and raises a one-clock credit pulse when space becomes available.
+* **iEP / iEP_after_RX** – router ➜ three `Threaded_Queue`s ➜ popper that removes **one packet per queue every 4th clock**; credits are OR-reduced back to the upstream module.
+* **TX** – mirrors the iEP front-end but instead of the slow popper has a transmitter that forwards **one packet per cycle** when `egress_ready` is asserted; credits return to iRC_tx.
+* **RX** – 1024-deep FIFO per thread, drives `ready_out` when any FIFO has space and converts ready/valid back to the credit protocol for iEP_after_RX.
 
----
-## Packet format
-```cpp
-struct RawTLP {
-    sc_uint<32> seq_num;   // unique sequence number
-    sc_uint<2>  thread_id; // 1-3 selects logical thread
-};
-```
+## Key parameters (edit in `src/main.cpp`)
+* `Threaded_Queue::FIFO_CAPACITY` – per-thread depth (default 8)
+* `RX::RX_FIFO_CAPACITY` – depth of RX FIFOs (default 1024)
+* Pop cadence in iEP/iEP_after_RX – controlled by `if (pop_counter == 3)` (¼ rate)
+* `g_enable_popping` – global toggle to disable the popper at runtime.
 
----
-## Threaded_Queue (per-thread FIFO + credit source)
-Single `SC_THREAD main_thread()` per FIFO:
-1. Wait pos-edge → wait 1 Δ-cycle → sample `valid_in`, enqueue if space.
-2. After a pop, assert `credit_out` high for the following **full clock**.
-3. Maintain a simple `credits` counter (no separate inc/dec flags).
-
-Parameters
-```
-FIFO_CAPACITY = 8       // depth of each per-thread FIFO
-```
-
----
-## Module summary
-* **iRC / iRC_tx** – keeps one credit counter per thread; round-robin sender prints `Send seq=n tid=t` once per packet.
-* **iEP** – router ➜ per-thread FIFO ➜ popper.  Popper removes one packet per queue every 4th clock; credits are OR-combined back to `iRC`.
-* **TX** – same FIFO front-end; transmitter pops **one packet/clock** when `RX.ready_out` is high and forwards it to RX; credits return to `iRC_tx`.
-* **RX** – 1024-deep FIFO; drives `ready_out` when space exists; prints every packet with FIFO occupancy.
-
----
-## Building & running
+## Build & Run
 ```bash
-# edit SYSTEMC_INC / SYSTEMC_LIB in Makefile if needed
-make            # builds src/main.cpp → build/sim
-./build/sim     # runs; console always prints packet flow
+# Edit SYSTEMC_INC / SYSTEMC_LIB in Makefile if your SystemC is not in /usr/local
+make          # builds build/sim
+./build/sim   # runs ~20 µs and emits two VCD files
 ```
-Waveforms
+
+### Waveforms
 ```bash
-gtkwave irc_iep_flow.vcd   # iRC → iEP path
-gtkwave irc_tx_flow.vcd    # iRC_tx → TX → RX path
+gtkwave irc_iep_flow.vcd      # iRC ➜ iEP (pure-credit path)
+gtkwave irc_tx_flow.vcd       # iRC_tx ➜ TX ➜ RX ➜ iEP_after_RX (hybrid path)
 ```
 
----
-## Typical console excerpt
-```
-300 ns [iRC] Send seq=1 tid=1
-300 ns [iEP] Route: seq_num=1 tid=1 -> queue 0
-400 ns [iEP popper] counter=3
-400 ns [iEP.iEP_queue_0] Popping data: seq_num=1 …
-
-300 ns [iRC_tx] Send seq=1 tid=2
-300 ns [TX] Route: seq_num=1 tid=2 -> queue 1
-500 ns [TX] Hold pkt seq=1 tid=2 from queue 1
-500 ns [TX] RX accepted seq=1
-500 ns RX: Received seq_num=1 tid=2 (occ=1/1024)
-```
-
----
-## Tuning knobs
-* **Pop rate**  (iEP) – change the popper condition `if (pop_counter == 3)` and modulus `4`.
-* **FIFO depths** – `Threaded_Queue::FIFO_CAPACITY`, `RX_FIFO_CAPACITY`.
-* **Log volume** – all prints use `std::cout`; comment out lines you do not need.
-
----
 ## Sanity checklist
-1. `raw_tlp_iRC2TX.seq_num` and `TX2RX_tlp.seq_num` rise indefinitely and match (offset by pipeline latency).
-2. Both credit buses toggle continuously – never stuck.
-3. No packet with `thread_id = 0` or `seq_num = 0` appears.
-4. Popper prints every fourth clock and each FIFO's credit count returns to 8 after every pop group.
+1. Sequence numbers rise monotonically and match between sender and receiver.
+2. Credit buses on both paths toggle continuously – never stuck.
+3. No packet carries `thread_id == 0` or `seq_num == 0`.
+4. The iEP popper prints every 4th clock and each `Threaded_Queue` credit counter returns to *8* after every pop group.
 
-If any of these conditions fail revisit the per-queue valid-pulse logic in **iEP** and **TX**. 
+## Extending the demo
+* Increase the number of logical threads by widening `RawTLP.thread_id` and updating loop bounds.
+* Stress congestion: set `g_enable_popping = false` after a few µs to watch queues fill up.
+* Replace the simple `TX` block with any RTL you want to characterise – the credit front-end is unaffected.
+
+---
+
+This README doubles as a compact primer when you prompt an LLM with the project – it should remain self-contained, architecture-focused and free of build-system minutiae.
