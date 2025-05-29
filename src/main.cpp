@@ -10,13 +10,15 @@
 // Central build-time configuration (all sizes / latencies in one place)
 // -----------------------------------------------------------------------------
 
-constexpr unsigned TX_FIFO_DEPTH = 48;   // entries (24 packets @ 64-bit)
-constexpr unsigned RX_FIFO_DEPTH = 24;   // entries
+constexpr unsigned TX_FIFO_DEPTH   = 1024;   // entries (24 packets @ 64-bit)
+constexpr unsigned RX_FIFO_DEPTH   = 24;   // entries
 constexpr unsigned THREAD_Q_DEPTH = 8;   // per-thread depth inside iEP/FrontEnd
+const unsigned GLOBAL_SENSE_WINDOW = 8; // can be tuned – equal to Threaded FIFO depth
 
-constexpr unsigned NOC_PIPE_LAT   = 12;  // fixed AXI cycles through NoC
-constexpr unsigned NOC_STALL_CYC   = 6;  // ready low phase length
-constexpr unsigned NOC_READY_CYC  = 6;  // ready high phase length (pattern repeats)
+constexpr unsigned NOC_STATIC_LATENCY = 12;  // fixed AXI cycles through NoC
+constexpr unsigned NOC_STALL_PCT  = 25; // percentage (0-99) of cycles ready is LOW
+constexpr unsigned NOC_PATTERN_LEN = 100; // resolution (cycles)
+static_assert(NOC_STALL_PCT < 100, "stall percentage must be <100");
 
 // Global control for FIFO popping
 bool g_enable_popping = true;
@@ -82,6 +84,31 @@ inline RawTLP axi_to_tlp(const AxiWord& w){
     RawTLP p; p.seq_num = w.data.range(31,0);
     p.thread_id = w.data.range(33,32);
     return p;
+}
+
+// -----------------------------------------------------------------------------
+// Helper for packing three 10-bit credit counters into a single AXI beat
+
+inline AxiWord credits_to_axi(const sc_uint<16> c0,
+                              const sc_uint<16> c1,
+                              const sc_uint<16> c2){
+    AxiWord w; w.tlast = true;
+    sc_uint<64> d = 0;
+    d.range(15,0)   = c0;
+    d.range(31,16)  = c1;
+    d.range(47,32)  = c2;
+    w.data = d;
+    return w;
+}
+
+inline void axi_to_credits(const AxiWord& w,
+                           sc_uint<16>& c0,
+                           sc_uint<16>& c1,
+                           sc_uint<16>& c2){
+    sc_uint<64> d = w.data;
+    c0 = d.range(15,0);
+    c1 = d.range(31,16);
+    c2 = d.range(47,32);
 }
 
 // -----------------------------------------------------------------------------
@@ -378,71 +405,130 @@ SC_MODULE(SimpleRxFIFO) {
 };
 
 // -----------------------------------------------------------------------------
-// ProxyCreditGen: aggregates credit pulses over a sensing window (THREAD_FIFO
-// depth) then emits them, decoupling the credit loop.
+// CreditTx: senses credit pulses near iEP and emits them as one AXI beat.
 // -----------------------------------------------------------------------------
 
-const unsigned GLOBAL_SENSE_WINDOW = 8; // can be tuned – equal to Threaded FIFO depth
-
-SC_MODULE(ProxyCreditGen) {
+SC_MODULE(CreditTx){
     sc_in<bool>        clk;
     sc_in<bool>        reset_n;
-    sc_in<sc_uint<3>>  credit_in;   // from iEP
-    sc_out<sc_uint<3>> credit_out;  // to iRC
+    sc_in<sc_uint<3>>  credit_in;   // pulses from iEP queues
+    // AXI Stream out
+    sc_out<bool>       valid_out;
+    sc_out<AxiWord>    axi_out;
+    sc_in<bool>        ready_in;
 
-    // Per-thread credit counters
-    sc_uint<4> accum_cnt[3] = {0, 0, 0};   // live counts within current window
-    sc_uint<4> emit_cnt[3]  = {0, 0, 0};   // counts left to emit in burst phase
+    sc_uint<16> accum[3] = {0,0,0};
+    unsigned ctr = 0;
+    bool sending = false;
+    AxiWord pending;
 
-    void sense_thread() {
-        // Count every credit pulse into per-thread accum_cnt[]
-        while (true) {
+    void main_thread(){
+        wait(SC_ZERO_TIME);
+        while(true){
             wait(clk.posedge_event());
 
-            if (!reset_n.read()) {
-                for (int i = 0; i < 3; ++i) accum_cnt[i] = 0;
+            if(!reset_n.read()){
+                for(int i=0;i<3;++i) accum[i]=0;
+                ctr = 0; sending = false; valid_out.write(false);
                 continue;
             }
 
+            // Default deassert
+            if(!sending) valid_out.write(false);
+
+            // count incoming credit pulses every cycle
             sc_uint<3> in = credit_in.read();
-            for (int i = 0; i < 3; ++i) {
-                if (in[i]) accum_cnt[i]++;
+            for(int i=0;i<3;++i) if(in[i]) accum[i]++;
+
+            // When not currently sending, check window expiry
+            if(!sending){
+                if(++ctr == GLOBAL_SENSE_WINDOW){
+                    ctr = 0;
+                    // Build packet even if some counts are zero – optional
+                    pending = credits_to_axi(accum[0],accum[1],accum[2]);
+                    for(int i=0;i<3;++i) accum[i]=0;
+                    sending = true;
+                    valid_out.write(true);
+                    axi_out.write(pending);
+                }
+            } else { // currently asserting valid
+                if(ready_in.read()){
+                    sending = false;          // beat accepted
+                    valid_out.write(false);
+                } else {
+                    // keep driving same word
+                    valid_out.write(true);
+                    axi_out.write(pending);
+                }
             }
         }
     }
 
-    void emit_thread() {
-        unsigned ctr = 0;                     // sense-window counter
-        while (true) {
+    SC_CTOR(CreditTx){
+        SC_THREAD(main_thread);
+        sensitive<<clk.pos();
+    }
+};
+
+// -----------------------------------------------------------------------------
+// CreditRx: converts AXI credit packet back into per-thread pulses for iRC_tx
+// -----------------------------------------------------------------------------
+
+SC_MODULE(CreditRx){
+    sc_in<bool>        clk;
+    sc_in<bool>        reset_n;
+    // AXI Stream in
+    sc_in<bool>        valid_in;
+    sc_in<AxiWord>     axi_in;
+    sc_out<bool>       ready_out;
+    // Credit pulses toward RC
+    sc_out<sc_uint<3>> credit_out;
+
+    sc_uint<16> emit_cnt[3] = {0,0,0};
+
+    void main_thread(){
+        wait(SC_ZERO_TIME);
+        while(true){
             wait(clk.posedge_event());
 
-            if (!reset_n.read()) {
+            if(!reset_n.read()){
+                for(int i=0;i<3;++i) emit_cnt[i]=0;
+                ready_out.write(true);
                 credit_out.write(0);
-                ctr = 0;
-                for (int i = 0; i < 3; ++i) { accum_cnt[i] = 0; emit_cnt[i] = 0; }
                 continue;
             }
 
-            // Start of new emission burst when sense window ends
-            if (++ctr == GLOBAL_SENSE_WINDOW) {
-                for (int i = 0; i < 3; ++i) { emit_cnt[i] = accum_cnt[i]; accum_cnt[i] = 0; }
-                ctr = 0;
+            // Default outputs
+            credit_out.write(0);
+
+            bool empty = (emit_cnt[0]==0 && emit_cnt[1]==0 && emit_cnt[2]==0);
+            ready_out.write(empty); // accept new packet only when previous drained
+
+            // Emit phase
+            if(!empty){
+                sc_uint<3> pulse = 0;
+            for(int i=0;i<3;++i){
+                    if(emit_cnt[i]!=0){
+                        pulse[i]=1;
+                        emit_cnt[i]--;
+                    }
+                }
+                credit_out.write(pulse);
             }
 
-            // Emit up to 1 credit per thread per cycle until emit_cnt drains
-            sc_uint<3> out = 0;
-            for (int i = 0; i < 3; ++i) {
-                if (emit_cnt[i] != 0) { out[i] = 1; emit_cnt[i]--; }
+            // Acceptance of new packet
+            if(valid_in.read() && ready_out.read()){
+                sc_uint<16> cnt0,cnt1,cnt2; axi_to_credits(axi_in.read(),cnt0,cnt1,cnt2);
+                emit_cnt[0]=cnt0;
+                emit_cnt[1]=cnt1;
+                emit_cnt[2]=cnt2;
             }
-            credit_out.write(out);
         }
     }
 
-    SC_CTOR(ProxyCreditGen) {
-        SC_THREAD(sense_thread);
-        sensitive << clk.pos();
-        SC_THREAD(emit_thread);
-        sensitive << clk.pos();
+    SC_CTOR(CreditRx){
+        SC_THREAD(main_thread);
+        sensitive<<clk.pos();
     }
 };
 
@@ -639,19 +725,19 @@ SC_MODULE(AxiNoC) {
     sc_in<bool>      ready_in;
 
     // fixed pipeline latency buffer & back-pressure generation
-    static const unsigned PIPE_LAT = NOC_PIPE_LAT; // latency cycles
+    static const unsigned PIPE_LAT = NOC_STATIC_LATENCY; // latency cycles
     AxiWord  pipe[PIPE_LAT];
     bool     pipe_valid[PIPE_LAT] = {false};
-    unsigned pattern_ctr = 0;          // cycles within stall/ready pattern
+    unsigned pattern_ctr = 0;          // 0..NOC_PATTERN_LEN-1
 
     void main_thread(){
-        wait(SC_ZERO_TIME);
+            wait(SC_ZERO_TIME);
         while(true){
             wait(clk.posedge_event());
 
-            // Deterministic stall pattern: ready is low for NOC_STALL_CYC cycles,
-            // then high for NOC_READY_CYC cycles, repeating.
-            bool stall_active = (pattern_ctr < NOC_STALL_CYC);
+            // Deterministic duty-cycle stall: ready low for NOC_STALL_PCT % of pattern len
+            const unsigned stall_cycles = (NOC_PATTERN_LEN * NOC_STALL_PCT) / 100;
+            bool stall_active = (pattern_ctr < stall_cycles);
             bool ready_ok = !pipe_valid[0] && !stall_active;
             ready_out.write(ready_ok);
 
@@ -662,9 +748,7 @@ SC_MODULE(AxiNoC) {
                 // nothing special to do; stall pattern is time-based
             }
 
-            // advance deterministic pattern counter every cycle
-            pattern_ctr++;
-            if (pattern_ctr == (NOC_STALL_CYC + NOC_READY_CYC)) pattern_ctr = 0;
+            pattern_ctr = (pattern_ctr + 1) % NOC_PATTERN_LEN;
 
             // Drive output when last stage valid
             if(pipe_valid[PIPE_LAT-1]){
@@ -689,6 +773,44 @@ SC_MODULE(AxiNoC) {
     SC_CTOR(AxiNoC) {
         SC_THREAD(main_thread);
         sensitive<<clk.pos();
+    }
+};
+
+
+// -----------------------------------------------------------------------------
+// CreditDutyMon: measures duty cycle (percentage of cycles bus != 0)
+// -----------------------------------------------------------------------------
+
+SC_MODULE(CreditDutyMon){
+    sc_in<bool>        clk;
+    sc_in<sc_uint<3>>  bus_direct;
+    sc_in<sc_uint<3>>  bus_hybrid;
+
+    sc_uint<64> total      = 0;
+    sc_uint<64> hi_direct  = 0;
+    sc_uint<64> hi_hybrid  = 0;
+
+    void sample(){
+        total++;
+        if(bus_direct.read() != 0) hi_direct++;
+        if(bus_hybrid.read() != 0) hi_hybrid++;
+    }
+
+    void report(){
+        std::cout << "\n---- Credit bus duty cycle ----\n";
+        if(total == 0){
+            std::cout << "No samples taken!\n";
+            return;
+        }
+        auto pct = [&](sc_uint<64> hi){ return 100.0 * static_cast<double>(hi) / static_cast<double>(total); };
+        std::cout << "Direct bus : "  << pct(hi_direct) << " %\n";
+        std::cout << "Hybrid bus : "  << pct(hi_hybrid) << " %\n";
+    }
+
+    SC_CTOR(CreditDutyMon){
+        SC_METHOD(sample);
+        sensitive << clk.pos();
+        dont_initialize();
     }
 };
 
@@ -740,8 +862,12 @@ int sc_main(int argc, char* argv[]) {
     sc_signal<bool>    RX2NOC_ready;
     sc_signal<bool>    RX2EP_valid;
     sc_signal<RawTLP>  RX2EP_tlp;
-    sc_signal<sc_uint<3>> credit_proxy2iRC;
-    sc_signal<sc_uint<3>> credit_iEP2proxy;
+    sc_signal<sc_uint<3>> credit_iEP2cTx;
+    sc_signal<bool>       c_valid_tx, c_ready_tx;
+    sc_signal<AxiWord>    c_axi_tx;
+    sc_signal<bool>       c_valid_rx, c_ready_rx;
+    sc_signal<AxiWord>    c_axi_rx;
+    sc_signal<sc_uint<3>> credit_pkt2rc;
 
     // Create and connect TX path with single FIFO
     iRC rc_tx("iRC_tx");
@@ -775,19 +901,40 @@ int sc_main(int argc, char* argv[]) {
     ep_rx.reset_n(reset_n);
     ep_rx.raw_valid(RX2EP_valid);
     ep_rx.raw_tlp(RX2EP_tlp);
-    ep_rx.credit_out(credit_iEP2proxy);
+    ep_rx.credit_out(credit_iEP2cTx);
 
-    // Proxy credit generator
-    ProxyCreditGen proxy("proxy_credit");
-    proxy.clk(system_clk);
-    proxy.reset_n(reset_n);
-    proxy.credit_in(credit_iEP2proxy);
-    proxy.credit_out(credit_proxy2iRC);
+    // Credit path over its own deterministic AXI NoC
+    CreditTx c_tx("CreditTx");
+    c_tx.clk(system_clk);
+    c_tx.reset_n(reset_n);
+    c_tx.credit_in(credit_iEP2cTx);
+    c_tx.valid_out(c_valid_tx);
+    c_tx.axi_out(c_axi_tx);
+    c_tx.ready_in(c_ready_tx);
 
-    // Connect proxy output to iRC_tx once
-    rc_tx.credit_in(credit_proxy2iRC);
+    // Use a separate NoC instance but same behaviour
+    AxiNoC c_noc("Credit_NOC");
+    c_noc.clk(system_clk);
+    c_noc.reset_n(reset_n);
+    c_noc.valid_in(c_valid_tx);
+    c_noc.axi_in(c_axi_tx);
+    c_noc.ready_out(c_ready_tx);
+    c_noc.valid_out(c_valid_rx);
+    c_noc.axi_out(c_axi_rx);
+    c_noc.ready_in(c_ready_rx);
 
-    // Instantiate NoC
+    CreditRx c_rx("CreditRx");
+    c_rx.clk(system_clk);
+    c_rx.reset_n(reset_n);
+    c_rx.valid_in(c_valid_rx);
+    c_rx.axi_in(c_axi_rx);
+    c_rx.ready_out(c_ready_rx);
+    c_rx.credit_out(credit_pkt2rc);
+
+    // Connect to iRC_tx
+    rc_tx.credit_in(credit_pkt2rc);
+
+    // ------------------- Data path NoC (TX → RX) ---------------------------
     AxiNoC noc("AXI_NOC");
     noc.clk(system_clk);
     noc.reset_n(reset_n);
@@ -809,8 +956,17 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf_tx, RX2NOC_ready,  "RX_ready_to_NOC");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
     sc_trace(tf_tx, RX2EP_tlp,   "RX2EP_tlp");
-    sc_trace(tf_tx, credit_proxy2iRC, "credit_proxy2iRC");
-    sc_trace(tf_tx, credit_iEP2proxy, "credit_iEP2proxy");
+    sc_trace(tf_tx, c_valid_tx, "credit_valid_tx");
+    sc_trace(tf_tx, c_ready_tx, "credit_ready_tx");
+    sc_trace(tf_tx, c_valid_rx, "credit_valid_rx");
+    sc_trace(tf_tx, credit_pkt2rc, "credit_pkt2rc");
+    sc_trace(tf_tx, credit_iEP2cTx, "credit_iEP2cTx");
+
+    // Duty cycle monitor instance
+    CreditDutyMon mon("CreditMon");
+    mon.clk(system_clk);
+    mon.bus_direct(credit);
+    mon.bus_hybrid(credit_pkt2rc);
 
     // Initial values
     reset_n.write(false);
@@ -820,7 +976,10 @@ int sc_main(int argc, char* argv[]) {
     reset_n.write(true);
     
     // Run the simulation for longer to see the effects
-    sc_start(20, SC_US);
+    sc_start(200, SC_US);
+
+    // Print duty cycle stats
+    mon.report();
 
     // Close trace files
     sc_close_vcd_trace_file(tf);

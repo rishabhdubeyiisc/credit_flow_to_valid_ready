@@ -39,6 +39,7 @@ Both topologies share one clock and run for 20 µs; you can watch every wave in 
 | `TX_FIFO_DEPTH`                       | Burst buffer at TX; ***should cover stall latency*** (48 fits 12-cycle NoC × 4 beats). | 48 |
 | `RX_FIFO_DEPTH`                       | Elasticity buffer after network. | 24 |
 | `NOC_STALL_CYC`/`NOC_READY_CYC`       | Deterministic ready-low / ready-high period in `AxiNoC`. | 6 / 6 |
+| `NOC_STALL_PCT`                       | Duty-cycle of ready-low in `AxiNoC` (0-99 %). | 10 % |
 | `Threaded_Queue::FIFO_CAPACITY`       | Per-thread depth in iEPs. | 8 |
 | `g_enable_popping`                    | Runtime switch to pause the popper. | true |
 
@@ -61,19 +62,40 @@ prints packet count, average latency and throughput **per topology** by parsing 
 ---
 ## 5.  FIFO depth sweeper
 
-`scripts/fifo_tuner.py` rewrites the TX & RX DEPTH constants, rebuilds, runs, parses and dumps a CSV (`fifo_sweep_report.csv`).
+### `fifo_tuner.py` (auto-explorer)
+
+1. Iterates over `TX_DEPTHS × RX_DEPTHS` (config arrays inside the script).
+2. For every pair it:
+   • patches `TX_FIFO_DEPTH` / `RX_FIFO_DEPTH` in `src/main.cpp`
+   • `make` + simulation (console captured to `auto_run.log`)
+   • runs `analyze_logs.py` and grabs:
+     – credit & ready throughput / latency / packet count
+     – max FIFO occupancy (TX, RX)
+     – duty-cycle of both credit buses
+3. Writes a one-line status to the console and appends a full row to
+   `fifo_sweep_report.csv` with all metrics.
+
+CSV columns:
+
+| col | meaning |
+|-----|---------|
+| tx_depth, rx_depth | FIFO sizes under test |
+| credit_mpps / ready_mpps | sustained throughput |
+| credit_lat_ns / ready_lat_ns | average end-to-end latency |
+| credit_pkts / ready_pkts | packets delivered |
+| ratio | ready / credit throughput |
+| max_tx / max_rx | worst-case FIFO depth seen |
+| duty_direct_% / duty_hybrid_% | credit-bus duty cycle seen by monitor |
+| status | `OK` if ratio ≥ 0.9 (configurable) |
+
+Run it:
 
 ```bash
-python3 scripts/fifo_tuner.py
-
-TX_DEPTH RX_DEPTH  Ready(Mpps)  Ratio_to_Credit
----------------------------------------------
-       2        1   ---           N/A   PARSE_ERR
-       2        2       5.20       0.97 OK
-       4        1   ---           N/A   PARSE_ERR
-       ...
+python3 scripts/fifo_tuner.py | tee fifo_tuner_output.txt
+cat fifo_sweep_report.csv | column -t -s,
 ```
-*OK* marks configurations where ready-path ≥ 90 % of credit-path throughput.
+
+Use the CSV in spreadsheets or feed the whole README back to an LLM for further design space exploration.
 
 ---
 ## 6.  Typical experiments
