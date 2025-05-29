@@ -206,7 +206,7 @@ SC_MODULE(iRC) {
 
                     raw_tlp.write(pkt);
                     raw_valid.write(true);   // Assert valid for this cycle only
-                    std::cout << "[iRC] Send seq="<<pkt.seq_num<<" tid="<<pkt.thread_id << std::endl;
+                    std::cout << sc_time_stamp() << " [" << name() << "] Send seq="<<pkt.seq_num<<" tid="<<pkt.thread_id << std::endl;
 
                     // Consume one credit for this thread
                     credit_counter[thread_to_try - 1]--;  // Adjust index for credit_counter
