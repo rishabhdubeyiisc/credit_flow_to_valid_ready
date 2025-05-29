@@ -26,5 +26,6 @@ clean:
 	rm -f logs
 	rm -f irc_iep_flow.vcd
 	rm -f irc_tx_flow.vcd
+	rm -f sim*.txt
 
 .PHONY: clean 

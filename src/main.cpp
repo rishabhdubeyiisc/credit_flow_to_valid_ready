@@ -3,6 +3,7 @@
 #include <queue>  // For std::queue
 #include <iostream>  // For std::cout
 #include <string>
+#include <algorithm>
 
 // Global control for FIFO popping
 bool g_enable_popping = true;
@@ -120,6 +121,95 @@ SC_MODULE(Threaded_Queue) {
 
     SC_CTOR(Threaded_Queue) : fifo(FIFO_CAPACITY) {
         SC_THREAD(main_thread);
+        sensitive << clk.pos();
+    }
+};
+
+// -----------------------------------------------------------------------------
+// ThreadedFrontEnd: reusable wrapper that contains 3 Threaded_Queues plus the
+// router (valid/tlp -> per-queue) and credit combiner logic.  This captures the
+// functionality that was previously duplicated inside both iEP and TX.
+// -----------------------------------------------------------------------------
+
+SC_MODULE(ThreadedFrontEnd) {
+    // Ports identical to the classic front-end used by iEP / TX
+    sc_in<bool>         clk;
+    sc_in<bool>         reset_n;
+    sc_in<bool>         ingress_valid;
+    sc_in<RawTLP>       ingress_tlp;
+    sc_out<sc_uint<3>>  credit_out;
+
+    // Internal per-thread FIFOs
+    Threaded_Queue* queues[3];
+    sc_signal<bool>      credit_signals[3];
+    sc_signal<RawTLP>    tlp_signals[3];
+    sc_signal<bool>      valid_signals[3];
+
+    // Exposed helpers so outer modules can pull data deterministically
+    bool has_data(int idx) const {
+        return queues[idx]->has_data();
+    }
+
+    bool pop_data(int idx, RawTLP& pkt) {
+        return queues[idx]->pop_data(pkt);
+    }
+
+    // Router thread: demux ingress packet by thread_id -> per-queue signals
+    void input_router_thread() {
+        while (true) {
+            wait(clk.posedge_event());
+
+            if (!reset_n.read()) {
+                // de-assert all valids when in reset
+                for (int i = 0; i < 3; ++i) valid_signals[i].write(false);
+                continue;
+            }
+
+            wait(SC_ZERO_TIME); // 1-delta to allow producer observations
+
+            for (int i = 0; i < 3; ++i) valid_signals[i].write(false);
+
+            if (ingress_valid.read()) {
+                RawTLP pkt = ingress_tlp.read();
+                unsigned tid = pkt.thread_id.to_uint();
+                if (tid >= 1 && tid <= 3) {
+                    tlp_signals[tid - 1].write(pkt);
+                    valid_signals[tid - 1].write(true);
+                    debug_route(name(), pkt, tid - 1);
+                }
+            }
+        }
+    }
+
+    // Combiner: OR-reduce per-queue credit pulses into a 3-bit bus
+    void credit_combine_thread() {
+        while (true) {
+            wait(clk.posedge_event());
+            wait(SC_ZERO_TIME);
+            sc_uint<3> combined = 0;
+            for (int i = 0; i < 3; ++i) combined[i] = credit_signals[i].read();
+            credit_out.write(combined);
+        }
+    }
+
+    SC_CTOR(ThreadedFrontEnd) {
+        // Build child queue names without illegal '.' characters to avoid SystemC W506.
+        std::string prefix(name());
+        std::replace(prefix.begin(), prefix.end(), '.', '_');
+        for (int i = 0; i < 3; ++i) {
+            std::string qn = prefix + "_queue_" + std::to_string(i);
+            queues[i] = new Threaded_Queue(qn.c_str());
+            queues[i]->clk(clk);
+            queues[i]->reset_n(reset_n);
+            queues[i]->raw_tlp_in(tlp_signals[i]);
+            queues[i]->valid_in(valid_signals[i]);
+            queues[i]->credit_out(credit_signals[i]);
+        }
+
+        SC_THREAD(input_router_thread);
+        sensitive << clk.pos();
+
+        SC_THREAD(credit_combine_thread);
         sensitive << clk.pos();
     }
 };
@@ -242,10 +332,7 @@ SC_MODULE(iEP) {
     sc_in<RawTLP>       raw_tlp;
     sc_out<sc_uint<3>>  credit_out;
 
-    Threaded_Queue* threaded_queues[3];
-    sc_signal<bool> credit_signals[3];
-    sc_signal<RawTLP> tlp_signals[3];
-    sc_signal<bool>   valid_signals[3];
+    ThreadedFrontEnd* threaded_queues;
 
     // Method to process popped data
     void process_popped_data(const RawTLP& pkt, int queue_id) {
@@ -255,19 +342,6 @@ SC_MODULE(iEP) {
                   << " with seq_num=" << pkt.seq_num 
                   << " thread_id=" << pkt.thread_id 
                   << std::endl;
-    }
-
-    void credit_combine_thread() {
-        while (true) {
-            wait(clk.posedge_event());
-            // Ensure data driven by iRC in the same clock phase is visible
-            wait(SC_ZERO_TIME);
-            sc_uint<3> combined_credits = 0;
-            for (int i = 0; i < 3; i++) {
-                combined_credits[i] = credit_signals[i].read();
-            }
-            credit_out.write(combined_credits);
-        }
     }
 
     void popper_thread() {
@@ -288,7 +362,7 @@ SC_MODULE(iEP) {
                     // Try to pop from each queue
                     for (int i = 0; i < 3; i++) {
                         RawTLP pkt;
-                        if (threaded_queues[i]->pop_data(pkt)) {
+                        if (threaded_queues->pop_data(i, pkt)) {
                             process_popped_data(pkt, i);
                         }
                     }
@@ -299,49 +373,15 @@ SC_MODULE(iEP) {
     }
 
     SC_CTOR(iEP) {
-        for (int i = 0; i < 3; i++) {
-            std::string queue_name = std::string(name()) + "_queue_" + std::to_string(i);
-            threaded_queues[i] = new Threaded_Queue(queue_name.c_str());
-            threaded_queues[i]->clk(clk);
-            threaded_queues[i]->reset_n(reset_n);
-            threaded_queues[i]->raw_tlp_in(tlp_signals[i]);
-            threaded_queues[i]->valid_in(valid_signals[i]);
-            threaded_queues[i]->credit_out(credit_signals[i]);
-        }
-
-        SC_THREAD(input_router_thread);
-        sensitive << clk.pos();
-        
-        SC_THREAD(credit_combine_thread);
-        sensitive << clk.pos() << reset_n << credit_signals[0] << credit_signals[1] << credit_signals[2];
+        threaded_queues = new ThreadedFrontEnd((std::string(name()) + "_front").c_str());
+        threaded_queues->clk(clk);
+        threaded_queues->reset_n(reset_n);
+        threaded_queues->ingress_valid(raw_valid);
+        threaded_queues->ingress_tlp(raw_tlp);
+        threaded_queues->credit_out(credit_out);
 
         SC_THREAD(popper_thread);
         sensitive << clk.pos() << reset_n;
-    }
-
-    void input_router_thread() {
-        while (true) {
-            wait(clk.posedge_event());
-
-            if (!reset_n.read()) {
-                continue;
-            }
-
-            wait(SC_ZERO_TIME);
-
-            // Default deassert
-            for(int i=0;i<3;++i) valid_signals[i].write(false);
-
-            if (raw_valid.read()) {
-                RawTLP pkt = raw_tlp.read();
-                unsigned int tid = pkt.thread_id.to_uint();
-                if (tid >= 1 && tid <= 3) {
-                    tlp_signals[tid - 1].write(pkt);
-                    valid_signals[tid - 1].write(true); // one-delta pulse
-                    debug_route(name(), pkt, tid - 1);
-                }
-            }
-        }
     }
 };
 
@@ -358,23 +398,7 @@ SC_MODULE(TX) {
     sc_out<RawTLP>      egress_tlp;
     sc_in<bool>         egress_ready;
 
-    Threaded_Queue* threaded_queues[3];
-    sc_signal<bool> credit_signals[3];
-    sc_signal<RawTLP> tlp_signals[3];
-    sc_signal<bool>   valid_signals[3];
-
-    void credit_combine_thread() {
-        while (true) {
-            wait(clk.posedge_event());
-            // Ensure data driven by iRC in the same clock phase is visible
-            wait(SC_ZERO_TIME);
-            sc_uint<3> combined_credits = 0;
-            for (int i = 0; i < 3; i++) {
-                combined_credits[i] = credit_signals[i].read();
-            }
-            credit_out.write(combined_credits);
-        }
-    }
+    ThreadedFrontEnd* threaded_queues;
 
     void transmitter_thread() {
         wait(SC_ZERO_TIME);  // Initial wait for proper synchronization
@@ -399,8 +423,8 @@ SC_MODULE(TX) {
             if (!holding) {
                 for (int i = 0; i < 3; ++i) {
                     int q = (current_queue + i) % 3;
-                    if (threaded_queues[q]->has_data()) {
-                        if (threaded_queues[q]->pop_data(held_pkt)) {
+                    if (threaded_queues->has_data(q)) {
+                        if (threaded_queues->pop_data(q, held_pkt)) {
                             holding = true;
                             std::cout << sc_time_stamp() << " [TX] Hold pkt seq=" << held_pkt.seq_num << " tid=" << held_pkt.thread_id << " from queue " << q << std::endl;
                             current_queue = (q + 1) % 3;  // advance pointer
@@ -427,49 +451,15 @@ SC_MODULE(TX) {
     }
 
     SC_CTOR(TX) {
-        for (int i = 0; i < 3; i++) {
-            std::string queue_name = std::string(name()) + "_queue_" + std::to_string(i);
-            threaded_queues[i] = new Threaded_Queue(queue_name.c_str());
-            threaded_queues[i]->clk(clk);
-            threaded_queues[i]->reset_n(reset_n);
-            threaded_queues[i]->raw_tlp_in(tlp_signals[i]);
-            threaded_queues[i]->valid_in(valid_signals[i]);
-            threaded_queues[i]->credit_out(credit_signals[i]);
-        }
-
-        SC_THREAD(input_router_thread);
-        sensitive << clk.pos();
-        
-        SC_THREAD(credit_combine_thread);
-        sensitive << clk.pos() << reset_n << credit_signals[0] << credit_signals[1] << credit_signals[2];
+        threaded_queues = new ThreadedFrontEnd((std::string(name()) + "_front").c_str());
+        threaded_queues->clk(clk);
+        threaded_queues->reset_n(reset_n);
+        threaded_queues->ingress_valid(ingress_valid);
+        threaded_queues->ingress_tlp(ingress_tlp);
+        threaded_queues->credit_out(credit_out);
 
         SC_THREAD(transmitter_thread);
         sensitive << clk.pos() << reset_n << egress_ready;
-    }
-
-    void input_router_thread() {
-        while (true) {
-            wait(clk.posedge_event());
-
-            if (!reset_n.read()) {
-                continue;
-            }
-
-            wait(SC_ZERO_TIME);
-
-            // Default deassert
-            for(int i=0;i<3;++i) valid_signals[i].write(false);
-
-            if (ingress_valid.read()) {
-                RawTLP pkt = ingress_tlp.read();
-                unsigned int tid = pkt.thread_id.to_uint();
-                if (tid >= 1 && tid <= 3) {
-                    tlp_signals[tid - 1].write(pkt);
-                    valid_signals[tid - 1].write(true); // one-delta pulse
-                    debug_route(name(), pkt, tid - 1);
-                }
-            }
-        }
     }
 };
 
