@@ -40,7 +40,13 @@ for line in source:
         t = int(mp.group('time'))
         seq = int(mp.group('seq'))
         qname = mp.group('queue')
-        topo = 'credit' if qname.startswith('iEP_') else 'ready'
+        if qname.startswith('iEP.iEP_front'):
+            topo = 'credit'
+        elif qname.startswith('iEP_after_RX'):
+            topo = 'ready'
+        else:
+            # fallback based on substring
+            topo = 'ready' if 'after_RX' in qname else 'credit'
         st = send_ts[topo].pop(seq, None)
         if st is not None:
             latencies[topo].append(t - st)

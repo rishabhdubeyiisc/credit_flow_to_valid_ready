@@ -214,7 +214,204 @@ SC_MODULE(ThreadedFrontEnd) {
     }
 };
 
+// -----------------------------------------------------------------------------
+// SimpleTxFIFO: single FIFO buffer with valid/ready handshake on egress.
+// -----------------------------------------------------------------------------
+
+SC_MODULE(SimpleTxFIFO) {
+    sc_in<bool>        clk;
+    sc_in<bool>        reset_n;
+    // ingress from iRC_tx (raw_valid/raw_tlp)
+    sc_in<bool>        ingress_valid;
+    sc_in<RawTLP>      ingress_tlp;
+    // egress toward RX (valid/ready)
+    sc_out<bool>       egress_valid;
+    sc_out<RawTLP>     egress_tlp;
+    sc_in<bool>        egress_ready;
+    sc_out<unsigned>   occ_out;   // expose current occupancy (reg + fifo)
+
+    static const unsigned DEPTH = 1024;    // burst size
+    sc_fifo<RawTLP> fifo;
+    unsigned int max_occ = 0;
+
+    void main_thread() {
+        wait(SC_ZERO_TIME);
+        bool holding = false;
+        RawTLP held_pkt;
+        while (true) {
+            wait(clk.posedge_event());
+
+            // enqueue from iRC_tx
+            if (ingress_valid.read() && fifo.num_free() > 0) {
+                fifo.write(ingress_tlp.read());
+            }
+
+            // track occupancy
+            unsigned cur_occ = fifo.num_available() + (holding ? 1 : 0);
+            if (cur_occ > max_occ) {
+                max_occ = cur_occ;
+                std::cout << sc_time_stamp()
+                          << " [TX_FIFO] depth=" << max_occ << std::endl;
+            }
+            occ_out.write(cur_occ);
+
+            // fetch into holding register if empty
+            if (!holding && fifo.nb_read(held_pkt)) {
+                holding = true;
+            }
+
+            // drive outputs
+            if (holding) {
+                egress_tlp.write(held_pkt);
+                egress_valid.write(true);
+                if (egress_ready.read()) {
+                    holding = false; // drop the packet
+                }
+            } else {
+                egress_valid.write(false);
+            }
+        }
+    }
+
+    SC_CTOR(SimpleTxFIFO) : fifo(DEPTH) {
+        SC_THREAD(main_thread);
+        sensitive << clk.pos();
+    }
+};
+
+// -----------------------------------------------------------------------------
+// SimpleRxFIFO: single FIFO buffer; accepts valid/ready, outputs raw_valid/raw_tlp.
+// -----------------------------------------------------------------------------
+
+SC_MODULE(SimpleRxFIFO) {
+    sc_in<bool>        clk;
+    sc_in<bool>        reset_n;
+    // ingress from TX
+    sc_in<bool>        valid_in;
+    sc_in<RawTLP>      tlp_in;
+    sc_out<bool>       ready_out;
+    // egress toward iEP_after_RX
+    sc_out<bool>       valid_out;
+    sc_out<RawTLP>     tlp_out;
+    sc_out<unsigned>   occ_out;
+
+    static const unsigned DEPTH = 24;    // or 1 if you prefer true pass-through
+    sc_fifo<RawTLP> fifo;
+    unsigned int max_occ = 0;
+
+    void main_thread() {
+        wait(SC_ZERO_TIME);
+        bool holding = false;
+        RawTLP held_pkt;
+        while (true) {
+            wait(clk.posedge_event());
+
+            ready_out.write(fifo.num_free() > 0);
+
+            unsigned int occ = fifo.num_available();
+            if (occ > max_occ) {
+                max_occ = occ;
+                std::cout << sc_time_stamp() << " [RX_FIFO] depth=" << max_occ << std::endl;
+            }
+            occ_out.write(occ + (holding ? 1 : 0));
+
+            if (valid_in.read() && ready_out.read()) {
+                fifo.write(tlp_in.read());
+            }
+
+            if (!holding && fifo.nb_read(held_pkt)) {
+                holding = true;
+            }
+
+            if (holding) {
+                tlp_out.write(held_pkt);
+                valid_out.write(true);
+                holding = false; // always pop after one cycle
+            } else {
+                valid_out.write(false);
+            }
+        }
+    }
+
+    SC_CTOR(SimpleRxFIFO) : fifo(DEPTH) {
+        SC_THREAD(main_thread);
+        sensitive << clk.pos();
+    }
+};
+
+// -----------------------------------------------------------------------------
+// ProxyCreditGen: aggregates credit pulses over a sensing window (THREAD_FIFO
+// depth) then emits them, decoupling the credit loop.
+// -----------------------------------------------------------------------------
+
+const unsigned GLOBAL_SENSE_WINDOW = 8; // can be tuned – equal to Threaded FIFO depth
+
+SC_MODULE(ProxyCreditGen) {
+    sc_in<bool>        clk;
+    sc_in<bool>        reset_n;
+    sc_in<sc_uint<3>>  credit_in;   // from iEP
+    sc_out<sc_uint<3>> credit_out;  // to iRC
+
+    unsigned sense_counter;
+    unsigned credit_count[3];
+
+    void main_thread() {
+        sense_counter = 0;
+        for(int i=0;i<3;++i) credit_count[i] = 0;
+        credit_out.write(0);
+        wait(SC_ZERO_TIME);
+
+        while (true) {
+            wait(clk.posedge_event());
+
+            if (!reset_n.read()) {
+                for(int i=0;i<3;++i) credit_count[i] = 0;
+                credit_out.write(0);
+                sense_counter = 0;
+                continue;
+            }
+
+            // 1) SENSE  – accumulate arriving credit pulses
+            sc_uint<3> in = credit_in.read();
+            if (in != 0) {
+                std::cout << sc_time_stamp() << " [ProxyCredit] sense credit_in="
+                          << in.to_uint() << std::endl;
+            }
+            for (int i = 0; i < 3; ++i) {
+                if (in[i]) credit_count[i]++;
+            }
+
+            // 2) EMIT  – one credit per queue per cycle while we have any buffered
+            sc_uint<3> out = 0;
+            for (int i = 0; i < 3; ++i) {
+                if (credit_count[i] > 0) {
+                    out[i] = 1;
+                    credit_count[i]--;
+                }
+            }
+            credit_out.write(out);
+
+            // 3) Optional: window statistics every 8 cycles (for visibility only)
+            sense_counter++;
+            if (sense_counter >= GLOBAL_SENSE_WINDOW) {
+                std::cout << sc_time_stamp() << " [ProxyCredit] window stats buffered="
+                          << credit_count[0] << "," << credit_count[1] << "," << credit_count[2]
+                          << std::endl;
+                sense_counter = 0;
+            }
+        }
+    }
+
+    SC_CTOR(ProxyCreditGen){
+        SC_THREAD(main_thread);
+        sensitive<<clk.pos();
+    }
+};
+
+// -----------------------------------------------------------------------------
 // iRC: Root Complex module (sender)
+// -----------------------------------------------------------------------------
+
 SC_MODULE(iRC) {
     sc_in<bool>         clk;
     sc_in<bool>         reset_n;
@@ -385,167 +582,6 @@ SC_MODULE(iEP) {
     }
 };
 
-// TX: Transmit module with valid/ready handshaking
-SC_MODULE(TX) {
-    sc_in<bool>         clk;
-    sc_in<bool>         reset_n;
-    sc_in<bool>         ingress_valid;
-    sc_in<RawTLP>       ingress_tlp;
-    sc_out<sc_uint<3>>  credit_out;
-
-    // Output interface for next module
-    sc_out<bool>        egress_valid;
-    sc_out<RawTLP>      egress_tlp;
-    sc_in<bool>         egress_ready;
-
-    ThreadedFrontEnd* threaded_queues;
-
-    void transmitter_thread() {
-        wait(SC_ZERO_TIME);  // Initial wait for proper synchronization
-
-        // State for holding a packet across cycles until handshake completes
-        bool     holding = false;
-        RawTLP   held_pkt;
-        int      current_queue = 0; // round-robin pointer
-
-        while (true) {
-            wait(clk.posedge_event());
-
-            if (!reset_n.read()) {
-                egress_valid.write(false);
-                holding = false;
-                continue;
-            }
-
-            wait(SC_ZERO_TIME);
-
-            // If we are not currently holding a packet, try to fetch one
-            if (!holding) {
-                for (int i = 0; i < 3; ++i) {
-                    int q = (current_queue + i) % 3;
-                    if (threaded_queues->has_data(q)) {
-                        if (threaded_queues->pop_data(q, held_pkt)) {
-                            holding = true;
-                            std::cout << sc_time_stamp() << " [TX] Hold pkt seq=" << held_pkt.seq_num << " tid=" << held_pkt.thread_id << " from queue " << q << std::endl;
-                            current_queue = (q + 1) % 3;  // advance pointer
-                            break;
-                        }
-                    }
-                }
-            }
-
-            // Drive outputs according to holding state
-            if (holding) {
-                egress_tlp.write(held_pkt);
-                egress_valid.write(true);
-            } else {
-                egress_valid.write(false);
-            }
-
-            // If handshake completed, drop the held packet on next cycle
-            if (holding && egress_ready.read()) {
-                std::cout << sc_time_stamp() << " [TX] RX accepted seq=" << held_pkt.seq_num << std::endl;
-                holding = false;  // packet consumed by RX
-            }
-        }
-    }
-
-    SC_CTOR(TX) {
-        threaded_queues = new ThreadedFrontEnd((std::string(name()) + "_front").c_str());
-        threaded_queues->clk(clk);
-        threaded_queues->reset_n(reset_n);
-        threaded_queues->ingress_valid(ingress_valid);
-        threaded_queues->ingress_tlp(ingress_tlp);
-        threaded_queues->credit_out(credit_out);
-
-        SC_THREAD(transmitter_thread);
-        sensitive << clk.pos() << reset_n << egress_ready;
-    }
-};
-
-// RX: Receive module with large FIFO
-SC_MODULE(RX) {
-    sc_in<bool>         clk;
-    sc_in<bool>         reset_n;
-
-    sc_in<bool>         valid_in;
-    sc_in<RawTLP>       tlp_in;
-    sc_out<bool>        ready_out;
-
-    sc_out<bool>        raw_valid_out;
-    sc_out<RawTLP>      raw_tlp_out;
-    sc_in<sc_uint<3>>   credit_in;
-
-    static const unsigned int RX_FIFO_CAPACITY = 1024;
-    sc_fifo<RawTLP> fifos[3];
-    int credit_counter[3];
-
-    void receiver_thread() {
-        while (true) {
-            wait(clk.posedge_event());
-
-            if (!reset_n.read()) {
-                ready_out.write(false);
-                continue;
-            }
-
-            // Ready when all per-thread FIFOs have space
-            bool space=false;
-            for(int i=0;i<3;++i) space |= (fifos[i].num_free()>0);
-            ready_out.write(space);
-
-            if (valid_in.read()) {
-                RawTLP pkt = tlp_in.read();
-                int tid = pkt.thread_id.to_uint()-1;
-                if(tid>=0 && tid<3 && fifos[tid].num_free()>0){
-                    fifos[tid].write(pkt);
-                    std::cout<<sc_time_stamp()<<" RX: enqueue seq="<<pkt.seq_num<<" tid="<<pkt.thread_id<<" (occ="<<fifos[tid].num_available()<<")"<<std::endl;
-                }
-            }
-        }
-    }
-
-    void credit_monitor_thread(){
-        while(true){
-            wait(clk.posedge_event());
-            if(!reset_n.read()){
-                for(int i=0;i<3;++i) credit_counter[i]=0;
-                continue;
-            }
-            sc_uint<3> c=credit_in.read();
-            for(int i=0;i<3;++i){ if(c[i]) credit_counter[i]++; }
-        }
-    }
-
-    void transmitter_thread(){
-        raw_valid_out.write(false);
-        int rr=0;
-        while(true){
-            wait(clk.posedge_event());
-            raw_valid_out.write(false);
-            if(!reset_n.read()) continue;
-            for(int i=0;i<3;++i){
-                int q=(rr+i)%3;
-                if(credit_counter[q]>0 && fifos[q].num_available()>0){
-                    RawTLP pkt=fifos[q].read();
-                    raw_tlp_out.write(pkt);
-                    raw_valid_out.write(true);
-                    credit_counter[q]--; rr=(q+1)%3; break;
-                }
-            }
-        }
-    }
-
-    SC_CTOR(RX) : fifos{sc_fifo<RawTLP>(RX_FIFO_CAPACITY),sc_fifo<RawTLP>(RX_FIFO_CAPACITY),sc_fifo<RawTLP>(RX_FIFO_CAPACITY)} {
-        SC_THREAD(receiver_thread);
-        sensitive << clk.pos() << reset_n << valid_in << tlp_in;
-        SC_THREAD(credit_monitor_thread);
-        sensitive << clk.pos();
-        SC_THREAD(transmitter_thread);
-        sensitive << clk.pos();
-    }
-};
-
 // Top-level sc_main
 int sc_main(int argc, char* argv[]) {
 
@@ -583,8 +619,7 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf, raw_tlp,            "raw_tlp");  // This will now use our custom tracing function
     sc_trace(tf, credit,             "credit");
 
-    // Signals for TX topology
-    sc_signal<sc_uint<3>> credit_tx2iRC;
+    // Signals for TX/RX simple path
     sc_signal<bool>    raw_valid_iRC2TX;
     sc_signal<RawTLP>  raw_tlp_iRC2TX;
     sc_signal<bool>    TX2RX_valid;
@@ -592,36 +627,37 @@ int sc_main(int argc, char* argv[]) {
     sc_signal<bool>    RX2TX_ready;
     sc_signal<bool>    RX2EP_valid;
     sc_signal<RawTLP>  RX2EP_tlp;
-    sc_signal<sc_uint<3>> credit_RX2EP;
+    sc_signal<sc_uint<3>> credit_proxy2iRC;
+    sc_signal<sc_uint<3>> credit_iEP2proxy;
+    sc_signal<unsigned> tx_occ_sig, rx_occ_sig;
 
-    // Create and connect TX topology
+    // Create and connect TX path with single FIFO
     iRC rc_tx("iRC_tx");
     rc_tx.clk(system_clk);
     rc_tx.reset_n(reset_n);
-    rc_tx.credit_in(credit_tx2iRC);
     rc_tx.raw_valid(raw_valid_iRC2TX);
     rc_tx.raw_tlp(raw_tlp_iRC2TX);
 
-    TX tx("TX");
-    tx.clk(system_clk);
-    tx.reset_n(reset_n);
-    tx.ingress_valid(raw_valid_iRC2TX);
-    tx.ingress_tlp(raw_tlp_iRC2TX);
-    tx.credit_out(credit_tx2iRC);
-    tx.egress_valid(TX2RX_valid);
-    tx.egress_tlp(TX2RX_tlp);
-    tx.egress_ready(RX2TX_ready);
+    SimpleTxFIFO tx_fifo("TX");
+    tx_fifo.clk(system_clk);
+    tx_fifo.reset_n(reset_n);
+    tx_fifo.ingress_valid(raw_valid_iRC2TX);
+    tx_fifo.ingress_tlp(raw_tlp_iRC2TX);
+    tx_fifo.egress_valid(TX2RX_valid);
+    tx_fifo.egress_tlp(TX2RX_tlp);
+    tx_fifo.egress_ready(RX2TX_ready);
+    tx_fifo.occ_out(tx_occ_sig);
 
-    // Create and connect RX module
-    RX rx("RX");
-    rx.clk(system_clk);
-    rx.reset_n(reset_n);
-    rx.valid_in(TX2RX_valid);
-    rx.tlp_in(TX2RX_tlp);
-    rx.ready_out(RX2TX_ready);
-    rx.raw_valid_out(RX2EP_valid);
-    rx.raw_tlp_out(RX2EP_tlp);
-    rx.credit_in(credit_RX2EP);
+    // RX simple FIFO
+    SimpleRxFIFO rx_fifo("RX");
+    rx_fifo.clk(system_clk);
+    rx_fifo.reset_n(reset_n);
+    rx_fifo.valid_in(TX2RX_valid);
+    rx_fifo.tlp_in(TX2RX_tlp);
+    rx_fifo.ready_out(RX2TX_ready);
+    rx_fifo.valid_out(RX2EP_valid);
+    rx_fifo.tlp_out(RX2EP_tlp);
+    rx_fifo.occ_out(rx_occ_sig);
 
     // iEP instance after RX (consumes TX path)
     iEP ep_rx("iEP_after_RX");
@@ -629,20 +665,32 @@ int sc_main(int argc, char* argv[]) {
     ep_rx.reset_n(reset_n);
     ep_rx.raw_valid(RX2EP_valid);
     ep_rx.raw_tlp(RX2EP_tlp);
-    ep_rx.credit_out(credit_RX2EP);
+    ep_rx.credit_out(credit_iEP2proxy);
+
+    // Proxy credit generator
+    ProxyCreditGen proxy("proxy_credit");
+    proxy.clk(system_clk);
+    proxy.reset_n(reset_n);
+    proxy.credit_in(credit_iEP2proxy);
+    proxy.credit_out(credit_proxy2iRC);
+
+    // Connect proxy output to iRC_tx once
+    rc_tx.credit_in(credit_proxy2iRC);
 
     // Trace TX topology signals
     sc_trace(tf_tx, system_clk, "system_clk");
     sc_trace(tf_tx, reset_n, "reset_n");
     sc_trace(tf_tx, raw_valid_iRC2TX, "raw_valid_iRC2TX");
     sc_trace(tf_tx, raw_tlp_iRC2TX, "raw_tlp_iRC2TX");
-    sc_trace(tf_tx, credit_tx2iRC, "credit_tx2iRC");
     sc_trace(tf_tx, TX2RX_valid, "TX2RX_valid");
     sc_trace(tf_tx, TX2RX_tlp, "TX2RX_tlp");
     sc_trace(tf_tx, RX2TX_ready, "RX2TX_ready");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
     sc_trace(tf_tx, RX2EP_tlp, "RX2EP_tlp");
-    sc_trace(tf_tx, credit_RX2EP, "credit_RX2EP");
+    sc_trace(tf_tx, credit_proxy2iRC, "credit_proxy2iRC");
+    sc_trace(tf_tx, credit_iEP2proxy, "credit_iEP2proxy");
+    sc_trace(tf_tx, tx_occ_sig, "TX_FIFO_occ");
+    sc_trace(tf_tx, rx_occ_sig, "RX_FIFO_occ");
 
     // Initial values
     reset_n.write(false);

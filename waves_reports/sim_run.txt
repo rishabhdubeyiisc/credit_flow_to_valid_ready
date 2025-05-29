@@ -1,0 +1,2389 @@
+
+Info: (I703) tracing timescale unit set: 1 ns (irc_iep_flow.vcd)
+
+Info: (I703) tracing timescale unit set: 1 ns (irc_tx_flow.vcd)
+100 ns [iEP popper] counter=0
+100 ns [iEP popper] counter=0
+100 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=1
+100 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=1
+100 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=1
+100 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=1
+100 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=1
+100 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=1
+200 ns [iEP popper] counter=1
+200 ns [iEP popper] counter=1
+200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=2
+200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=2
+200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=2
+200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=2
+200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=2
+200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=2
+300 ns [ProxyCredit] sense credit_in=7
+300 ns [iRC] Send seq=1 tid=1
+300 ns [iEP popper] counter=2
+300 ns [iEP popper] counter=2
+[iEP.iEP_front] Route: seq_num=1 tid=1 -> queue 0
+300 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=3
+300 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=3
+300 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=3
+300 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=3
+300 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=3
+300 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=3
+400 ns [iEP popper] counter=3
+400 ns [iEP popper] counter=3
+400 ns [iRC] Send seq=2 tid=2
+400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=2 tid=2 -> queue 1
+400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=4
+400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=4
+400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=4
+400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=4
+400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=4
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=1 thread_id=1 (FIFO occ=0)
+400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=4
+500 ns [ProxyCredit] sense credit_in=7
+500 ns [iRC] Send seq=3 tid=3
+500 ns [iEP popper] counter=0
+500 ns [iRC_tx] Send seq=1 tid=1
+500 ns [iEP popper] counter=0
+[iEP.iEP_front] Route: seq_num=3 tid=3 -> queue 2
+500 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=5
+500 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=5
+500 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=5
+500 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=5
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=2 thread_id=2 (FIFO occ=0)
+500 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=5
+500 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=5
+600 ns [iEP popper] counter=1
+600 ns [iRC_tx] Send seq=2 tid=2
+600 ns [iEP popper] counter=1
+600 ns [iRC] Send seq=4 tid=3
+600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=4 tid=3 -> queue 2
+600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=6
+600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=6
+600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=6
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=3 thread_id=3 (FIFO occ=0)
+600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=6
+600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=6
+600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=6
+700 ns [TX_FIFO] depth=1
+700 ns [ProxyCredit] sense credit_in=7
+700 ns [iRC] Send seq=5 tid=1
+700 ns [iEP popper] counter=2
+700 ns [iRC_tx] Send seq=3 tid=2
+700 ns [iEP popper] counter=2
+[iEP.iEP_front] Route: seq_num=5 tid=1 -> queue 0
+700 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=7
+700 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=7
+700 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=7
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=4 thread_id=3 (FIFO occ=1)
+700 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=7
+700 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=7
+700 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=7
+800 ns [iEP popper] counter=3
+800 ns [iRC_tx] Send seq=4 tid=3
+800 ns [iEP popper] counter=3
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=1, thread_id=1 - Credits=6
+800 ns Processing popped packet from queue 0 with seq_num=1 thread_id=1
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=2, thread_id=2 - Credits=6
+800 ns Processing popped packet from queue 1 with seq_num=2 thread_id=2
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=3, thread_id=3 - Credits=6
+800 ns Processing popped packet from queue 2 with seq_num=3 thread_id=3
+800 ns [iRC] Send seq=6 tid=1
+800 ns [ProxyCredit] sense credit_in=7
+800 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP.iEP_front] Route: seq_num=6 tid=1 -> queue 0
+800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=7
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=7
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=5 thread_id=1 (FIFO occ=0)
+800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=7
+900 ns [RX_FIFO] depth=1
+900 ns [ProxyCredit] sense credit_in=7
+900 ns [iRC] Send seq=7 tid=2
+900 ns [iEP popper] counter=0
+900 ns [iRC_tx] Send seq=5 tid=3
+900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=1 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=7 tid=2 -> queue 1
+900 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+900 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=6 thread_id=1 (FIFO occ=1)
+900 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+1 us [iEP popper] counter=1
+1 us [iRC_tx] Send seq=6 tid=1
+1 us [iEP popper] counter=1
+1 us [iRC] Send seq=8 tid=2
+1 us [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=2 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=8 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=1 thread_id=1 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=7 thread_id=2 (FIFO occ=0)
+1100 ns [iRC] Send seq=9 tid=3
+1100 ns [iEP popper] counter=2
+1100 ns [iRC_tx] Send seq=7 tid=1
+1100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=3 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=9 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=2 thread_id=2 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=8 thread_id=2 (FIFO occ=1)
+1200 ns [iEP popper] counter=3
+1200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=1, thread_id=1 - Credits=7
+1200 ns Processing popped packet from queue 0 with seq_num=1 thread_id=1
+1200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=2, thread_id=2 - Credits=7
+1200 ns Processing popped packet from queue 1 with seq_num=2 thread_id=2
+1200 ns [iRC_tx] Send seq=8 tid=2
+1200 ns [iEP popper] counter=3
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=5, thread_id=1 - Credits=7
+1200 ns Processing popped packet from queue 0 with seq_num=5 thread_id=1
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=7, thread_id=2 - Credits=7
+1200 ns Processing popped packet from queue 1 with seq_num=7 thread_id=2
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=4, thread_id=3 - Credits=7
+1200 ns Processing popped packet from queue 2 with seq_num=4 thread_id=3
+1200 ns [iRC] Send seq=10 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=4 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=10 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=3 thread_id=2 (FIFO occ=0)
+1200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+1200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=9 thread_id=3 (FIFO occ=0)
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+1200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+1300 ns [iRC] Send seq=11 tid=1
+1300 ns [iEP popper] counter=0
+1300 ns [iRC_tx] Send seq=9 tid=2
+1300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=5 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=11 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=4 thread_id=3 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=10 thread_id=3 (FIFO occ=1)
+1400 ns [iEP popper] counter=1
+1400 ns [iRC_tx] Send seq=10 tid=3
+1400 ns [iEP popper] counter=1
+1400 ns [iRC] Send seq=12 tid=1
+1400 ns [ProxyCredit] sense credit_in=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=6 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=12 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=5 thread_id=3 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=11 thread_id=1 (FIFO occ=1)
+1500 ns [iRC] Send seq=13 tid=2
+1500 ns [iEP popper] counter=2
+1500 ns [iRC_tx] Send seq=11 tid=3
+1500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=7 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=13 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=6 thread_id=1 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=12 thread_id=1 (FIFO occ=2)
+1600 ns [iEP popper] counter=3
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=6, thread_id=1 - Credits=7
+1600 ns Processing popped packet from queue 0 with seq_num=6 thread_id=1
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=3, thread_id=2 - Credits=7
+1600 ns Processing popped packet from queue 1 with seq_num=3 thread_id=2
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=4, thread_id=3 - Credits=7
+1600 ns Processing popped packet from queue 2 with seq_num=4 thread_id=3
+1600 ns [iRC_tx] Send seq=12 tid=1
+1600 ns [iEP popper] counter=3
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=6, thread_id=1 - Credits=7
+1600 ns Processing popped packet from queue 0 with seq_num=6 thread_id=1
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=8, thread_id=2 - Credits=7
+1600 ns Processing popped packet from queue 1 with seq_num=8 thread_id=2
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=9, thread_id=3 - Credits=7
+1600 ns Processing popped packet from queue 2 with seq_num=9 thread_id=3
+1600 ns [iRC] Send seq=14 tid=2
+1600 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=8 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=14 tid=2 -> queue 1
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=7 thread_id=1 (FIFO occ=0)
+1600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=13 thread_id=2 (FIFO occ=0)
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+1600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+1700 ns [iRC] Send seq=15 tid=3
+1700 ns [iEP popper] counter=0
+1700 ns [iRC_tx] Send seq=13 tid=1
+1700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=9 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=15 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=8 thread_id=2 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=14 thread_id=2 (FIFO occ=1)
+1800 ns [iEP popper] counter=1
+1800 ns [iRC_tx] Send seq=14 tid=2
+1800 ns [iEP popper] counter=1
+1800 ns [iRC] Send seq=16 tid=3
+1800 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=10 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=16 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=9 thread_id=2 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=15 thread_id=3 (FIFO occ=1)
+1900 ns [iRC] Send seq=17 tid=1
+1900 ns [iEP popper] counter=2
+1900 ns [iRC_tx] Send seq=15 tid=2
+1900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=11 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=17 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=10 thread_id=3 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=16 thread_id=3 (FIFO occ=2)
+2 us [iEP popper] counter=3
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=7, thread_id=1 - Credits=7
+2 us Processing popped packet from queue 0 with seq_num=7 thread_id=1
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=8, thread_id=2 - Credits=7
+2 us Processing popped packet from queue 1 with seq_num=8 thread_id=2
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=5, thread_id=3 - Credits=7
+2 us Processing popped packet from queue 2 with seq_num=5 thread_id=3
+2 us [iRC_tx] Send seq=16 tid=3
+2 us [iEP popper] counter=3
+2 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=11, thread_id=1 - Credits=7
+2 us Processing popped packet from queue 0 with seq_num=11 thread_id=1
+2 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=13, thread_id=2 - Credits=7
+2 us Processing popped packet from queue 1 with seq_num=13 thread_id=2
+2 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=10, thread_id=3 - Credits=7
+2 us Processing popped packet from queue 2 with seq_num=10 thread_id=3
+2 us [iRC] Send seq=18 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=12 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=18 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=11 thread_id=3 (FIFO occ=1)
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+2 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+2 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+2 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=17 thread_id=1 (FIFO occ=1)
+2 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+2100 ns [iRC] Send seq=19 tid=2
+2100 ns [iEP popper] counter=0
+2100 ns [iRC_tx] Send seq=17 tid=3
+2100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=13 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=19 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=12 thread_id=1 (FIFO occ=0)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=18 thread_id=1 (FIFO occ=2)
+2200 ns [iEP popper] counter=1
+2200 ns [iRC_tx] Send seq=18 tid=1
+2200 ns [iEP popper] counter=1
+2200 ns [iRC] Send seq=20 tid=2
+2200 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=14 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=20 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=13 thread_id=1 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=19 thread_id=2 (FIFO occ=1)
+2300 ns [iRC] Send seq=21 tid=3
+2300 ns [iEP popper] counter=2
+2300 ns [iRC_tx] Send seq=19 tid=1
+2300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=15 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=21 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=14 thread_id=2 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=20 thread_id=2 (FIFO occ=2)
+2400 ns [iEP popper] counter=3
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=12, thread_id=1 - Credits=7
+2400 ns Processing popped packet from queue 0 with seq_num=12 thread_id=1
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=9, thread_id=2 - Credits=7
+2400 ns Processing popped packet from queue 1 with seq_num=9 thread_id=2
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=10, thread_id=3 - Credits=7
+2400 ns Processing popped packet from queue 2 with seq_num=10 thread_id=3
+2400 ns [iRC_tx] Send seq=20 tid=2
+2400 ns [iEP popper] counter=3
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=12, thread_id=1 - Credits=7
+2400 ns Processing popped packet from queue 0 with seq_num=12 thread_id=1
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=14, thread_id=2 - Credits=7
+2400 ns Processing popped packet from queue 1 with seq_num=14 thread_id=2
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=15, thread_id=3 - Credits=7
+2400 ns Processing popped packet from queue 2 with seq_num=15 thread_id=3
+2400 ns [iRC] Send seq=22 tid=3
+2400 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=16 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=22 tid=3 -> queue 2
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=15 thread_id=2 (FIFO occ=1)
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+2400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=21 thread_id=3 (FIFO occ=1)
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+2400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+2500 ns [iRC] Send seq=23 tid=1
+2500 ns [iEP popper] counter=0
+2500 ns [iRC_tx] Send seq=21 tid=2
+2500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=17 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=23 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=16 thread_id=3 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=22 thread_id=3 (FIFO occ=2)
+2600 ns [iEP popper] counter=1
+2600 ns [iRC_tx] Send seq=22 tid=3
+2600 ns [iEP popper] counter=1
+2600 ns [iRC] Send seq=24 tid=1
+2600 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=18 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=24 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=17 thread_id=3 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=23 thread_id=1 (FIFO occ=2)
+2700 ns [iRC] Send seq=25 tid=2
+2700 ns [iEP popper] counter=2
+2700 ns [iRC_tx] Send seq=23 tid=3
+2700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=19 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=25 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=18 thread_id=1 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=24 thread_id=1 (FIFO occ=3)
+2800 ns [iEP popper] counter=3
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=13, thread_id=1 - Credits=7
+2800 ns Processing popped packet from queue 0 with seq_num=13 thread_id=1
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=14, thread_id=2 - Credits=7
+2800 ns Processing popped packet from queue 1 with seq_num=14 thread_id=2
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=11, thread_id=3 - Credits=7
+2800 ns Processing popped packet from queue 2 with seq_num=11 thread_id=3
+2800 ns [iRC_tx] Send seq=24 tid=1
+2800 ns [iEP popper] counter=3
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=17, thread_id=1 - Credits=7
+2800 ns Processing popped packet from queue 0 with seq_num=17 thread_id=1
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=19, thread_id=2 - Credits=7
+2800 ns Processing popped packet from queue 1 with seq_num=19 thread_id=2
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=16, thread_id=3 - Credits=7
+2800 ns Processing popped packet from queue 2 with seq_num=16 thread_id=3
+2800 ns [iRC] Send seq=26 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=20 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=26 tid=2 -> queue 1
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=19 thread_id=1 (FIFO occ=1)
+2800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=25 thread_id=2 (FIFO occ=1)
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+2800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+2900 ns [iRC] Send seq=27 tid=3
+2900 ns [iEP popper] counter=0
+2900 ns [iRC_tx] Send seq=25 tid=1
+2900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=21 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=27 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=20 thread_id=2 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=26 thread_id=2 (FIFO occ=2)
+3 us [iEP popper] counter=1
+3 us [iRC_tx] Send seq=26 tid=2
+3 us [iEP popper] counter=1
+3 us [iRC] Send seq=28 tid=3
+3 us [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=22 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=28 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=21 thread_id=2 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=27 thread_id=3 (FIFO occ=2)
+3100 ns [iRC] Send seq=29 tid=1
+3100 ns [iEP popper] counter=2
+3100 ns [iRC_tx] Send seq=27 tid=2
+3100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=23 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=29 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=22 thread_id=3 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=28 thread_id=3 (FIFO occ=3)
+3200 ns [iEP popper] counter=3
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=18, thread_id=1 - Credits=7
+3200 ns Processing popped packet from queue 0 with seq_num=18 thread_id=1
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=15, thread_id=2 - Credits=7
+3200 ns Processing popped packet from queue 1 with seq_num=15 thread_id=2
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=16, thread_id=3 - Credits=7
+3200 ns Processing popped packet from queue 2 with seq_num=16 thread_id=3
+3200 ns [iRC_tx] Send seq=28 tid=3
+3200 ns [iEP popper] counter=3
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=18, thread_id=1 - Credits=7
+3200 ns Processing popped packet from queue 0 with seq_num=18 thread_id=1
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=20, thread_id=2 - Credits=7
+3200 ns Processing popped packet from queue 1 with seq_num=20 thread_id=2
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=21, thread_id=3 - Credits=7
+3200 ns Processing popped packet from queue 2 with seq_num=21 thread_id=3
+3200 ns [iRC] Send seq=30 tid=1
+3200 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=24 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=30 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=23 thread_id=3 (FIFO occ=2)
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+3200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=29 thread_id=1 (FIFO occ=2)
+3200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+3300 ns [iRC] Send seq=31 tid=2
+3300 ns [iEP popper] counter=0
+3300 ns [iRC_tx] Send seq=29 tid=3
+3300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=25 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=31 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=24 thread_id=1 (FIFO occ=1)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=30 thread_id=1 (FIFO occ=3)
+3400 ns [iEP popper] counter=1
+3400 ns [iRC_tx] Send seq=30 tid=1
+3400 ns [iEP popper] counter=1
+3400 ns [iRC] Send seq=32 tid=2
+3400 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=26 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=32 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=25 thread_id=1 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=31 thread_id=2 (FIFO occ=2)
+3500 ns [iRC] Send seq=33 tid=3
+3500 ns [iEP popper] counter=2
+3500 ns [iRC_tx] Send seq=31 tid=1
+3500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=27 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=33 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=26 thread_id=2 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=32 thread_id=2 (FIFO occ=3)
+3600 ns [iEP popper] counter=3
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=19, thread_id=1 - Credits=7
+3600 ns Processing popped packet from queue 0 with seq_num=19 thread_id=1
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=20, thread_id=2 - Credits=7
+3600 ns Processing popped packet from queue 1 with seq_num=20 thread_id=2
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=17, thread_id=3 - Credits=7
+3600 ns Processing popped packet from queue 2 with seq_num=17 thread_id=3
+3600 ns [iRC_tx] Send seq=32 tid=2
+3600 ns [iEP popper] counter=3
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=23, thread_id=1 - Credits=7
+3600 ns Processing popped packet from queue 0 with seq_num=23 thread_id=1
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=25, thread_id=2 - Credits=7
+3600 ns Processing popped packet from queue 1 with seq_num=25 thread_id=2
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=22, thread_id=3 - Credits=7
+3600 ns Processing popped packet from queue 2 with seq_num=22 thread_id=3
+3600 ns [iRC] Send seq=34 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=28 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=34 tid=3 -> queue 2
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=27 thread_id=2 (FIFO occ=2)
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+3600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=33 thread_id=3 (FIFO occ=2)
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+3600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+3700 ns [iRC] Send seq=35 tid=1
+3700 ns [iEP popper] counter=0
+3700 ns [iRC_tx] Send seq=33 tid=2
+3700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=29 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=35 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=28 thread_id=3 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=34 thread_id=3 (FIFO occ=3)
+3800 ns [iEP popper] counter=1
+3800 ns [iRC_tx] Send seq=34 tid=3
+3800 ns [iEP popper] counter=1
+3800 ns [iRC] Send seq=36 tid=1
+3800 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=30 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=36 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=29 thread_id=3 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=35 thread_id=1 (FIFO occ=3)
+3900 ns [iRC] Send seq=37 tid=2
+3900 ns [iEP popper] counter=2
+3900 ns [iRC_tx] Send seq=35 tid=3
+3900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=31 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=37 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=30 thread_id=1 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=36 thread_id=1 (FIFO occ=4)
+4 us [iEP popper] counter=3
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=24, thread_id=1 - Credits=7
+4 us Processing popped packet from queue 0 with seq_num=24 thread_id=1
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=21, thread_id=2 - Credits=7
+4 us Processing popped packet from queue 1 with seq_num=21 thread_id=2
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=22, thread_id=3 - Credits=7
+4 us Processing popped packet from queue 2 with seq_num=22 thread_id=3
+4 us [iRC_tx] Send seq=36 tid=1
+4 us [iEP popper] counter=3
+4 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=24, thread_id=1 - Credits=7
+4 us Processing popped packet from queue 0 with seq_num=24 thread_id=1
+4 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=26, thread_id=2 - Credits=7
+4 us Processing popped packet from queue 1 with seq_num=26 thread_id=2
+4 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=27, thread_id=3 - Credits=7
+4 us Processing popped packet from queue 2 with seq_num=27 thread_id=3
+4 us [iRC] Send seq=38 tid=2
+4 us [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=32 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=38 tid=2 -> queue 1
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=31 thread_id=1 (FIFO occ=2)
+4 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+4 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=37 thread_id=2 (FIFO occ=2)
+4 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+4 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+4100 ns [iRC] Send seq=39 tid=3
+4100 ns [iEP popper] counter=0
+4100 ns [iRC_tx] Send seq=37 tid=1
+4100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=33 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=39 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=32 thread_id=2 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=38 thread_id=2 (FIFO occ=3)
+4200 ns [iEP popper] counter=1
+4200 ns [iRC_tx] Send seq=38 tid=2
+4200 ns [iEP popper] counter=1
+4200 ns [iRC] Send seq=40 tid=3
+4200 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=34 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=40 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=33 thread_id=2 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=39 thread_id=3 (FIFO occ=3)
+4300 ns [iRC] Send seq=41 tid=1
+4300 ns [iEP popper] counter=2
+4300 ns [iRC_tx] Send seq=39 tid=2
+4300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=35 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=41 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=34 thread_id=3 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=40 thread_id=3 (FIFO occ=4)
+4400 ns [iEP popper] counter=3
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=25, thread_id=1 - Credits=7
+4400 ns Processing popped packet from queue 0 with seq_num=25 thread_id=1
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=26, thread_id=2 - Credits=7
+4400 ns Processing popped packet from queue 1 with seq_num=26 thread_id=2
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=23, thread_id=3 - Credits=7
+4400 ns Processing popped packet from queue 2 with seq_num=23 thread_id=3
+4400 ns [iRC_tx] Send seq=40 tid=3
+4400 ns [iEP popper] counter=3
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=29, thread_id=1 - Credits=7
+4400 ns Processing popped packet from queue 0 with seq_num=29 thread_id=1
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=31, thread_id=2 - Credits=7
+4400 ns Processing popped packet from queue 1 with seq_num=31 thread_id=2
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=28, thread_id=3 - Credits=7
+4400 ns Processing popped packet from queue 2 with seq_num=28 thread_id=3
+4400 ns [iRC] Send seq=42 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=36 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=42 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=35 thread_id=3 (FIFO occ=3)
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+4400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=41 thread_id=1 (FIFO occ=3)
+4400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+4500 ns [iRC] Send seq=43 tid=2
+4500 ns [iEP popper] counter=0
+4500 ns [iRC_tx] Send seq=41 tid=3
+4500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=37 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=43 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=36 thread_id=1 (FIFO occ=2)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=42 thread_id=1 (FIFO occ=4)
+4600 ns [iEP popper] counter=1
+4600 ns [iRC_tx] Send seq=42 tid=1
+4600 ns [iEP popper] counter=1
+4600 ns [iRC] Send seq=44 tid=2
+4600 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=38 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=44 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=37 thread_id=1 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=43 thread_id=2 (FIFO occ=3)
+4700 ns [iRC] Send seq=45 tid=3
+4700 ns [iEP popper] counter=2
+4700 ns [iRC_tx] Send seq=43 tid=1
+4700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=39 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=45 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=38 thread_id=2 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=44 thread_id=2 (FIFO occ=4)
+4800 ns [iEP popper] counter=3
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=30, thread_id=1 - Credits=7
+4800 ns Processing popped packet from queue 0 with seq_num=30 thread_id=1
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=27, thread_id=2 - Credits=7
+4800 ns Processing popped packet from queue 1 with seq_num=27 thread_id=2
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=28, thread_id=3 - Credits=7
+4800 ns Processing popped packet from queue 2 with seq_num=28 thread_id=3
+4800 ns [iRC_tx] Send seq=44 tid=2
+4800 ns [iEP popper] counter=3
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=30, thread_id=1 - Credits=7
+4800 ns Processing popped packet from queue 0 with seq_num=30 thread_id=1
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=32, thread_id=2 - Credits=7
+4800 ns Processing popped packet from queue 1 with seq_num=32 thread_id=2
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=33, thread_id=3 - Credits=7
+4800 ns Processing popped packet from queue 2 with seq_num=33 thread_id=3
+4800 ns [iRC] Send seq=46 tid=3
+4800 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=40 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=46 tid=3 -> queue 2
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=39 thread_id=2 (FIFO occ=3)
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+4800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=45 thread_id=3 (FIFO occ=3)
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+4800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+4900 ns [iRC] Send seq=47 tid=1
+4900 ns [iEP popper] counter=0
+4900 ns [iRC_tx] Send seq=45 tid=2
+4900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=41 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=47 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=40 thread_id=3 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=46 thread_id=3 (FIFO occ=4)
+5 us [iEP popper] counter=1
+5 us [iRC_tx] Send seq=46 tid=3
+5 us [iEP popper] counter=1
+5 us [iRC] Send seq=48 tid=1
+5 us [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=42 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=48 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=41 thread_id=3 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=47 thread_id=1 (FIFO occ=4)
+5100 ns [iRC] Send seq=49 tid=2
+5100 ns [iEP popper] counter=2
+5100 ns [iRC_tx] Send seq=47 tid=3
+5100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=43 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=49 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=42 thread_id=1 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=48 thread_id=1 (FIFO occ=5)
+5200 ns [iEP popper] counter=3
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=31, thread_id=1 - Credits=7
+5200 ns Processing popped packet from queue 0 with seq_num=31 thread_id=1
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=32, thread_id=2 - Credits=7
+5200 ns Processing popped packet from queue 1 with seq_num=32 thread_id=2
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=29, thread_id=3 - Credits=7
+5200 ns Processing popped packet from queue 2 with seq_num=29 thread_id=3
+5200 ns [iRC_tx] Send seq=48 tid=1
+5200 ns [iEP popper] counter=3
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=35, thread_id=1 - Credits=7
+5200 ns Processing popped packet from queue 0 with seq_num=35 thread_id=1
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=37, thread_id=2 - Credits=7
+5200 ns Processing popped packet from queue 1 with seq_num=37 thread_id=2
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=34, thread_id=3 - Credits=7
+5200 ns Processing popped packet from queue 2 with seq_num=34 thread_id=3
+5200 ns [iRC] Send seq=50 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=44 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=50 tid=2 -> queue 1
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=43 thread_id=1 (FIFO occ=3)
+5200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=49 thread_id=2 (FIFO occ=3)
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+5200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+5300 ns [iRC] Send seq=51 tid=3
+5300 ns [iEP popper] counter=0
+5300 ns [iRC_tx] Send seq=49 tid=1
+5300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=45 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=51 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=44 thread_id=2 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=50 thread_id=2 (FIFO occ=4)
+5400 ns [iEP popper] counter=1
+5400 ns [iRC_tx] Send seq=50 tid=2
+5400 ns [iEP popper] counter=1
+5400 ns [iRC] Send seq=52 tid=3
+5400 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=46 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=52 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=45 thread_id=2 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=51 thread_id=3 (FIFO occ=4)
+5500 ns [iRC] Send seq=53 tid=1
+5500 ns [iEP popper] counter=2
+5500 ns [iRC_tx] Send seq=51 tid=2
+5500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=47 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=53 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=46 thread_id=3 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=52 thread_id=3 (FIFO occ=5)
+5600 ns [iEP popper] counter=3
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=36, thread_id=1 - Credits=7
+5600 ns Processing popped packet from queue 0 with seq_num=36 thread_id=1
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=33, thread_id=2 - Credits=7
+5600 ns Processing popped packet from queue 1 with seq_num=33 thread_id=2
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=34, thread_id=3 - Credits=7
+5600 ns Processing popped packet from queue 2 with seq_num=34 thread_id=3
+5600 ns [iRC_tx] Send seq=52 tid=3
+5600 ns [iEP popper] counter=3
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=36, thread_id=1 - Credits=7
+5600 ns Processing popped packet from queue 0 with seq_num=36 thread_id=1
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=38, thread_id=2 - Credits=7
+5600 ns Processing popped packet from queue 1 with seq_num=38 thread_id=2
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=39, thread_id=3 - Credits=7
+5600 ns Processing popped packet from queue 2 with seq_num=39 thread_id=3
+5600 ns [iRC] Send seq=54 tid=1
+5600 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=48 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=54 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=47 thread_id=3 (FIFO occ=4)
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+5600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=53 thread_id=1 (FIFO occ=4)
+5600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+5700 ns [iRC] Send seq=55 tid=2
+5700 ns [iEP popper] counter=0
+5700 ns [iRC_tx] Send seq=53 tid=3
+5700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=49 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=55 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=48 thread_id=1 (FIFO occ=3)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=54 thread_id=1 (FIFO occ=5)
+5800 ns [iEP popper] counter=1
+5800 ns [iRC_tx] Send seq=54 tid=1
+5800 ns [iEP popper] counter=1
+5800 ns [iRC] Send seq=56 tid=2
+5800 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=50 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=56 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=49 thread_id=1 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=55 thread_id=2 (FIFO occ=4)
+5900 ns [iRC] Send seq=57 tid=3
+5900 ns [iEP popper] counter=2
+5900 ns [iRC_tx] Send seq=55 tid=1
+5900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=51 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=57 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=50 thread_id=2 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=56 thread_id=2 (FIFO occ=5)
+6 us [iEP popper] counter=3
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=37, thread_id=1 - Credits=7
+6 us Processing popped packet from queue 0 with seq_num=37 thread_id=1
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=38, thread_id=2 - Credits=7
+6 us Processing popped packet from queue 1 with seq_num=38 thread_id=2
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=35, thread_id=3 - Credits=7
+6 us Processing popped packet from queue 2 with seq_num=35 thread_id=3
+6 us [iRC_tx] Send seq=56 tid=2
+6 us [iEP popper] counter=3
+6 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=41, thread_id=1 - Credits=7
+6 us Processing popped packet from queue 0 with seq_num=41 thread_id=1
+6 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=43, thread_id=2 - Credits=7
+6 us Processing popped packet from queue 1 with seq_num=43 thread_id=2
+6 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=40, thread_id=3 - Credits=7
+6 us Processing popped packet from queue 2 with seq_num=40 thread_id=3
+6 us [iRC] Send seq=58 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=52 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=58 tid=3 -> queue 2
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=51 thread_id=2 (FIFO occ=4)
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+6 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=57 thread_id=3 (FIFO occ=4)
+6 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+6 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+6 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+6100 ns [iRC] Send seq=59 tid=1
+6100 ns [iEP popper] counter=0
+6100 ns [iRC_tx] Send seq=57 tid=2
+6100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=53 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=59 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=52 thread_id=3 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=58 thread_id=3 (FIFO occ=5)
+6200 ns [iEP popper] counter=1
+6200 ns [iRC_tx] Send seq=58 tid=3
+6200 ns [iEP popper] counter=1
+6200 ns [iRC] Send seq=60 tid=1
+6200 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=54 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=60 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=53 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=59 thread_id=1 (FIFO occ=5)
+6300 ns [iRC] Send seq=61 tid=2
+6300 ns [iEP popper] counter=2
+6300 ns [iRC_tx] Send seq=59 tid=3
+6300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=55 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=61 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=54 thread_id=1 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=60 thread_id=1 (FIFO occ=6)
+6400 ns [iEP popper] counter=3
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=42, thread_id=1 - Credits=7
+6400 ns Processing popped packet from queue 0 with seq_num=42 thread_id=1
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=39, thread_id=2 - Credits=7
+6400 ns Processing popped packet from queue 1 with seq_num=39 thread_id=2
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=40, thread_id=3 - Credits=7
+6400 ns Processing popped packet from queue 2 with seq_num=40 thread_id=3
+6400 ns [iRC_tx] Send seq=60 tid=1
+6400 ns [iEP popper] counter=3
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=42, thread_id=1 - Credits=7
+6400 ns Processing popped packet from queue 0 with seq_num=42 thread_id=1
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=44, thread_id=2 - Credits=7
+6400 ns Processing popped packet from queue 1 with seq_num=44 thread_id=2
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=45, thread_id=3 - Credits=7
+6400 ns Processing popped packet from queue 2 with seq_num=45 thread_id=3
+6400 ns [iRC] Send seq=62 tid=2
+6400 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=56 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=62 tid=2 -> queue 1
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=55 thread_id=1 (FIFO occ=4)
+6400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=61 thread_id=2 (FIFO occ=4)
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+6400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+6500 ns [iRC] Send seq=63 tid=3
+6500 ns [iEP popper] counter=0
+6500 ns [iRC_tx] Send seq=61 tid=1
+6500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=57 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=63 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=56 thread_id=2 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=62 thread_id=2 (FIFO occ=5)
+6600 ns [iEP popper] counter=1
+6600 ns [iRC_tx] Send seq=62 tid=2
+6600 ns [iEP popper] counter=1
+6600 ns [iRC] Send seq=64 tid=3
+6600 ns [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=58 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=64 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=57 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=63 thread_id=3 (FIFO occ=5)
+6700 ns [iRC] Send seq=65 tid=1
+6700 ns [iEP popper] counter=2
+6700 ns [iRC_tx] Send seq=63 tid=2
+6700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=59 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=65 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=58 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=64 thread_id=3 (FIFO occ=6)
+6800 ns [iEP popper] counter=3
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=43, thread_id=1 - Credits=7
+6800 ns Processing popped packet from queue 0 with seq_num=43 thread_id=1
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=44, thread_id=2 - Credits=7
+6800 ns Processing popped packet from queue 1 with seq_num=44 thread_id=2
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=41, thread_id=3 - Credits=7
+6800 ns Processing popped packet from queue 2 with seq_num=41 thread_id=3
+6800 ns [iRC_tx] Send seq=64 tid=3
+6800 ns [iEP popper] counter=3
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=47, thread_id=1 - Credits=7
+6800 ns Processing popped packet from queue 0 with seq_num=47 thread_id=1
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=49, thread_id=2 - Credits=7
+6800 ns Processing popped packet from queue 1 with seq_num=49 thread_id=2
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=46, thread_id=3 - Credits=7
+6800 ns Processing popped packet from queue 2 with seq_num=46 thread_id=3
+6800 ns [iRC] Send seq=66 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=60 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=66 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=59 thread_id=3 (FIFO occ=5)
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+6800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=65 thread_id=1 (FIFO occ=5)
+6800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+6900 ns [iRC] Send seq=67 tid=2
+6900 ns [iEP popper] counter=0
+6900 ns [iRC_tx] Send seq=65 tid=1
+6900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=61 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=67 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=60 thread_id=1 (FIFO occ=4)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=66 thread_id=1 (FIFO occ=6)
+7 us [iEP popper] counter=1
+7 us [iEP popper] counter=1
+7 us [iRC] Send seq=68 tid=2
+7 us [ProxyCredit] sense credit_in=7
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=62 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=68 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=61 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=67 thread_id=2 (FIFO occ=5)
+7100 ns [iRC] Send seq=69 tid=3
+7100 ns [iEP popper] counter=2
+7100 ns [iRC_tx] Send seq=66 tid=1
+7100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=63 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=69 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=62 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=68 thread_id=2 (FIFO occ=6)
+7200 ns [iEP popper] counter=3
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=48, thread_id=1 - Credits=7
+7200 ns Processing popped packet from queue 0 with seq_num=48 thread_id=1
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=45, thread_id=2 - Credits=7
+7200 ns Processing popped packet from queue 1 with seq_num=45 thread_id=2
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=46, thread_id=3 - Credits=7
+7200 ns Processing popped packet from queue 2 with seq_num=46 thread_id=3
+7200 ns [iRC_tx] Send seq=67 tid=2
+7200 ns [iEP popper] counter=3
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=48, thread_id=1 - Credits=7
+7200 ns Processing popped packet from queue 0 with seq_num=48 thread_id=1
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=50, thread_id=2 - Credits=7
+7200 ns Processing popped packet from queue 1 with seq_num=50 thread_id=2
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=51, thread_id=3 - Credits=7
+7200 ns Processing popped packet from queue 2 with seq_num=51 thread_id=3
+7200 ns [iRC] Send seq=70 tid=3
+7200 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=64 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=70 tid=3 -> queue 2
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=63 thread_id=2 (FIFO occ=5)
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+7200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=69 thread_id=3 (FIFO occ=5)
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+7200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+7300 ns [iRC] Send seq=71 tid=1
+7300 ns [iEP popper] counter=0
+7300 ns [iRC_tx] Send seq=68 tid=3
+7300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=65 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=71 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=64 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=70 thread_id=3 (FIFO occ=6)
+7400 ns [iEP popper] counter=1
+7400 ns [iEP popper] counter=1
+7400 ns [iRC] Send seq=72 tid=1
+7400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=72 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=65 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=71 thread_id=1 (FIFO occ=6)
+7500 ns [iRC] Send seq=73 tid=2
+7500 ns [iEP popper] counter=2
+7500 ns [iRC_tx] Send seq=69 tid=3
+7500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=66 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=73 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=72 thread_id=1 (FIFO occ=7)
+7600 ns [iEP popper] counter=3
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=49, thread_id=1 - Credits=7
+7600 ns Processing popped packet from queue 0 with seq_num=49 thread_id=1
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=50, thread_id=2 - Credits=7
+7600 ns Processing popped packet from queue 1 with seq_num=50 thread_id=2
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=47, thread_id=3 - Credits=7
+7600 ns Processing popped packet from queue 2 with seq_num=47 thread_id=3
+7600 ns [iRC_tx] Send seq=70 tid=1
+7600 ns [iEP popper] counter=3
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=53, thread_id=1 - Credits=7
+7600 ns Processing popped packet from queue 0 with seq_num=53 thread_id=1
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=55, thread_id=2 - Credits=7
+7600 ns Processing popped packet from queue 1 with seq_num=55 thread_id=2
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=52, thread_id=3 - Credits=7
+7600 ns Processing popped packet from queue 2 with seq_num=52 thread_id=3
+7600 ns [iRC] Send seq=74 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=67 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=74 tid=2 -> queue 1
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=66 thread_id=1 (FIFO occ=5)
+7600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=73 thread_id=2 (FIFO occ=5)
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+7600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+7700 ns [iRC] Send seq=75 tid=3
+7700 ns [iEP popper] counter=0
+7700 ns [iRC_tx] Send seq=71 tid=2
+7700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=68 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=75 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=67 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=74 thread_id=2 (FIFO occ=6)
+7800 ns [iEP popper] counter=1
+7800 ns [iEP popper] counter=1
+7800 ns [iRC] Send seq=76 tid=3
+7800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=76 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=68 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=75 thread_id=3 (FIFO occ=6)
+7900 ns [iRC] Send seq=77 tid=1
+7900 ns [iEP popper] counter=2
+7900 ns [iRC_tx] Send seq=72 tid=2
+7900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=69 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=77 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=76 thread_id=3 (FIFO occ=7)
+8 us [iEP popper] counter=3
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=54, thread_id=1 - Credits=7
+8 us Processing popped packet from queue 0 with seq_num=54 thread_id=1
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=51, thread_id=2 - Credits=7
+8 us Processing popped packet from queue 1 with seq_num=51 thread_id=2
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=52, thread_id=3 - Credits=7
+8 us Processing popped packet from queue 2 with seq_num=52 thread_id=3
+8 us [iRC_tx] Send seq=73 tid=3
+8 us [iEP popper] counter=3
+8 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=54, thread_id=1 - Credits=7
+8 us Processing popped packet from queue 0 with seq_num=54 thread_id=1
+8 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=56, thread_id=2 - Credits=7
+8 us Processing popped packet from queue 1 with seq_num=56 thread_id=2
+8 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=57, thread_id=3 - Credits=7
+8 us Processing popped packet from queue 2 with seq_num=57 thread_id=3
+8 us [iRC] Send seq=78 tid=2
+8 us [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=70 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=78 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=69 thread_id=3 (FIFO occ=5)
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+8 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+8 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+8 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=77 thread_id=1 (FIFO occ=6)
+8 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+8100 ns [iEP popper] counter=0
+8100 ns [iRC_tx] Send seq=74 tid=1
+8100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=71 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=70 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=78 thread_id=2 (FIFO occ=6)
+8200 ns [iEP popper] counter=1
+8200 ns [iEP popper] counter=1
+8200 ns [iRC] Send seq=79 tid=2
+8200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=79 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=71 thread_id=2 (FIFO occ=5)
+8300 ns [iRC] Send seq=80 tid=3
+8300 ns [iEP popper] counter=2
+8300 ns [iRC_tx] Send seq=75 tid=1
+8300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=72 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=80 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=79 thread_id=2 (FIFO occ=7)
+8400 ns [iEP popper] counter=3
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=55, thread_id=1 - Credits=7
+8400 ns Processing popped packet from queue 0 with seq_num=55 thread_id=1
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=56, thread_id=2 - Credits=7
+8400 ns Processing popped packet from queue 1 with seq_num=56 thread_id=2
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=53, thread_id=3 - Credits=7
+8400 ns Processing popped packet from queue 2 with seq_num=53 thread_id=3
+8400 ns [iRC_tx] Send seq=76 tid=2
+8400 ns [iEP popper] counter=3
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=59, thread_id=1 - Credits=7
+8400 ns Processing popped packet from queue 0 with seq_num=59 thread_id=1
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=61, thread_id=2 - Credits=7
+8400 ns Processing popped packet from queue 1 with seq_num=61 thread_id=2
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=58, thread_id=3 - Credits=7
+8400 ns Processing popped packet from queue 2 with seq_num=58 thread_id=3
+8400 ns [iRC] Send seq=81 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=73 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=81 tid=1 -> queue 0
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=72 thread_id=2 (FIFO occ=5)
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+8400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=80 thread_id=3 (FIFO occ=6)
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+8400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+8500 ns [iEP popper] counter=0
+8500 ns [iRC_tx] Send seq=77 tid=3
+8500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=74 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=73 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=81 thread_id=1 (FIFO occ=6)
+8600 ns [iEP popper] counter=1
+8600 ns [iEP popper] counter=1
+8600 ns [iRC] Send seq=82 tid=1
+8600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=82 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=74 thread_id=1 (FIFO occ=5)
+8700 ns [iRC] Send seq=83 tid=2
+8700 ns [iEP popper] counter=2
+8700 ns [iRC_tx] Send seq=78 tid=3
+8700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=75 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=83 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=82 thread_id=1 (FIFO occ=7)
+8800 ns [iEP popper] counter=3
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=60, thread_id=1 - Credits=7
+8800 ns Processing popped packet from queue 0 with seq_num=60 thread_id=1
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=57, thread_id=2 - Credits=7
+8800 ns Processing popped packet from queue 1 with seq_num=57 thread_id=2
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=58, thread_id=3 - Credits=7
+8800 ns Processing popped packet from queue 2 with seq_num=58 thread_id=3
+8800 ns [iRC_tx] Send seq=79 tid=1
+8800 ns [iEP popper] counter=3
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=60, thread_id=1 - Credits=7
+8800 ns Processing popped packet from queue 0 with seq_num=60 thread_id=1
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=62, thread_id=2 - Credits=7
+8800 ns Processing popped packet from queue 1 with seq_num=62 thread_id=2
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=63, thread_id=3 - Credits=7
+8800 ns Processing popped packet from queue 2 with seq_num=63 thread_id=3
+8800 ns [iRC] Send seq=84 tid=3
+8800 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=76 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=84 tid=3 -> queue 2
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=75 thread_id=1 (FIFO occ=5)
+8800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=83 thread_id=2 (FIFO occ=6)
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+8800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+8900 ns [iEP popper] counter=0
+8900 ns [iRC_tx] Send seq=80 tid=2
+8900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=77 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=76 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=84 thread_id=3 (FIFO occ=6)
+9 us [iEP popper] counter=1
+9 us [iEP popper] counter=1
+9 us [iRC] Send seq=85 tid=3
+9 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=85 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=77 thread_id=3 (FIFO occ=5)
+9100 ns [iRC] Send seq=86 tid=1
+9100 ns [iEP popper] counter=2
+9100 ns [iRC_tx] Send seq=81 tid=2
+9100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=78 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=86 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=85 thread_id=3 (FIFO occ=7)
+9200 ns [iEP popper] counter=3
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=61, thread_id=1 - Credits=7
+9200 ns Processing popped packet from queue 0 with seq_num=61 thread_id=1
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=62, thread_id=2 - Credits=7
+9200 ns Processing popped packet from queue 1 with seq_num=62 thread_id=2
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=59, thread_id=3 - Credits=7
+9200 ns Processing popped packet from queue 2 with seq_num=59 thread_id=3
+9200 ns [iRC_tx] Send seq=82 tid=3
+9200 ns [iEP popper] counter=3
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=65, thread_id=1 - Credits=7
+9200 ns Processing popped packet from queue 0 with seq_num=65 thread_id=1
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=67, thread_id=2 - Credits=7
+9200 ns Processing popped packet from queue 1 with seq_num=67 thread_id=2
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=64, thread_id=3 - Credits=7
+9200 ns Processing popped packet from queue 2 with seq_num=64 thread_id=3
+9200 ns [iRC] Send seq=87 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=79 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=87 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=78 thread_id=3 (FIFO occ=5)
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+9200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=86 thread_id=1 (FIFO occ=6)
+9200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+9300 ns [iEP popper] counter=0
+9300 ns [iRC_tx] Send seq=83 tid=1
+9300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=80 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=79 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=87 thread_id=2 (FIFO occ=6)
+9400 ns [iEP popper] counter=1
+9400 ns [iEP popper] counter=1
+9400 ns [iRC] Send seq=88 tid=2
+9400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=88 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=80 thread_id=2 (FIFO occ=5)
+9500 ns [iRC] Send seq=89 tid=3
+9500 ns [iEP popper] counter=2
+9500 ns [iRC_tx] Send seq=84 tid=1
+9500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=81 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=89 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=88 thread_id=2 (FIFO occ=7)
+9600 ns [iEP popper] counter=3
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=65, thread_id=1 - Credits=7
+9600 ns Processing popped packet from queue 0 with seq_num=65 thread_id=1
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=63, thread_id=2 - Credits=7
+9600 ns Processing popped packet from queue 1 with seq_num=63 thread_id=2
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=64, thread_id=3 - Credits=7
+9600 ns Processing popped packet from queue 2 with seq_num=64 thread_id=3
+9600 ns [iRC_tx] Send seq=85 tid=2
+9600 ns [iEP popper] counter=3
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=66, thread_id=1 - Credits=7
+9600 ns Processing popped packet from queue 0 with seq_num=66 thread_id=1
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=68, thread_id=2 - Credits=7
+9600 ns Processing popped packet from queue 1 with seq_num=68 thread_id=2
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=69, thread_id=3 - Credits=7
+9600 ns Processing popped packet from queue 2 with seq_num=69 thread_id=3
+9600 ns [iRC] Send seq=90 tid=1
+9600 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=82 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=90 tid=1 -> queue 0
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=81 thread_id=2 (FIFO occ=5)
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+9600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=89 thread_id=3 (FIFO occ=6)
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+9600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+9700 ns [iEP popper] counter=0
+9700 ns [iRC_tx] Send seq=86 tid=3
+9700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=83 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=82 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=90 thread_id=1 (FIFO occ=6)
+9800 ns [iEP popper] counter=1
+9800 ns [iEP popper] counter=1
+9800 ns [iRC] Send seq=91 tid=1
+9800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=91 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=83 thread_id=1 (FIFO occ=5)
+9900 ns [iRC] Send seq=92 tid=2
+9900 ns [iEP popper] counter=2
+9900 ns [iRC_tx] Send seq=87 tid=3
+9900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=84 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=92 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=91 thread_id=1 (FIFO occ=7)
+10 us [iEP popper] counter=3
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=66, thread_id=1 - Credits=7
+10 us Processing popped packet from queue 0 with seq_num=66 thread_id=1
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=67, thread_id=2 - Credits=7
+10 us Processing popped packet from queue 1 with seq_num=67 thread_id=2
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=68, thread_id=3 - Credits=7
+10 us Processing popped packet from queue 2 with seq_num=68 thread_id=3
+10 us [iRC_tx] Send seq=88 tid=1
+10 us [iEP popper] counter=3
+10 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=71, thread_id=1 - Credits=7
+10 us Processing popped packet from queue 0 with seq_num=71 thread_id=1
+10 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=73, thread_id=2 - Credits=7
+10 us Processing popped packet from queue 1 with seq_num=73 thread_id=2
+10 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=70, thread_id=3 - Credits=7
+10 us Processing popped packet from queue 2 with seq_num=70 thread_id=3
+10 us [iRC] Send seq=93 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=85 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=93 tid=3 -> queue 2
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=84 thread_id=1 (FIFO occ=5)
+10 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+10 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=92 thread_id=2 (FIFO occ=6)
+10 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+10 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+10100 ns [iEP popper] counter=0
+10100 ns [iRC_tx] Send seq=89 tid=2
+10100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=86 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=85 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=93 thread_id=3 (FIFO occ=6)
+10200 ns [iEP popper] counter=1
+10200 ns [iEP popper] counter=1
+10200 ns [iRC] Send seq=94 tid=3
+10200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=94 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=86 thread_id=3 (FIFO occ=5)
+10300 ns [iRC] Send seq=95 tid=1
+10300 ns [iEP popper] counter=2
+10300 ns [iRC_tx] Send seq=90 tid=2
+10300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=87 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=95 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=94 thread_id=3 (FIFO occ=7)
+10400 ns [iEP popper] counter=3
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=70, thread_id=1 - Credits=7
+10400 ns Processing popped packet from queue 0 with seq_num=70 thread_id=1
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=71, thread_id=2 - Credits=7
+10400 ns Processing popped packet from queue 1 with seq_num=71 thread_id=2
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=69, thread_id=3 - Credits=7
+10400 ns Processing popped packet from queue 2 with seq_num=69 thread_id=3
+10400 ns [iRC_tx] Send seq=91 tid=3
+10400 ns [iEP popper] counter=3
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=72, thread_id=1 - Credits=7
+10400 ns Processing popped packet from queue 0 with seq_num=72 thread_id=1
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=74, thread_id=2 - Credits=7
+10400 ns Processing popped packet from queue 1 with seq_num=74 thread_id=2
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=75, thread_id=3 - Credits=7
+10400 ns Processing popped packet from queue 2 with seq_num=75 thread_id=3
+10400 ns [iRC] Send seq=96 tid=2
+10400 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=88 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=96 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=87 thread_id=3 (FIFO occ=5)
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+10400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=95 thread_id=1 (FIFO occ=6)
+10400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+10500 ns [iEP popper] counter=0
+10500 ns [iRC_tx] Send seq=92 tid=1
+10500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=89 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=88 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=96 thread_id=2 (FIFO occ=6)
+10600 ns [iEP popper] counter=1
+10600 ns [iEP popper] counter=1
+10600 ns [iRC] Send seq=97 tid=2
+10600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=97 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=89 thread_id=2 (FIFO occ=5)
+10700 ns [iRC] Send seq=98 tid=3
+10700 ns [iEP popper] counter=2
+10700 ns [iRC_tx] Send seq=93 tid=1
+10700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=90 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=98 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=97 thread_id=2 (FIFO occ=7)
+10800 ns [iEP popper] counter=3
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=74, thread_id=1 - Credits=7
+10800 ns Processing popped packet from queue 0 with seq_num=74 thread_id=1
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=72, thread_id=2 - Credits=7
+10800 ns Processing popped packet from queue 1 with seq_num=72 thread_id=2
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=73, thread_id=3 - Credits=7
+10800 ns Processing popped packet from queue 2 with seq_num=73 thread_id=3
+10800 ns [iRC_tx] Send seq=94 tid=2
+10800 ns [iEP popper] counter=3
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=77, thread_id=1 - Credits=7
+10800 ns Processing popped packet from queue 0 with seq_num=77 thread_id=1
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=78, thread_id=2 - Credits=7
+10800 ns Processing popped packet from queue 1 with seq_num=78 thread_id=2
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=76, thread_id=3 - Credits=7
+10800 ns Processing popped packet from queue 2 with seq_num=76 thread_id=3
+10800 ns [iRC] Send seq=99 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=91 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=99 tid=1 -> queue 0
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=90 thread_id=2 (FIFO occ=5)
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+10800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=98 thread_id=3 (FIFO occ=6)
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+10800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+10900 ns [iEP popper] counter=0
+10900 ns [iRC_tx] Send seq=95 tid=3
+10900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=92 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=91 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=99 thread_id=1 (FIFO occ=6)
+11 us [iEP popper] counter=1
+11 us [iEP popper] counter=1
+11 us [iRC] Send seq=100 tid=1
+11 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=100 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=92 thread_id=1 (FIFO occ=5)
+11100 ns [iRC] Send seq=101 tid=2
+11100 ns [iEP popper] counter=2
+11100 ns [iRC_tx] Send seq=96 tid=3
+11100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=93 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=101 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=100 thread_id=1 (FIFO occ=7)
+11200 ns [iEP popper] counter=3
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=75, thread_id=1 - Credits=7
+11200 ns Processing popped packet from queue 0 with seq_num=75 thread_id=1
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=76, thread_id=2 - Credits=7
+11200 ns Processing popped packet from queue 1 with seq_num=76 thread_id=2
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=77, thread_id=3 - Credits=7
+11200 ns Processing popped packet from queue 2 with seq_num=77 thread_id=3
+11200 ns [iRC_tx] Send seq=97 tid=1
+11200 ns [iEP popper] counter=3
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=81, thread_id=1 - Credits=7
+11200 ns Processing popped packet from queue 0 with seq_num=81 thread_id=1
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=79, thread_id=2 - Credits=7
+11200 ns Processing popped packet from queue 1 with seq_num=79 thread_id=2
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=80, thread_id=3 - Credits=7
+11200 ns Processing popped packet from queue 2 with seq_num=80 thread_id=3
+11200 ns [iRC] Send seq=102 tid=3
+11200 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=94 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=102 tid=3 -> queue 2
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=93 thread_id=1 (FIFO occ=5)
+11200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=101 thread_id=2 (FIFO occ=6)
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+11200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+11300 ns [iEP popper] counter=0
+11300 ns [iRC_tx] Send seq=98 tid=2
+11300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=95 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=94 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=102 thread_id=3 (FIFO occ=6)
+11400 ns [iEP popper] counter=1
+11400 ns [iEP popper] counter=1
+11400 ns [iRC] Send seq=103 tid=3
+11400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=103 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=95 thread_id=3 (FIFO occ=5)
+11500 ns [iRC] Send seq=104 tid=1
+11500 ns [iEP popper] counter=2
+11500 ns [iRC_tx] Send seq=99 tid=2
+11500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=96 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=104 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=103 thread_id=3 (FIFO occ=7)
+11600 ns [iEP popper] counter=3
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=79, thread_id=1 - Credits=7
+11600 ns Processing popped packet from queue 0 with seq_num=79 thread_id=1
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=80, thread_id=2 - Credits=7
+11600 ns Processing popped packet from queue 1 with seq_num=80 thread_id=2
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=78, thread_id=3 - Credits=7
+11600 ns Processing popped packet from queue 2 with seq_num=78 thread_id=3
+11600 ns [iRC_tx] Send seq=100 tid=3
+11600 ns [iEP popper] counter=3
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=82, thread_id=1 - Credits=7
+11600 ns Processing popped packet from queue 0 with seq_num=82 thread_id=1
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=83, thread_id=2 - Credits=7
+11600 ns Processing popped packet from queue 1 with seq_num=83 thread_id=2
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=84, thread_id=3 - Credits=7
+11600 ns Processing popped packet from queue 2 with seq_num=84 thread_id=3
+11600 ns [iRC] Send seq=105 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=97 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=105 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=96 thread_id=3 (FIFO occ=5)
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+11600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=104 thread_id=1 (FIFO occ=6)
+11600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+11700 ns [iEP popper] counter=0
+11700 ns [iRC_tx] Send seq=101 tid=1
+11700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=98 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=97 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=105 thread_id=2 (FIFO occ=6)
+11800 ns [iEP popper] counter=1
+11800 ns [iEP popper] counter=1
+11800 ns [iRC] Send seq=106 tid=2
+11800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=106 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=98 thread_id=2 (FIFO occ=5)
+11900 ns [iRC] Send seq=107 tid=3
+11900 ns [iEP popper] counter=2
+11900 ns [iRC_tx] Send seq=102 tid=1
+11900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=99 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=107 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=106 thread_id=2 (FIFO occ=7)
+12 us [iEP popper] counter=3
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=83, thread_id=1 - Credits=7
+12 us Processing popped packet from queue 0 with seq_num=83 thread_id=1
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=81, thread_id=2 - Credits=7
+12 us Processing popped packet from queue 1 with seq_num=81 thread_id=2
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=82, thread_id=3 - Credits=7
+12 us Processing popped packet from queue 2 with seq_num=82 thread_id=3
+12 us [iRC_tx] Send seq=103 tid=2
+12 us [iEP popper] counter=3
+12 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=86, thread_id=1 - Credits=7
+12 us Processing popped packet from queue 0 with seq_num=86 thread_id=1
+12 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=87, thread_id=2 - Credits=7
+12 us Processing popped packet from queue 1 with seq_num=87 thread_id=2
+12 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=85, thread_id=3 - Credits=7
+12 us Processing popped packet from queue 2 with seq_num=85 thread_id=3
+12 us [iRC] Send seq=108 tid=1
+12 us [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=100 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=108 tid=1 -> queue 0
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=99 thread_id=2 (FIFO occ=5)
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+12 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=107 thread_id=3 (FIFO occ=6)
+12 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+12 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+12 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+12100 ns [iEP popper] counter=0
+12100 ns [iRC_tx] Send seq=104 tid=3
+12100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=101 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=100 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=108 thread_id=1 (FIFO occ=6)
+12200 ns [iEP popper] counter=1
+12200 ns [iEP popper] counter=1
+12200 ns [iRC] Send seq=109 tid=1
+12200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=109 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=101 thread_id=1 (FIFO occ=5)
+12300 ns [iRC] Send seq=110 tid=2
+12300 ns [iEP popper] counter=2
+12300 ns [iRC_tx] Send seq=105 tid=3
+12300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=102 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=110 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=109 thread_id=1 (FIFO occ=7)
+12400 ns [iEP popper] counter=3
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=84, thread_id=1 - Credits=7
+12400 ns Processing popped packet from queue 0 with seq_num=84 thread_id=1
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=85, thread_id=2 - Credits=7
+12400 ns Processing popped packet from queue 1 with seq_num=85 thread_id=2
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=86, thread_id=3 - Credits=7
+12400 ns Processing popped packet from queue 2 with seq_num=86 thread_id=3
+12400 ns [iRC_tx] Send seq=106 tid=1
+12400 ns [iEP popper] counter=3
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=90, thread_id=1 - Credits=7
+12400 ns Processing popped packet from queue 0 with seq_num=90 thread_id=1
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=88, thread_id=2 - Credits=7
+12400 ns Processing popped packet from queue 1 with seq_num=88 thread_id=2
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=89, thread_id=3 - Credits=7
+12400 ns Processing popped packet from queue 2 with seq_num=89 thread_id=3
+12400 ns [iRC] Send seq=111 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=103 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=111 tid=3 -> queue 2
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=102 thread_id=1 (FIFO occ=5)
+12400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=110 thread_id=2 (FIFO occ=6)
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+12400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+12500 ns [iEP popper] counter=0
+12500 ns [iRC_tx] Send seq=107 tid=2
+12500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=104 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=103 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=111 thread_id=3 (FIFO occ=6)
+12600 ns [iEP popper] counter=1
+12600 ns [iEP popper] counter=1
+12600 ns [iRC] Send seq=112 tid=3
+12600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=112 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=104 thread_id=3 (FIFO occ=5)
+12700 ns [iRC] Send seq=113 tid=1
+12700 ns [iEP popper] counter=2
+12700 ns [iRC_tx] Send seq=108 tid=2
+12700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=105 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=113 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=112 thread_id=3 (FIFO occ=7)
+12800 ns [iEP popper] counter=3
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=88, thread_id=1 - Credits=7
+12800 ns Processing popped packet from queue 0 with seq_num=88 thread_id=1
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=89, thread_id=2 - Credits=7
+12800 ns Processing popped packet from queue 1 with seq_num=89 thread_id=2
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=87, thread_id=3 - Credits=7
+12800 ns Processing popped packet from queue 2 with seq_num=87 thread_id=3
+12800 ns [iRC_tx] Send seq=109 tid=3
+12800 ns [iEP popper] counter=3
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=91, thread_id=1 - Credits=7
+12800 ns Processing popped packet from queue 0 with seq_num=91 thread_id=1
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=92, thread_id=2 - Credits=7
+12800 ns Processing popped packet from queue 1 with seq_num=92 thread_id=2
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=93, thread_id=3 - Credits=7
+12800 ns Processing popped packet from queue 2 with seq_num=93 thread_id=3
+12800 ns [iRC] Send seq=114 tid=2
+12800 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=106 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=114 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=105 thread_id=3 (FIFO occ=5)
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+12800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=113 thread_id=1 (FIFO occ=6)
+12800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+12900 ns [iEP popper] counter=0
+12900 ns [iRC_tx] Send seq=110 tid=1
+12900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=107 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=106 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=114 thread_id=2 (FIFO occ=6)
+13 us [iEP popper] counter=1
+13 us [iEP popper] counter=1
+13 us [iRC] Send seq=115 tid=2
+13 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=115 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=107 thread_id=2 (FIFO occ=5)
+13100 ns [iRC] Send seq=116 tid=3
+13100 ns [iEP popper] counter=2
+13100 ns [iRC_tx] Send seq=111 tid=1
+13100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=108 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=116 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=115 thread_id=2 (FIFO occ=7)
+13200 ns [iEP popper] counter=3
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=92, thread_id=1 - Credits=7
+13200 ns Processing popped packet from queue 0 with seq_num=92 thread_id=1
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=90, thread_id=2 - Credits=7
+13200 ns Processing popped packet from queue 1 with seq_num=90 thread_id=2
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=91, thread_id=3 - Credits=7
+13200 ns Processing popped packet from queue 2 with seq_num=91 thread_id=3
+13200 ns [iRC_tx] Send seq=112 tid=2
+13200 ns [iEP popper] counter=3
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=95, thread_id=1 - Credits=7
+13200 ns Processing popped packet from queue 0 with seq_num=95 thread_id=1
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=96, thread_id=2 - Credits=7
+13200 ns Processing popped packet from queue 1 with seq_num=96 thread_id=2
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=94, thread_id=3 - Credits=7
+13200 ns Processing popped packet from queue 2 with seq_num=94 thread_id=3
+13200 ns [iRC] Send seq=117 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=109 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=117 tid=1 -> queue 0
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=108 thread_id=2 (FIFO occ=5)
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+13200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=116 thread_id=3 (FIFO occ=6)
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+13200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+13300 ns [iEP popper] counter=0
+13300 ns [iRC_tx] Send seq=113 tid=3
+13300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=110 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=109 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=117 thread_id=1 (FIFO occ=6)
+13400 ns [iEP popper] counter=1
+13400 ns [iEP popper] counter=1
+13400 ns [iRC] Send seq=118 tid=1
+13400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=118 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=110 thread_id=1 (FIFO occ=5)
+13500 ns [iRC] Send seq=119 tid=2
+13500 ns [iEP popper] counter=2
+13500 ns [iRC_tx] Send seq=114 tid=3
+13500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=111 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=119 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=118 thread_id=1 (FIFO occ=7)
+13600 ns [iEP popper] counter=3
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=93, thread_id=1 - Credits=7
+13600 ns Processing popped packet from queue 0 with seq_num=93 thread_id=1
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=94, thread_id=2 - Credits=7
+13600 ns Processing popped packet from queue 1 with seq_num=94 thread_id=2
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=95, thread_id=3 - Credits=7
+13600 ns Processing popped packet from queue 2 with seq_num=95 thread_id=3
+13600 ns [iRC_tx] Send seq=115 tid=1
+13600 ns [iEP popper] counter=3
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=99, thread_id=1 - Credits=7
+13600 ns Processing popped packet from queue 0 with seq_num=99 thread_id=1
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=97, thread_id=2 - Credits=7
+13600 ns Processing popped packet from queue 1 with seq_num=97 thread_id=2
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=98, thread_id=3 - Credits=7
+13600 ns Processing popped packet from queue 2 with seq_num=98 thread_id=3
+13600 ns [iRC] Send seq=120 tid=3
+13600 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=112 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=120 tid=3 -> queue 2
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=111 thread_id=1 (FIFO occ=5)
+13600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=119 thread_id=2 (FIFO occ=6)
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+13600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+13700 ns [iEP popper] counter=0
+13700 ns [iRC_tx] Send seq=116 tid=2
+13700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=113 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=112 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=120 thread_id=3 (FIFO occ=6)
+13800 ns [iEP popper] counter=1
+13800 ns [iEP popper] counter=1
+13800 ns [iRC] Send seq=121 tid=3
+13800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=121 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=113 thread_id=3 (FIFO occ=5)
+13900 ns [iRC] Send seq=122 tid=1
+13900 ns [iEP popper] counter=2
+13900 ns [iRC_tx] Send seq=117 tid=2
+13900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=114 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=122 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=121 thread_id=3 (FIFO occ=7)
+14 us [iEP popper] counter=3
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=97, thread_id=1 - Credits=7
+14 us Processing popped packet from queue 0 with seq_num=97 thread_id=1
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=98, thread_id=2 - Credits=7
+14 us Processing popped packet from queue 1 with seq_num=98 thread_id=2
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=96, thread_id=3 - Credits=7
+14 us Processing popped packet from queue 2 with seq_num=96 thread_id=3
+14 us [iRC_tx] Send seq=118 tid=3
+14 us [iEP popper] counter=3
+14 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=100, thread_id=1 - Credits=7
+14 us Processing popped packet from queue 0 with seq_num=100 thread_id=1
+14 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=101, thread_id=2 - Credits=7
+14 us Processing popped packet from queue 1 with seq_num=101 thread_id=2
+14 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=102, thread_id=3 - Credits=7
+14 us Processing popped packet from queue 2 with seq_num=102 thread_id=3
+14 us [iRC] Send seq=123 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=115 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=123 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=114 thread_id=3 (FIFO occ=5)
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+14 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+14 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+14 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=122 thread_id=1 (FIFO occ=6)
+14 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+14100 ns [iEP popper] counter=0
+14100 ns [iRC_tx] Send seq=119 tid=1
+14100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=116 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=115 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=123 thread_id=2 (FIFO occ=6)
+14200 ns [iEP popper] counter=1
+14200 ns [iEP popper] counter=1
+14200 ns [iRC] Send seq=124 tid=2
+14200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=124 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=116 thread_id=2 (FIFO occ=5)
+14300 ns [iRC] Send seq=125 tid=3
+14300 ns [iEP popper] counter=2
+14300 ns [iRC_tx] Send seq=120 tid=1
+14300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=117 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=125 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=124 thread_id=2 (FIFO occ=7)
+14400 ns [iEP popper] counter=3
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=101, thread_id=1 - Credits=7
+14400 ns Processing popped packet from queue 0 with seq_num=101 thread_id=1
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=99, thread_id=2 - Credits=7
+14400 ns Processing popped packet from queue 1 with seq_num=99 thread_id=2
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=100, thread_id=3 - Credits=7
+14400 ns Processing popped packet from queue 2 with seq_num=100 thread_id=3
+14400 ns [iRC_tx] Send seq=121 tid=2
+14400 ns [iEP popper] counter=3
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=104, thread_id=1 - Credits=7
+14400 ns Processing popped packet from queue 0 with seq_num=104 thread_id=1
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=105, thread_id=2 - Credits=7
+14400 ns Processing popped packet from queue 1 with seq_num=105 thread_id=2
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=103, thread_id=3 - Credits=7
+14400 ns Processing popped packet from queue 2 with seq_num=103 thread_id=3
+14400 ns [iRC] Send seq=126 tid=1
+14400 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=118 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=126 tid=1 -> queue 0
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=117 thread_id=2 (FIFO occ=5)
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+14400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=125 thread_id=3 (FIFO occ=6)
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+14400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+14500 ns [iEP popper] counter=0
+14500 ns [iRC_tx] Send seq=122 tid=3
+14500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=119 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=118 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=126 thread_id=1 (FIFO occ=6)
+14600 ns [iEP popper] counter=1
+14600 ns [iEP popper] counter=1
+14600 ns [iRC] Send seq=127 tid=1
+14600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=127 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=119 thread_id=1 (FIFO occ=5)
+14700 ns [iRC] Send seq=128 tid=2
+14700 ns [iEP popper] counter=2
+14700 ns [iRC_tx] Send seq=123 tid=3
+14700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=120 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=128 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=127 thread_id=1 (FIFO occ=7)
+14800 ns [iEP popper] counter=3
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=102, thread_id=1 - Credits=7
+14800 ns Processing popped packet from queue 0 with seq_num=102 thread_id=1
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=103, thread_id=2 - Credits=7
+14800 ns Processing popped packet from queue 1 with seq_num=103 thread_id=2
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=104, thread_id=3 - Credits=7
+14800 ns Processing popped packet from queue 2 with seq_num=104 thread_id=3
+14800 ns [iRC_tx] Send seq=124 tid=1
+14800 ns [iEP popper] counter=3
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=108, thread_id=1 - Credits=7
+14800 ns Processing popped packet from queue 0 with seq_num=108 thread_id=1
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=106, thread_id=2 - Credits=7
+14800 ns Processing popped packet from queue 1 with seq_num=106 thread_id=2
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=107, thread_id=3 - Credits=7
+14800 ns Processing popped packet from queue 2 with seq_num=107 thread_id=3
+14800 ns [iRC] Send seq=129 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=121 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=129 tid=3 -> queue 2
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=120 thread_id=1 (FIFO occ=5)
+14800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=128 thread_id=2 (FIFO occ=6)
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+14800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+14900 ns [iEP popper] counter=0
+14900 ns [iRC_tx] Send seq=125 tid=2
+14900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=122 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=121 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=129 thread_id=3 (FIFO occ=6)
+15 us [iEP popper] counter=1
+15 us [iEP popper] counter=1
+15 us [iRC] Send seq=130 tid=3
+15 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=130 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=122 thread_id=3 (FIFO occ=5)
+15100 ns [iRC] Send seq=131 tid=1
+15100 ns [iEP popper] counter=2
+15100 ns [iRC_tx] Send seq=126 tid=2
+15100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=123 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=131 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=130 thread_id=3 (FIFO occ=7)
+15200 ns [iEP popper] counter=3
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=106, thread_id=1 - Credits=7
+15200 ns Processing popped packet from queue 0 with seq_num=106 thread_id=1
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=107, thread_id=2 - Credits=7
+15200 ns Processing popped packet from queue 1 with seq_num=107 thread_id=2
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=105, thread_id=3 - Credits=7
+15200 ns Processing popped packet from queue 2 with seq_num=105 thread_id=3
+15200 ns [iRC_tx] Send seq=127 tid=3
+15200 ns [iEP popper] counter=3
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=109, thread_id=1 - Credits=7
+15200 ns Processing popped packet from queue 0 with seq_num=109 thread_id=1
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=110, thread_id=2 - Credits=7
+15200 ns Processing popped packet from queue 1 with seq_num=110 thread_id=2
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=111, thread_id=3 - Credits=7
+15200 ns Processing popped packet from queue 2 with seq_num=111 thread_id=3
+15200 ns [iRC] Send seq=132 tid=2
+15200 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=124 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=132 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=123 thread_id=3 (FIFO occ=5)
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+15200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=131 thread_id=1 (FIFO occ=6)
+15200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+15300 ns [iEP popper] counter=0
+15300 ns [iRC_tx] Send seq=128 tid=1
+15300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=125 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=124 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=132 thread_id=2 (FIFO occ=6)
+15400 ns [iEP popper] counter=1
+15400 ns [iEP popper] counter=1
+15400 ns [iRC] Send seq=133 tid=2
+15400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=133 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=125 thread_id=2 (FIFO occ=5)
+15500 ns [iRC] Send seq=134 tid=3
+15500 ns [iEP popper] counter=2
+15500 ns [iRC_tx] Send seq=129 tid=1
+15500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=126 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=134 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=133 thread_id=2 (FIFO occ=7)
+15600 ns [iEP popper] counter=3
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=110, thread_id=1 - Credits=7
+15600 ns Processing popped packet from queue 0 with seq_num=110 thread_id=1
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=108, thread_id=2 - Credits=7
+15600 ns Processing popped packet from queue 1 with seq_num=108 thread_id=2
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=109, thread_id=3 - Credits=7
+15600 ns Processing popped packet from queue 2 with seq_num=109 thread_id=3
+15600 ns [iRC_tx] Send seq=130 tid=2
+15600 ns [iEP popper] counter=3
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=113, thread_id=1 - Credits=7
+15600 ns Processing popped packet from queue 0 with seq_num=113 thread_id=1
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=114, thread_id=2 - Credits=7
+15600 ns Processing popped packet from queue 1 with seq_num=114 thread_id=2
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=112, thread_id=3 - Credits=7
+15600 ns Processing popped packet from queue 2 with seq_num=112 thread_id=3
+15600 ns [iRC] Send seq=135 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=127 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=135 tid=1 -> queue 0
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=126 thread_id=2 (FIFO occ=5)
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+15600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=134 thread_id=3 (FIFO occ=6)
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+15600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+15700 ns [iEP popper] counter=0
+15700 ns [iRC_tx] Send seq=131 tid=3
+15700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=128 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=127 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=135 thread_id=1 (FIFO occ=6)
+15800 ns [iEP popper] counter=1
+15800 ns [iEP popper] counter=1
+15800 ns [iRC] Send seq=136 tid=1
+15800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=136 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=128 thread_id=1 (FIFO occ=5)
+15900 ns [iRC] Send seq=137 tid=2
+15900 ns [iEP popper] counter=2
+15900 ns [iRC_tx] Send seq=132 tid=3
+15900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=129 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=137 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=136 thread_id=1 (FIFO occ=7)
+16 us [iEP popper] counter=3
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=111, thread_id=1 - Credits=7
+16 us Processing popped packet from queue 0 with seq_num=111 thread_id=1
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=112, thread_id=2 - Credits=7
+16 us Processing popped packet from queue 1 with seq_num=112 thread_id=2
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=113, thread_id=3 - Credits=7
+16 us Processing popped packet from queue 2 with seq_num=113 thread_id=3
+16 us [iRC_tx] Send seq=133 tid=1
+16 us [iEP popper] counter=3
+16 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=117, thread_id=1 - Credits=7
+16 us Processing popped packet from queue 0 with seq_num=117 thread_id=1
+16 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=115, thread_id=2 - Credits=7
+16 us Processing popped packet from queue 1 with seq_num=115 thread_id=2
+16 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=116, thread_id=3 - Credits=7
+16 us Processing popped packet from queue 2 with seq_num=116 thread_id=3
+16 us [iRC] Send seq=138 tid=3
+16 us [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=130 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=138 tid=3 -> queue 2
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=129 thread_id=1 (FIFO occ=5)
+16 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+16 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=137 thread_id=2 (FIFO occ=6)
+16 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+16 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+16100 ns [iEP popper] counter=0
+16100 ns [iRC_tx] Send seq=134 tid=2
+16100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=131 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=130 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=138 thread_id=3 (FIFO occ=6)
+16200 ns [iEP popper] counter=1
+16200 ns [iEP popper] counter=1
+16200 ns [iRC] Send seq=139 tid=3
+16200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=139 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=131 thread_id=3 (FIFO occ=5)
+16300 ns [iRC] Send seq=140 tid=1
+16300 ns [iEP popper] counter=2
+16300 ns [iRC_tx] Send seq=135 tid=2
+16300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=132 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=140 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=139 thread_id=3 (FIFO occ=7)
+16400 ns [iEP popper] counter=3
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=115, thread_id=1 - Credits=7
+16400 ns Processing popped packet from queue 0 with seq_num=115 thread_id=1
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=116, thread_id=2 - Credits=7
+16400 ns Processing popped packet from queue 1 with seq_num=116 thread_id=2
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=114, thread_id=3 - Credits=7
+16400 ns Processing popped packet from queue 2 with seq_num=114 thread_id=3
+16400 ns [iRC_tx] Send seq=136 tid=3
+16400 ns [iEP popper] counter=3
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=118, thread_id=1 - Credits=7
+16400 ns Processing popped packet from queue 0 with seq_num=118 thread_id=1
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=119, thread_id=2 - Credits=7
+16400 ns Processing popped packet from queue 1 with seq_num=119 thread_id=2
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=120, thread_id=3 - Credits=7
+16400 ns Processing popped packet from queue 2 with seq_num=120 thread_id=3
+16400 ns [iRC] Send seq=141 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=133 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=141 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=132 thread_id=3 (FIFO occ=5)
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+16400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=140 thread_id=1 (FIFO occ=6)
+16400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+16500 ns [iEP popper] counter=0
+16500 ns [iRC_tx] Send seq=137 tid=1
+16500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=134 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=133 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=141 thread_id=2 (FIFO occ=6)
+16600 ns [iEP popper] counter=1
+16600 ns [iEP popper] counter=1
+16600 ns [iRC] Send seq=142 tid=2
+16600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=142 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=134 thread_id=2 (FIFO occ=5)
+16700 ns [iRC] Send seq=143 tid=3
+16700 ns [iEP popper] counter=2
+16700 ns [iRC_tx] Send seq=138 tid=1
+16700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=135 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=143 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=142 thread_id=2 (FIFO occ=7)
+16800 ns [iEP popper] counter=3
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=119, thread_id=1 - Credits=7
+16800 ns Processing popped packet from queue 0 with seq_num=119 thread_id=1
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=117, thread_id=2 - Credits=7
+16800 ns Processing popped packet from queue 1 with seq_num=117 thread_id=2
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=118, thread_id=3 - Credits=7
+16800 ns Processing popped packet from queue 2 with seq_num=118 thread_id=3
+16800 ns [iRC_tx] Send seq=139 tid=2
+16800 ns [iEP popper] counter=3
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=122, thread_id=1 - Credits=7
+16800 ns Processing popped packet from queue 0 with seq_num=122 thread_id=1
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=123, thread_id=2 - Credits=7
+16800 ns Processing popped packet from queue 1 with seq_num=123 thread_id=2
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=121, thread_id=3 - Credits=7
+16800 ns Processing popped packet from queue 2 with seq_num=121 thread_id=3
+16800 ns [iRC] Send seq=144 tid=1
+16800 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=136 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=144 tid=1 -> queue 0
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=135 thread_id=2 (FIFO occ=5)
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+16800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=143 thread_id=3 (FIFO occ=6)
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+16800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+16900 ns [iEP popper] counter=0
+16900 ns [iRC_tx] Send seq=140 tid=3
+16900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=137 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=136 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=144 thread_id=1 (FIFO occ=6)
+17 us [iEP popper] counter=1
+17 us [iEP popper] counter=1
+17 us [iRC] Send seq=145 tid=1
+17 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=145 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=137 thread_id=1 (FIFO occ=5)
+17100 ns [iRC] Send seq=146 tid=2
+17100 ns [iEP popper] counter=2
+17100 ns [iRC_tx] Send seq=141 tid=3
+17100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=138 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=146 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=145 thread_id=1 (FIFO occ=7)
+17200 ns [iEP popper] counter=3
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=120, thread_id=1 - Credits=7
+17200 ns Processing popped packet from queue 0 with seq_num=120 thread_id=1
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=121, thread_id=2 - Credits=7
+17200 ns Processing popped packet from queue 1 with seq_num=121 thread_id=2
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=122, thread_id=3 - Credits=7
+17200 ns Processing popped packet from queue 2 with seq_num=122 thread_id=3
+17200 ns [iRC_tx] Send seq=142 tid=1
+17200 ns [iEP popper] counter=3
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=126, thread_id=1 - Credits=7
+17200 ns Processing popped packet from queue 0 with seq_num=126 thread_id=1
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=124, thread_id=2 - Credits=7
+17200 ns Processing popped packet from queue 1 with seq_num=124 thread_id=2
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=125, thread_id=3 - Credits=7
+17200 ns Processing popped packet from queue 2 with seq_num=125 thread_id=3
+17200 ns [iRC] Send seq=147 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=139 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=147 tid=3 -> queue 2
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=138 thread_id=1 (FIFO occ=5)
+17200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=146 thread_id=2 (FIFO occ=6)
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+17200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+17300 ns [iEP popper] counter=0
+17300 ns [iRC_tx] Send seq=143 tid=2
+17300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=140 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=139 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=147 thread_id=3 (FIFO occ=6)
+17400 ns [iEP popper] counter=1
+17400 ns [iEP popper] counter=1
+17400 ns [iRC] Send seq=148 tid=3
+17400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=148 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=140 thread_id=3 (FIFO occ=5)
+17500 ns [iRC] Send seq=149 tid=1
+17500 ns [iEP popper] counter=2
+17500 ns [iRC_tx] Send seq=144 tid=2
+17500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=141 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=149 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=148 thread_id=3 (FIFO occ=7)
+17600 ns [iEP popper] counter=3
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=124, thread_id=1 - Credits=7
+17600 ns Processing popped packet from queue 0 with seq_num=124 thread_id=1
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=125, thread_id=2 - Credits=7
+17600 ns Processing popped packet from queue 1 with seq_num=125 thread_id=2
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=123, thread_id=3 - Credits=7
+17600 ns Processing popped packet from queue 2 with seq_num=123 thread_id=3
+17600 ns [iRC_tx] Send seq=145 tid=3
+17600 ns [iEP popper] counter=3
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=127, thread_id=1 - Credits=7
+17600 ns Processing popped packet from queue 0 with seq_num=127 thread_id=1
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=128, thread_id=2 - Credits=7
+17600 ns Processing popped packet from queue 1 with seq_num=128 thread_id=2
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=129, thread_id=3 - Credits=7
+17600 ns Processing popped packet from queue 2 with seq_num=129 thread_id=3
+17600 ns [iRC] Send seq=150 tid=2
+17600 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=142 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=150 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=141 thread_id=3 (FIFO occ=5)
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+17600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=149 thread_id=1 (FIFO occ=6)
+17600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+17700 ns [iEP popper] counter=0
+17700 ns [iRC_tx] Send seq=146 tid=1
+17700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=143 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=142 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=150 thread_id=2 (FIFO occ=6)
+17800 ns [iEP popper] counter=1
+17800 ns [iEP popper] counter=1
+17800 ns [iRC] Send seq=151 tid=2
+17800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=151 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=143 thread_id=2 (FIFO occ=5)
+17900 ns [iRC] Send seq=152 tid=3
+17900 ns [iEP popper] counter=2
+17900 ns [iRC_tx] Send seq=147 tid=1
+17900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=144 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=152 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=151 thread_id=2 (FIFO occ=7)
+18 us [iEP popper] counter=3
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=128, thread_id=1 - Credits=7
+18 us Processing popped packet from queue 0 with seq_num=128 thread_id=1
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=126, thread_id=2 - Credits=7
+18 us Processing popped packet from queue 1 with seq_num=126 thread_id=2
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=127, thread_id=3 - Credits=7
+18 us Processing popped packet from queue 2 with seq_num=127 thread_id=3
+18 us [iRC_tx] Send seq=148 tid=2
+18 us [iEP popper] counter=3
+18 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=131, thread_id=1 - Credits=7
+18 us Processing popped packet from queue 0 with seq_num=131 thread_id=1
+18 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=132, thread_id=2 - Credits=7
+18 us Processing popped packet from queue 1 with seq_num=132 thread_id=2
+18 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=130, thread_id=3 - Credits=7
+18 us Processing popped packet from queue 2 with seq_num=130 thread_id=3
+18 us [iRC] Send seq=153 tid=1
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=145 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=153 tid=1 -> queue 0
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=144 thread_id=2 (FIFO occ=5)
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+18 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=152 thread_id=3 (FIFO occ=6)
+18 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+18 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+18 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+18100 ns [iEP popper] counter=0
+18100 ns [iRC_tx] Send seq=149 tid=3
+18100 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=146 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=145 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=153 thread_id=1 (FIFO occ=6)
+18200 ns [iEP popper] counter=1
+18200 ns [iEP popper] counter=1
+18200 ns [iRC] Send seq=154 tid=1
+18200 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=154 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=146 thread_id=1 (FIFO occ=5)
+18300 ns [iRC] Send seq=155 tid=2
+18300 ns [iEP popper] counter=2
+18300 ns [iRC_tx] Send seq=150 tid=3
+18300 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=147 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=155 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=154 thread_id=1 (FIFO occ=7)
+18400 ns [iEP popper] counter=3
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=129, thread_id=1 - Credits=7
+18400 ns Processing popped packet from queue 0 with seq_num=129 thread_id=1
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=130, thread_id=2 - Credits=7
+18400 ns Processing popped packet from queue 1 with seq_num=130 thread_id=2
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=131, thread_id=3 - Credits=7
+18400 ns Processing popped packet from queue 2 with seq_num=131 thread_id=3
+18400 ns [iRC_tx] Send seq=151 tid=1
+18400 ns [iEP popper] counter=3
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=135, thread_id=1 - Credits=7
+18400 ns Processing popped packet from queue 0 with seq_num=135 thread_id=1
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=133, thread_id=2 - Credits=7
+18400 ns Processing popped packet from queue 1 with seq_num=133 thread_id=2
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=134, thread_id=3 - Credits=7
+18400 ns Processing popped packet from queue 2 with seq_num=134 thread_id=3
+18400 ns [iRC] Send seq=156 tid=3
+18400 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=148 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=156 tid=3 -> queue 2
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=147 thread_id=1 (FIFO occ=5)
+18400 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=155 thread_id=2 (FIFO occ=6)
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+18400 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+18500 ns [iEP popper] counter=0
+18500 ns [iRC_tx] Send seq=152 tid=2
+18500 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=149 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=148 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=156 thread_id=3 (FIFO occ=6)
+18600 ns [iEP popper] counter=1
+18600 ns [iEP popper] counter=1
+18600 ns [iRC] Send seq=157 tid=3
+18600 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=157 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=149 thread_id=3 (FIFO occ=5)
+18700 ns [iRC] Send seq=158 tid=1
+18700 ns [iEP popper] counter=2
+18700 ns [iRC_tx] Send seq=153 tid=2
+18700 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=150 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=158 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=157 thread_id=3 (FIFO occ=7)
+18800 ns [iEP popper] counter=3
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=133, thread_id=1 - Credits=7
+18800 ns Processing popped packet from queue 0 with seq_num=133 thread_id=1
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=134, thread_id=2 - Credits=7
+18800 ns Processing popped packet from queue 1 with seq_num=134 thread_id=2
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=132, thread_id=3 - Credits=7
+18800 ns Processing popped packet from queue 2 with seq_num=132 thread_id=3
+18800 ns [iRC_tx] Send seq=154 tid=3
+18800 ns [iEP popper] counter=3
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=136, thread_id=1 - Credits=7
+18800 ns Processing popped packet from queue 0 with seq_num=136 thread_id=1
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=137, thread_id=2 - Credits=7
+18800 ns Processing popped packet from queue 1 with seq_num=137 thread_id=2
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=138, thread_id=3 - Credits=7
+18800 ns Processing popped packet from queue 2 with seq_num=138 thread_id=3
+18800 ns [iRC] Send seq=159 tid=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=151 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=159 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=150 thread_id=3 (FIFO occ=5)
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+18800 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=158 thread_id=1 (FIFO occ=6)
+18800 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+18900 ns [iEP popper] counter=0
+18900 ns [iRC_tx] Send seq=155 tid=1
+18900 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=152 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=151 thread_id=1 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=159 thread_id=2 (FIFO occ=6)
+19 us [iEP popper] counter=1
+19 us [iEP popper] counter=1
+19 us [iRC] Send seq=160 tid=2
+19 us [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=160 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=152 thread_id=2 (FIFO occ=5)
+19100 ns [iRC] Send seq=161 tid=3
+19100 ns [iEP popper] counter=2
+19100 ns [iRC_tx] Send seq=156 tid=1
+19100 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=153 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=161 tid=3 -> queue 2
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=160 thread_id=2 (FIFO occ=7)
+19200 ns [iEP popper] counter=3
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=137, thread_id=1 - Credits=7
+19200 ns Processing popped packet from queue 0 with seq_num=137 thread_id=1
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=135, thread_id=2 - Credits=7
+19200 ns Processing popped packet from queue 1 with seq_num=135 thread_id=2
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=136, thread_id=3 - Credits=7
+19200 ns Processing popped packet from queue 2 with seq_num=136 thread_id=3
+19200 ns [iRC_tx] Send seq=157 tid=2
+19200 ns [iEP popper] counter=3
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=140, thread_id=1 - Credits=7
+19200 ns Processing popped packet from queue 0 with seq_num=140 thread_id=1
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=141, thread_id=2 - Credits=7
+19200 ns Processing popped packet from queue 1 with seq_num=141 thread_id=2
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=139, thread_id=3 - Credits=7
+19200 ns Processing popped packet from queue 2 with seq_num=139 thread_id=3
+19200 ns [iRC] Send seq=162 tid=1
+19200 ns [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=154 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=162 tid=1 -> queue 0
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=153 thread_id=2 (FIFO occ=5)
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+19200 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=161 thread_id=3 (FIFO occ=6)
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+19200 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+19300 ns [iEP popper] counter=0
+19300 ns [iRC_tx] Send seq=158 tid=3
+19300 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=155 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=154 thread_id=3 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=162 thread_id=1 (FIFO occ=6)
+19400 ns [iEP popper] counter=1
+19400 ns [iEP popper] counter=1
+19400 ns [iRC] Send seq=163 tid=1
+19400 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=163 tid=1 -> queue 0
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=155 thread_id=1 (FIFO occ=5)
+19500 ns [iRC] Send seq=164 tid=2
+19500 ns [iEP popper] counter=2
+19500 ns [iRC_tx] Send seq=159 tid=3
+19500 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=156 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=164 tid=2 -> queue 1
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=163 thread_id=1 (FIFO occ=7)
+19600 ns [iEP popper] counter=3
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=138, thread_id=1 - Credits=7
+19600 ns Processing popped packet from queue 0 with seq_num=138 thread_id=1
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=139, thread_id=2 - Credits=7
+19600 ns Processing popped packet from queue 1 with seq_num=139 thread_id=2
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=140, thread_id=3 - Credits=7
+19600 ns Processing popped packet from queue 2 with seq_num=140 thread_id=3
+19600 ns [iRC_tx] Send seq=160 tid=1
+19600 ns [iEP popper] counter=3
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=144, thread_id=1 - Credits=7
+19600 ns Processing popped packet from queue 0 with seq_num=144 thread_id=1
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=142, thread_id=2 - Credits=7
+19600 ns Processing popped packet from queue 1 with seq_num=142 thread_id=2
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=143, thread_id=3 - Credits=7
+19600 ns Processing popped packet from queue 2 with seq_num=143 thread_id=3
+19600 ns [iRC] Send seq=165 tid=3
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=157 tid=2 -> queue 1
+[iEP.iEP_front] Route: seq_num=165 tid=3 -> queue 2
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Enqueue: seq_num=156 thread_id=1 (FIFO occ=5)
+19600 ns [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_1] Enqueue: seq_num=164 thread_id=2 (FIFO occ=6)
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+19600 ns [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8
+19700 ns [iEP popper] counter=0
+19700 ns [iRC_tx] Send seq=161 tid=2
+19700 ns [iEP popper] counter=0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=158 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Enqueue: seq_num=157 thread_id=2 (FIFO occ=5)
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=165 thread_id=3 (FIFO occ=6)
+19800 ns [iEP popper] counter=1
+19800 ns [iEP popper] counter=1
+19800 ns [iRC] Send seq=166 tid=3
+19800 ns [ProxyCredit] sense credit_in=7
+[iEP.iEP_front] Route: seq_num=166 tid=3 -> queue 2
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=158 thread_id=3 (FIFO occ=5)
+19900 ns [iRC] Send seq=167 tid=1
+19900 ns [iEP popper] counter=2
+19900 ns [iRC_tx] Send seq=162 tid=2
+19900 ns [iEP popper] counter=2
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=159 tid=3 -> queue 2
+[iEP.iEP_front] Route: seq_num=167 tid=1 -> queue 0
+[iEP.iEP_front.iEP_iEP_front_queue_2] Enqueue: seq_num=166 thread_id=3 (FIFO occ=7)
+20 us [iEP popper] counter=3
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Popping data: seq_num=142, thread_id=1 - Credits=7
+20 us Processing popped packet from queue 0 with seq_num=142 thread_id=1
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Popping data: seq_num=143, thread_id=2 - Credits=7
+20 us Processing popped packet from queue 1 with seq_num=143 thread_id=2
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Popping data: seq_num=141, thread_id=3 - Credits=7
+20 us Processing popped packet from queue 2 with seq_num=141 thread_id=3
+20 us [iRC_tx] Send seq=163 tid=3
+20 us [iEP popper] counter=3
+20 us [iEP.iEP_front.iEP_iEP_front_queue_0] Popping data: seq_num=145, thread_id=1 - Credits=7
+20 us Processing popped packet from queue 0 with seq_num=145 thread_id=1
+20 us [iEP.iEP_front.iEP_iEP_front_queue_1] Popping data: seq_num=146, thread_id=2 - Credits=7
+20 us Processing popped packet from queue 1 with seq_num=146 thread_id=2
+20 us [iEP.iEP_front.iEP_iEP_front_queue_2] Popping data: seq_num=147, thread_id=3 - Credits=7
+20 us Processing popped packet from queue 2 with seq_num=147 thread_id=3
+20 us [iRC] Send seq=168 tid=2
+20 us [ProxyCredit] window stats buffered=0,0,0
+[iEP_after_RX.iEP_after_RX_front] Route: seq_num=160 tid=1 -> queue 0
+[iEP.iEP_front] Route: seq_num=168 tid=2 -> queue 1
+[iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Enqueue: seq_num=159 thread_id=3 (FIFO occ=5)
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_2] Issuing credit - Current=8
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_1] Issuing credit - Current=8
+20 us [iEP_after_RX.iEP_after_RX_front.iEP_after_RX_iEP_after_RX_front_queue_0] Issuing credit - Current=8
+20 us [iEP.iEP_front.iEP_iEP_front_queue_2] Issuing credit - Current=8
+20 us [iEP.iEP_front.iEP_iEP_front_queue_1] Issuing credit - Current=8
+[iEP.iEP_front.iEP_iEP_front_queue_0] Enqueue: seq_num=167 thread_id=1 (FIFO occ=6)
+20 us [iEP.iEP_front.iEP_iEP_front_queue_0] Issuing credit - Current=8

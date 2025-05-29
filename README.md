@@ -1,65 +1,92 @@
-# Credit-Based Flow-Control & Valid/Ready Demo
+# Credit-Based vs Ready/Valid – SystemC Playground
 
-SystemC simulation illustrating two independent data-transport topologies built from the same building blocks:
-
-1. *Pure credit-based link*
-   iRC (root complex) ➜ iEP (endpoint)
-
-2. *Hybrid link using ready/valid in the middle*
-   iRC_tx (root complex) ➜ TX (credit FIFO front-end + ready/valid transmitter) ➜ RX (wide FIFO consumer) ➜ iEP_after_RX (per-thread consumer)
-
-The two paths share the same clock and run side-by-side so you can directly compare latency, throughput, back-pressure behaviour and waveform size.
+This repo is a **minimal yet complete** experiment-bed that lets you compare two flow-control philosophies side-by-side under the *same* traffic generator and consumer logic.
 
 ```
-                credits[2:0]
-        ┌───────────────────────────────┐
-        │                               │
- iRC ──▶│ raw_valid/tlp     iEP         │
-        └───────────────────────────────┘
-
-
- iRC_tx ─raw_valid/tlp─▶ TX ─valid/ready─▶ RX ─raw_valid/tlp─▶ iEP_after_RX
-                 ▲          ▲                    ▲                 ▲
-                 └─credit───┘                    └─credit[2:0]─────┘
+Direct credit path                            Hybrid (credit + ready/valid)
+───────────────────────                      ───────────────────────────────────────────────────────────────
+  iRC              credits[2:0]                iRC_tx          credits[2:0]
+   │  Raw-valid/TLP    ▲                        │   Raw-valid/TLP   ▲
+   ▼                   │                        ▼                  │
+  iEP  ◀───────────────┘ (1-cycle loop)       SimpleTxFIFO ─valid/ready─► SimpleRxFIFO ─Raw-valid/TLP─► iEP_after_RX
+                                                 ▲                                 ▲                         ▲
+                                                 └──── credit bus via ProxyCreditGen ────────────────────────┘
 ```
 
-## Module cheat-sheet
-* **iRC / iRC_tx** – round-robin sender, maintains one credit counter per thread and prints `Send seq=n tid=t` on every packet.
-* **Threaded_Queue** – core building block used by iEP, TX and RX. Holds one FIFO (depth 8) per logical thread and raises a one-clock credit pulse when space becomes available.
-* **iEP / iEP_after_RX** – router ➜ three `Threaded_Queue`s ➜ popper that removes **one packet per queue every 4th clock**; credits are OR-reduced back to the upstream module.
-* **TX** – mirrors the iEP front-end but instead of the slow popper has a transmitter that forwards **one packet per cycle** when `egress_ready` is asserted; credits return to iRC_tx.
-* **RX** – 1024-deep FIFO per thread, drives `ready_out` when any FIFO has space and converts ready/valid back to the credit protocol for iEP_after_RX.
-
-## Key parameters (edit in `src/main.cpp`)
-* `Threaded_Queue::FIFO_CAPACITY` – per-thread depth (default 8)
-* `RX::RX_FIFO_CAPACITY` – depth of RX FIFOs (default 1024)
-* Pop cadence in iEP/iEP_after_RX – controlled by `if (pop_counter == 3)` (¼ rate)
-* `g_enable_popping` – global toggle to disable the popper at runtime.
-
-## Build & Run
-```bash
-# Edit SYSTEMC_INC / SYSTEMC_LIB in Makefile if your SystemC is not in /usr/local
-make          # builds build/sim
-./build/sim   # runs ~20 µs and emits two VCD files
-```
-
-### Waveforms
-```bash
-gtkwave irc_iep_flow.vcd      # iRC ➜ iEP (pure-credit path)
-gtkwave irc_tx_flow.vcd       # iRC_tx ➜ TX ➜ RX ➜ iEP_after_RX (hybrid path)
-```
-
-## Sanity checklist
-1. Sequence numbers rise monotonically and match between sender and receiver.
-2. Credit buses on both paths toggle continuously – never stuck.
-3. No packet carries `thread_id == 0` or `seq_num == 0`.
-4. The iEP popper prints every 4th clock and each `Threaded_Queue` credit counter returns to *8* after every pop group.
-
-## Extending the demo
-* Increase the number of logical threads by widening `RawTLP.thread_id` and updating loop bounds.
-* Stress congestion: set `g_enable_popping = false` after a few µs to watch queues fill up.
-* Replace the simple `TX` block with any RTL you want to characterise – the credit front-end is unaffected.
+Both topologies share one clock and run for 20 µs; you can watch every wave in **GTKW** and mine every statistic with the included Python tools.
 
 ---
+## 1.  Modules (all in `src/main.cpp`)
 
-This README doubles as a compact primer when you prompt an LLM with the project – it should remain self-contained, architecture-focused and free of build-system minutiae.
+| Module            | Purpose / Notes |
+|-------------------|-----------------|
+| `iRC` / `iRC_tx`  | Round-robin multi-thread sender. One credit counter per thread; prints `Send seq=n tid=t`. |
+| `Threaded_Queue`  | 8-deep FIFO + credit logic for **one** thread. Building block for iEP & front-ends. |
+| `ThreadedFrontEnd`| Router + **3×** `Threaded_Queue` + credit OR-combine. Re-used by both iEP flavours. |
+| `SimpleTxFIFO`    | *Single* FIFO that converts Raw-valid/TLP into ready/valid. Depth tunable (default 24). |
+| `SimpleRxFIFO`    | Reverse converter (ready/valid → Raw-valid/TLP). Depth tunable (default 2). |
+| `ProxyCreditGen`  | "Leaky-bucket" proxy that **continues counting** credits while it emits buffered ones; 8-cycle stats window. Breaks the long credit loop safely. |
+| `iEP`             | Classical credit consumer. Pops one pkt/queue every 4 clks. |
+| `iEP_after_RX`    | Same as iEP but fed through TX/RX path. |
+
+---
+## 2.  Key knobs
+
+| Symbol                                | Description | Default |
+|---------------------------------------|-------------|---------|
+| `GLOBAL_SENSE_WINDOW`                 | Statistics window in `ProxyCreditGen` (credits keep flowing even while sensing). | 8 |
+| `SimpleTxFIFO::DEPTH`                 | Burst buffer at TX; ***must be ≥ threads × window*** (24 for 3×8). | 24 |
+| `SimpleRxFIFO::DEPTH`                 | Elasticity buffer after network; 1–2 is enough. | 2 |
+| `Threaded_Queue::FIFO_CAPACITY`       | Per-thread depth in iEPs. | 8 |
+| `g_enable_popping`                    | Runtime switch to pause the popper. | true |
+
+---
+## 3.  Build & run
+```bash
+make            # -> build/sim
+./build/sim     # generates irc_iep_flow.vcd  +  irc_tx_flow.vcd
+```
+Open either file in **GTKWave** to inspect both data & credit buses.
+
+---
+## 4.  Post-run analysis
+
+```
+python3 scripts/analyze_logs.py sim_log.txt
+```
+prints packet count, average latency and throughput **per topology** by parsing the console log.
+
+---
+## 5.  FIFO depth sweeper
+
+`scripts/fifo_tuner.py` rewrites the TX & RX DEPTH constants, rebuilds, runs, parses and dumps a CSV (`fifo_sweep_report.csv`).
+
+```bash
+python3 scripts/fifo_tuner.py
+
+TX_DEPTH RX_DEPTH  Ready(Mpps)  Ratio_to_Credit
+---------------------------------------------
+       2        1   ---           N/A   PARSE_ERR
+       2        2       5.20       0.97 OK
+       4        1   ---           N/A   PARSE_ERR
+       ...
+```
+*OK* marks configurations where ready-path ≥ 90 % of credit-path throughput.
+
+---
+## 6.  Typical experiments
+
+1. **Bandwidth-delay product** – raise `SimpleTxFIFO::DEPTH` while inserting artificial latency blocks between TX and RX.
+2. **Congestion** – disable popping in `iEP_after_RX` to see credit starvation propagate back through the network.
+3. **Thread scaling** – widen `RawTLP.thread_id`, update loop bounds, and observe how credit bus width vs window sizing changes buffer requirements.
+4. **Algorithmic tuning** – change the emit rule in `ProxyCreditGen` (e.g. emit 2 credits/queue/clk) and compare results with the tuner.
+
+---
+### This README as an AI prompt
+The document now contains:
+* full architectural diagram
+* module cheat-sheet
+* all tunable parameters & defaults
+* how to build, run, analyse and sweep
+
+so pasting it into an LLM gives enough context to propose new modules or debug future changes without reading the entire codebase.
