@@ -26,6 +26,7 @@ Both topologies share one clock and run for 20 µs; you can watch every wave in 
 | `SimpleTxFIFO`    | *Single* FIFO that converts Raw-valid/TLP into ready/valid. Depth tunable (default 24). |
 | `SimpleRxFIFO`    | Reverse converter (ready/valid → Raw-valid/TLP). Depth tunable (default 2). |
 | `ProxyCreditGen`  | "Leaky-bucket" proxy that **continues counting** credits while it emits buffered ones; 8-cycle stats window. Breaks the long credit loop safely. |
+| `AxiNoC`          | 12-stage pipeline that asserts `ready` low for `NOC_STALL_CYC` cycles and high for `NOC_READY_CYC` cycles, modelling round-robin arbitration. |
 | `iEP`             | Classical credit consumer. Pops one pkt/queue every 4 clks. |
 | `iEP_after_RX`    | Same as iEP but fed through TX/RX path. |
 
@@ -35,8 +36,9 @@ Both topologies share one clock and run for 20 µs; you can watch every wave in 
 | Symbol                                | Description | Default |
 |---------------------------------------|-------------|---------|
 | `GLOBAL_SENSE_WINDOW`                 | Statistics window in `ProxyCreditGen` (credits keep flowing even while sensing). | 8 |
-| `SimpleTxFIFO::DEPTH`                 | Burst buffer at TX; ***must be ≥ threads × window*** (24 for 3×8). | 24 |
-| `SimpleRxFIFO::DEPTH`                 | Elasticity buffer after network; 1–2 is enough. | 2 |
+| `TX_FIFO_DEPTH`                       | Burst buffer at TX; ***should cover stall latency*** (48 fits 12-cycle NoC × 4 beats). | 48 |
+| `RX_FIFO_DEPTH`                       | Elasticity buffer after network. | 24 |
+| `NOC_STALL_CYC`/`NOC_READY_CYC`       | Deterministic ready-low / ready-high period in `AxiNoC`. | 6 / 6 |
 | `Threaded_Queue::FIFO_CAPACITY`       | Per-thread depth in iEPs. | 8 |
 | `g_enable_popping`                    | Runtime switch to pause the popper. | true |
 

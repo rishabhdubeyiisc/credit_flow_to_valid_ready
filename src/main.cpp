@@ -4,6 +4,19 @@
 #include <iostream>  // For std::cout
 #include <string>
 #include <algorithm>
+#include <cstdlib>
+
+// -----------------------------------------------------------------------------
+// Central build-time configuration (all sizes / latencies in one place)
+// -----------------------------------------------------------------------------
+
+constexpr unsigned TX_FIFO_DEPTH = 48;   // entries (24 packets @ 64-bit)
+constexpr unsigned RX_FIFO_DEPTH = 24;   // entries
+constexpr unsigned THREAD_Q_DEPTH = 8;   // per-thread depth inside iEP/FrontEnd
+
+constexpr unsigned NOC_PIPE_LAT   = 12;  // fixed AXI cycles through NoC
+constexpr unsigned NOC_STALL_CYC   = 6;  // ready low phase length
+constexpr unsigned NOC_READY_CYC  = 6;  // ready high phase length (pattern repeats)
 
 // Global control for FIFO popping
 bool g_enable_popping = true;
@@ -80,7 +93,7 @@ SC_MODULE(Threaded_Queue) {
     sc_in<bool> valid_in;
     sc_out<bool> credit_out;
 
-    static const unsigned int FIFO_CAPACITY = 8;
+    static const unsigned int FIFO_CAPACITY = THREAD_Q_DEPTH;
     sc_fifo<RawTLP> fifo;
     
     // Credit state
@@ -266,7 +279,6 @@ SC_MODULE(SimpleTxFIFO) {
     sc_out<AxiWord>    egress_axi;
     sc_in<bool>        egress_ready;
 
-    static const unsigned DEPTH = 48;    // 2 beats per TLP -> 24 packets
     sc_fifo<RawTLP> fifo;
     unsigned int max_occ = 0;
 
@@ -310,7 +322,7 @@ SC_MODULE(SimpleTxFIFO) {
         }
     }
 
-    SC_CTOR(SimpleTxFIFO) : fifo(DEPTH) {
+    SC_CTOR(SimpleTxFIFO, unsigned depth=TX_FIFO_DEPTH) : fifo(depth) {
         SC_THREAD(main_thread);
         sensitive << clk.pos();
     }
@@ -331,7 +343,6 @@ SC_MODULE(SimpleRxFIFO) {
     sc_out<bool>       valid_out;
     sc_out<RawTLP>     tlp_out;
 
-    static const unsigned DEPTH = 24;    // or 1 if you prefer true pass-through
     sc_fifo<RawTLP> fifo;
     unsigned int max_occ = 0;
 
@@ -360,7 +371,7 @@ SC_MODULE(SimpleRxFIFO) {
         }
     }
 
-    SC_CTOR(SimpleRxFIFO) : fifo(DEPTH) {
+    SC_CTOR(SimpleRxFIFO, unsigned depth=RX_FIFO_DEPTH) : fifo(depth) {
         SC_THREAD(main_thread);
         sensitive << clk.pos();
     }
@@ -379,59 +390,59 @@ SC_MODULE(ProxyCreditGen) {
     sc_in<sc_uint<3>>  credit_in;   // from iEP
     sc_out<sc_uint<3>> credit_out;  // to iRC
 
-    unsigned sense_counter;
-    unsigned credit_count[3];
+    // Per-thread credit counters
+    sc_uint<4> accum_cnt[3] = {0, 0, 0};   // live counts within current window
+    sc_uint<4> emit_cnt[3]  = {0, 0, 0};   // counts left to emit in burst phase
 
-    void main_thread() {
-        sense_counter = 0;
-        for(int i=0;i<3;++i) credit_count[i] = 0;
-        credit_out.write(0);
-        wait(SC_ZERO_TIME);
-
+    void sense_thread() {
+        // Count every credit pulse into per-thread accum_cnt[]
         while (true) {
             wait(clk.posedge_event());
 
             if (!reset_n.read()) {
-                for(int i=0;i<3;++i) credit_count[i] = 0;
-                credit_out.write(0);
-                sense_counter = 0;
+                for (int i = 0; i < 3; ++i) accum_cnt[i] = 0;
                 continue;
             }
 
-            // 1) SENSE  – accumulate arriving credit pulses
             sc_uint<3> in = credit_in.read();
-            if (in != 0) {
-                std::cout << sc_time_stamp() << " [ProxyCredit] sense credit_in="
-                          << in.to_uint() << std::endl;
-            }
             for (int i = 0; i < 3; ++i) {
-                if (in[i]) credit_count[i]++;
-            }
-
-            // 2) EMIT  – one credit per queue per cycle while we have any buffered
-            sc_uint<3> out = 0;
-            for (int i = 0; i < 3; ++i) {
-                if (credit_count[i] > 0) {
-                    out[i] = 1;
-                    credit_count[i]--;
-                }
-            }
-            credit_out.write(out);
-
-            // 3) Optional: window statistics every 8 cycles (for visibility only)
-            sense_counter++;
-            if (sense_counter >= GLOBAL_SENSE_WINDOW) {
-                std::cout << sc_time_stamp() << " [ProxyCredit] window stats buffered="
-                          << credit_count[0] << "," << credit_count[1] << "," << credit_count[2]
-                          << std::endl;
-                sense_counter = 0;
+                if (in[i]) accum_cnt[i]++;
             }
         }
     }
 
-    SC_CTOR(ProxyCreditGen){
-        SC_THREAD(main_thread);
-        sensitive<<clk.pos();
+    void emit_thread() {
+        unsigned ctr = 0;                     // sense-window counter
+        while (true) {
+            wait(clk.posedge_event());
+
+            if (!reset_n.read()) {
+                credit_out.write(0);
+                ctr = 0;
+                for (int i = 0; i < 3; ++i) { accum_cnt[i] = 0; emit_cnt[i] = 0; }
+                continue;
+            }
+
+            // Start of new emission burst when sense window ends
+            if (++ctr == GLOBAL_SENSE_WINDOW) {
+                for (int i = 0; i < 3; ++i) { emit_cnt[i] = accum_cnt[i]; accum_cnt[i] = 0; }
+                ctr = 0;
+            }
+
+            // Emit up to 1 credit per thread per cycle until emit_cnt drains
+            sc_uint<3> out = 0;
+            for (int i = 0; i < 3; ++i) {
+                if (emit_cnt[i] != 0) { out[i] = 1; emit_cnt[i]--; }
+            }
+            credit_out.write(out);
+        }
+    }
+
+    SC_CTOR(ProxyCreditGen) {
+        SC_THREAD(sense_thread);
+        sensitive << clk.pos();
+        SC_THREAD(emit_thread);
+        sensitive << clk.pos();
     }
 };
 
@@ -609,6 +620,78 @@ SC_MODULE(iEP) {
     }
 };
 
+// -----------------------------------------------------------------------------
+// AxiNoC: simple elastic buffer that injects random back-pressure (ready=0)
+// cycles to emulate a network. Parameter MAX_STALL controls worst-case stall
+// between beats.
+// -----------------------------------------------------------------------------
+
+SC_MODULE(AxiNoC) {
+    sc_in<bool>      clk;
+    sc_in<bool>      reset_n;
+    // upstream (TX) side
+    sc_in<bool>      valid_in;
+    sc_in<AxiWord>   axi_in;
+    sc_out<bool>     ready_out;  // back to TX
+    // downstream (RX) side
+    sc_out<bool>     valid_out;
+    sc_out<AxiWord>  axi_out;
+    sc_in<bool>      ready_in;
+
+    // fixed pipeline latency buffer & back-pressure generation
+    static const unsigned PIPE_LAT = NOC_PIPE_LAT; // latency cycles
+    AxiWord  pipe[PIPE_LAT];
+    bool     pipe_valid[PIPE_LAT] = {false};
+    unsigned pattern_ctr = 0;          // cycles within stall/ready pattern
+
+    void main_thread(){
+        wait(SC_ZERO_TIME);
+        while(true){
+            wait(clk.posedge_event());
+
+            // Deterministic stall pattern: ready is low for NOC_STALL_CYC cycles,
+            // then high for NOC_READY_CYC cycles, repeating.
+            bool stall_active = (pattern_ctr < NOC_STALL_CYC);
+            bool ready_ok = !pipe_valid[0] && !stall_active;
+            ready_out.write(ready_ok);
+
+            if(valid_in.read() && ready_ok){
+                pipe[0] = axi_in.read();
+                pipe_valid[0] = true;
+
+                // nothing special to do; stall pattern is time-based
+            }
+
+            // advance deterministic pattern counter every cycle
+            pattern_ctr++;
+            if (pattern_ctr == (NOC_STALL_CYC + NOC_READY_CYC)) pattern_ctr = 0;
+
+            // Drive output when last stage valid
+            if(pipe_valid[PIPE_LAT-1]){
+                valid_out.write(true);
+                axi_out.write(pipe[PIPE_LAT-1]);
+                if(ready_in.read()) pipe_valid[PIPE_LAT-1] = false;
+            } else {
+                valid_out.write(false);
+            }
+
+            // shift pipeline each clock
+            for (int i = PIPE_LAT-1; i > 0; --i) {
+                if (!pipe_valid[i] && pipe_valid[i-1]) {
+                    pipe[i]       = pipe[i-1];
+                    pipe_valid[i] = true;
+                    pipe_valid[i-1] = false;
+                }
+            }
+        }
+    }
+
+    SC_CTOR(AxiNoC) {
+        SC_THREAD(main_thread);
+        sensitive<<clk.pos();
+    }
+};
+
 // Top-level sc_main
 int sc_main(int argc, char* argv[]) {
 
@@ -647,11 +730,14 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf, credit,             "credit");
 
     // Signals for TX/RX simple path
-    sc_signal<bool>    raw_valid_iRC2TX;
-    sc_signal<RawTLP>  raw_tlp_iRC2TX;
-    sc_signal<bool>    TX2RX_valid;
-    sc_signal<AxiWord> TX2RX_axi;
-    sc_signal<bool>    RX2TX_ready;
+    sc_signal<bool>    RC2TX_raw_valid;
+    sc_signal<RawTLP>  RC2TX_raw_tlp;
+    sc_signal<bool>    TX2NOC_valid;
+    sc_signal<AxiWord> TX2NOC_axi;
+    sc_signal<bool>    NOC2TX_ready;
+    sc_signal<bool>    NOC2RX_valid;
+    sc_signal<AxiWord> NOC2RX_axi;
+    sc_signal<bool>    RX2NOC_ready;
     sc_signal<bool>    RX2EP_valid;
     sc_signal<RawTLP>  RX2EP_tlp;
     sc_signal<sc_uint<3>> credit_proxy2iRC;
@@ -661,25 +747,25 @@ int sc_main(int argc, char* argv[]) {
     iRC rc_tx("iRC_tx");
     rc_tx.clk(system_clk);
     rc_tx.reset_n(reset_n);
-    rc_tx.raw_valid(raw_valid_iRC2TX);
-    rc_tx.raw_tlp(raw_tlp_iRC2TX);
+    rc_tx.raw_valid(RC2TX_raw_valid);
+    rc_tx.raw_tlp(RC2TX_raw_tlp);
 
-    SimpleTxFIFO tx_fifo("TX");
+    SimpleTxFIFO tx_fifo("TX", TX_FIFO_DEPTH);
     tx_fifo.clk(system_clk);
     tx_fifo.reset_n(reset_n);
-    tx_fifo.ingress_valid(raw_valid_iRC2TX);
-    tx_fifo.ingress_tlp(raw_tlp_iRC2TX);
-    tx_fifo.egress_valid(TX2RX_valid);
-    tx_fifo.egress_axi(TX2RX_axi);
-    tx_fifo.egress_ready(RX2TX_ready);
+    tx_fifo.ingress_valid(RC2TX_raw_valid);
+    tx_fifo.ingress_tlp(RC2TX_raw_tlp);
+    tx_fifo.egress_valid(TX2NOC_valid);
+    tx_fifo.egress_axi(TX2NOC_axi);
+    tx_fifo.egress_ready(NOC2TX_ready);
 
     // RX simple FIFO
-    SimpleRxFIFO rx_fifo("RX");
+    SimpleRxFIFO rx_fifo("RX", RX_FIFO_DEPTH);
     rx_fifo.clk(system_clk);
     rx_fifo.reset_n(reset_n);
-    rx_fifo.valid_in(TX2RX_valid);
-    rx_fifo.axi_in(TX2RX_axi);
-    rx_fifo.ready_out(RX2TX_ready);
+    rx_fifo.valid_in(NOC2RX_valid);
+    rx_fifo.axi_in(NOC2RX_axi);
+    rx_fifo.ready_out(RX2NOC_ready);
     rx_fifo.valid_out(RX2EP_valid);
     rx_fifo.tlp_out(RX2EP_tlp);
 
@@ -701,16 +787,28 @@ int sc_main(int argc, char* argv[]) {
     // Connect proxy output to iRC_tx once
     rc_tx.credit_in(credit_proxy2iRC);
 
-    // Trace TX topology signals
-    sc_trace(tf_tx, system_clk, "system_clk");
-    sc_trace(tf_tx, reset_n, "reset_n");
-    sc_trace(tf_tx, raw_valid_iRC2TX, "raw_valid_iRC2TX");
-    sc_trace(tf_tx, raw_tlp_iRC2TX, "raw_tlp_iRC2TX");
-    sc_trace(tf_tx, TX2RX_valid, "TX2RX_valid");
-    sc_trace(tf_tx, TX2RX_axi, "TX2RX_axi");
-    sc_trace(tf_tx, RX2TX_ready, "RX2TX_ready");
+    // Instantiate NoC
+    AxiNoC noc("AXI_NOC");
+    noc.clk(system_clk);
+    noc.reset_n(reset_n);
+    noc.valid_in(TX2NOC_valid);
+    noc.axi_in(TX2NOC_axi);
+    noc.ready_out(NOC2TX_ready);
+    noc.valid_out(NOC2RX_valid);
+    noc.axi_out(NOC2RX_axi);
+    noc.ready_in(RX2NOC_ready);
+
+    // traces – entire TX→NoC→RX path plus proxy credits
+    sc_trace(tf_tx, RC2TX_raw_valid, "RC2TX_raw_valid");
+    sc_trace(tf_tx, RC2TX_raw_tlp,  "RC2TX_raw_tlp");
+    sc_trace(tf_tx, TX2NOC_valid,    "TX2NOC_valid");
+    sc_trace(tf_tx, NOC2TX_ready, "NOC_ready_to_TX");
+    sc_trace(tf_tx, TX2NOC_axi,   "TX2NOC_axi");
+    sc_trace(tf_tx, NOC2RX_valid,  "NOC2RX_valid");
+    sc_trace(tf_tx, NOC2RX_axi,    "NOC2RX_axi");
+    sc_trace(tf_tx, RX2NOC_ready,  "RX_ready_to_NOC");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
-    sc_trace(tf_tx, RX2EP_tlp, "RX2EP_tlp");
+    sc_trace(tf_tx, RX2EP_tlp,   "RX2EP_tlp");
     sc_trace(tf_tx, credit_proxy2iRC, "credit_proxy2iRC");
     sc_trace(tf_tx, credit_iEP2proxy, "credit_iEP2proxy");
 
