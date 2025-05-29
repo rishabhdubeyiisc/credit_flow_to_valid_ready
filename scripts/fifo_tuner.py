@@ -3,10 +3,11 @@ import re, subprocess, shutil, os, sys, itertools, textwrap, csv
 SRC_FILE = 'src/main.cpp'
 LOG_FILE = 'auto_run.log'
 ANALYZE = 'scripts/analyze_logs.py'
+SANITY = 'scripts/sanity_ready_loss.py'
 
 TX_DEPTHS = [2, 4, 8, 16, 24, 32, 64, 128, 256, 512, 1024]
-RX_DEPTHS = [2, 4, 8, 16, 24]
-TARGET_RATIO = 0.9  # ready throughput should be this fraction of credit throughput
+RX_DEPTHS = [2, 4]
+TARGET_RATIO = 0.8  # ready throughput should be this fraction of credit throughput
 
 # Regexes to locate the TX and RX depth constexpr lines in main.cpp
 TX_REGEX = re.compile(r'constexpr unsigned TX_FIFO_DEPTH\s*=\s*(\d+);')
@@ -85,6 +86,11 @@ def analyze():
     return metrics
 
 
+def sanity_ok():
+    rc = subprocess.call(['python3', SANITY, LOG_FILE])
+    return rc == 0
+
+
 def sweep():
     results = []
     print('\nTX_DEPTH RX_DEPTH  Ready(Mpps)  Ratio_to_Credit')
@@ -93,7 +99,16 @@ def sweep():
         set_depths(tx, rx)
         build()
         run_sim()
-        m = analyze()
+
+        sane = sanity_ok()
+
+        m = analyze() if sane else {}
+
+        if not sane:
+            print(f"{tx:8d} {rx:8d}   ---           N/A   DROPPED")
+            results.append((tx, rx, None, None, None, None, 'DROP'))
+            continue
+
         if 'ready_mpps' not in m:
             print(f'{tx:8d} {rx:8d}   ---           N/A   PARSE_ERR')
             continue

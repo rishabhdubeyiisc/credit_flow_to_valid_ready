@@ -5,9 +5,9 @@ from collections import defaultdict
 # Usage: python analyze_logs.py <sim_log.txt>
 # Pass '-' to read from stdin
 
-send_pattern = re.compile(r"(?P<time>\d+)\s+ns \[iRC(?P<tx>_tx)?\] Send seq=(?P<seq>\d+)")
+send_pattern = re.compile(r"(?P<time>\d+) ns \[iRC(?P<tx>_tx)?\] sender_thread.*seq_num=(?P<seq>\d+)")
 # pop pattern captures queue name so we can identify topology via prefix
-pop_pattern = re.compile(r"(?P<time>\d+)\s+ns \[(?P<queue>[^\]]+)\] Popping data: seq_num=(?P<seq>\d+)")
+pop_pattern = re.compile(r"(?P<time>\d+) ns \[(?P<queue>[^\]]+)\] process_popped_data.*seq_num=(?P<seq>\d+)")
 # track FIFO occupancy prints
 depth_pattern = re.compile(r"\[(?P<which>[TR]X)_FIFO\] depth=(?P<d>\d+)")
 
@@ -67,6 +67,16 @@ for line in source:
             max_depth[which] = depth
         continue
 
+    # Duty cycle section
+    if line.startswith('---- Credit bus duty cycle'):
+        # read the next two lines from source (already stripped)
+        direct_line = next(source).strip()
+        hybrid_line = next(source).strip()
+        duty_direct = float(direct_line.split(':')[1].strip().rstrip('%'))
+        duty_hybrid = float(hybrid_line.split(':')[1].strip().rstrip('%'))
+        duty = (duty_direct, duty_hybrid)
+        continue
+
 if first_time is None:
     print("No events found – are you using the correct log?")
     sys.exit(1)
@@ -90,4 +100,13 @@ for topo in ('credit', 'ready'):
 
 # FIFO occupancy summary
 print(f"Max TX FIFO occupancy : {max_depth['TX']}")
-print(f"Max RX FIFO occupancy : {max_depth['RX']}\n") 
+print(f"Max RX FIFO occupancy : {max_depth['RX']}\n")
+
+# Duty cycle if captured
+try:
+    duty_direct, duty_hybrid
+    print("Credit bus duty-cycle (% of cycles bus != 0):")
+    print(f"  Direct bus : {duty_direct:.2f} %")
+    print(f"  Hybrid bus : {duty_hybrid:.2f} %")
+except NameError:
+    pass 

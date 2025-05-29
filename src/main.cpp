@@ -11,12 +11,13 @@
 // -----------------------------------------------------------------------------
 
 constexpr unsigned TX_FIFO_DEPTH   = 1024;   // entries (24 packets @ 64-bit)
-constexpr unsigned RX_FIFO_DEPTH   = 24;   // entries
+constexpr unsigned RX_FIFO_DEPTH   = 4;   // entries
 constexpr unsigned THREAD_Q_DEPTH = 8;   // per-thread depth inside iEP/FrontEnd
 const unsigned GLOBAL_SENSE_WINDOW = 8; // can be tuned – equal to Threaded FIFO depth
+constexpr unsigned sim_time_in_us = 400;  // total simulation duration
 
-constexpr unsigned NOC_STATIC_LATENCY = 12;  // fixed AXI cycles through NoC
-constexpr unsigned NOC_STALL_PCT  = 25; // percentage (0-99) of cycles ready is LOW
+constexpr unsigned NOC_STATIC_LATENCY_ONE_WAY = 10 ;  //((2*65) + 20)// fixed AXI cycles through NoC //taking from NIC Fabric thus 2 times as C2C + GPU fabrics + Lets take C2C and SMN bridges to add 10 Cycles // this in one way latency only
+constexpr unsigned NOC_STALL_PCT  = 15; // percentage (0-99) of cycles ready is LOW
 constexpr unsigned NOC_PATTERN_LEN = 100; // resolution (cycles)
 static_assert(NOC_STALL_PCT < 100, "stall percentage must be <100");
 
@@ -46,11 +47,6 @@ void sc_trace(sc_trace_file* tf, const RawTLP& tlp, const std::string& name) {
     sc_trace(tf, tlp.thread_id, name + ".thread_id");
 }
 
-// Helper debug print for routing actions
-inline void debug_route(const char* mod, const RawTLP& pkt, int q) {
-    std::cout << "["<<mod<<"] Route: seq_num="<<pkt.seq_num<<" tid="<<pkt.thread_id<<" -> queue "<<q << std::endl;
-}
-
 // ---------------- AXI Stream word used only between TX and RX ----------------
 struct AxiWord {
     sc_uint<64> data{0};
@@ -65,7 +61,7 @@ inline std::ostream& operator<<(std::ostream& os, const AxiWord& w){
 
 inline void sc_trace(sc_trace_file* tf, const AxiWord& w, const std::string& n){
     sc_trace(tf, w.data,   n+".data");
-    sc_trace(tf, w.tlast,  n+".tlast");
+    // sc_trace(tf, w.tlast,  n+".tlast");
 }
 
 // -----------------------------------------------------------------------------
@@ -160,7 +156,9 @@ SC_MODULE(Threaded_Queue) {
             if (valid_in.read() && fifo.num_free() > 0) {
                 RawTLP pkt = raw_tlp_in.read();
                 fifo.write(pkt);
-                std::cout << "["<<name()<<"] Enqueue: seq_num="<<pkt.seq_num<<" thread_id="<<pkt.thread_id<<" (FIFO occ="<<fifo.num_available()<<")" << std::endl;
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " seq_num=" << pkt.seq_num << " thread_id=" << pkt.thread_id
+                          << " (FIFO occ=" << fifo.num_available() << ")" << std::endl;
             }
 
             // Issue credit if space available and credits not maxed out
@@ -168,9 +166,8 @@ SC_MODULE(Threaded_Queue) {
                 credits++;
                 credit_out.write(true);
                 credit_pending = true;
-                std::cout << sc_time_stamp() 
-                          << " [" << name() << "] Issuing credit - Current=" << credits 
-                          << std::endl;
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " Issuing credit - Current=" << credits << std::endl;
             }
         }
     }
@@ -185,11 +182,9 @@ SC_MODULE(Threaded_Queue) {
         if (fifo.nb_read(pkt)) {  // Use non-blocking read
             if (credits > 0) {
                 credits--;
-                std::cout << sc_time_stamp() 
-                          << " [" << name() << "] Popping data: seq_num=" << pkt.seq_num
-                          << ", thread_id=" << pkt.thread_id
-                          << " - Credits=" << credits 
-                          << std::endl;
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " seq_num=" << pkt.seq_num << " thread_id=" << pkt.thread_id
+                          << " - Credits=" << credits << std::endl;
             }
             return true;
         }
@@ -252,7 +247,10 @@ SC_MODULE(ThreadedFrontEnd) {
                 if (tid >= 1 && tid <= 3) {
                     tlp_signals[tid - 1].write(pkt);
                     valid_signals[tid - 1].write(true);
-                    debug_route(name(), pkt, tid - 1);
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " routed seq_num=" << pkt.seq_num
+                              << " thread_id=" << pkt.thread_id
+                              << " queue_id=" << (tid - 1) << std::endl;
                 }
             }
         }
@@ -332,6 +330,9 @@ SC_MODULE(SimpleTxFIFO) {
             // fetch new packet when current TLP fully sent
             if (!holding && fifo.nb_read(held_pkt)) {
                 holding = true;
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " Ready to dequeue seq_num=" << held_pkt.seq_num
+                          << " thread_id=" << held_pkt.thread_id << std::endl;
             }
 
             // drive outputs
@@ -341,7 +342,10 @@ SC_MODULE(SimpleTxFIFO) {
                 egress_valid.write(true);
 
                 if (egress_ready.read()) {
-                    holding = false;
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " Handshake: sent seq_num=" << held_pkt.seq_num
+                              << " thread_id=" << held_pkt.thread_id << std::endl;
+                    holding = false; // consumer accepted in this cycle
                 }
             } else {
                 egress_valid.write(false);
@@ -385,7 +389,10 @@ SC_MODULE(SimpleRxFIFO) {
 
             if (valid_in.read() && ready_out.read()) {
                 AxiWord aw = axi_in.read();
-                fifo.write(axi_to_tlp(aw));
+                RawTLP p = axi_to_tlp(aw);
+                fifo.write(p);
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " Enqueue seq_num=" << p.seq_num << " thread_id=" << p.thread_id << std::endl;
             }
 
             RawTLP pkt;
@@ -617,7 +624,8 @@ SC_MODULE(iRC) {
 
                     raw_tlp.write(pkt);
                     raw_valid.write(true);   // Assert valid for this cycle only
-                    std::cout << sc_time_stamp() << " [" << name() << "] Send seq="<<pkt.seq_num<<" tid="<<pkt.thread_id << std::endl;
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " seq_num=" << pkt.seq_num << " thread_id=" << pkt.thread_id << std::endl;
 
                     // Consume one credit for this thread
                     credit_counter[thread_to_try - 1]--;  // Adjust index for credit_counter
@@ -657,12 +665,9 @@ SC_MODULE(iEP) {
 
     // Method to process popped data
     void process_popped_data(const RawTLP& pkt, int queue_id) {
-        // TODO: Add your custom processing logic here
-        std::cout << sc_time_stamp() 
-                  << " Processing popped packet from queue " << queue_id 
-                  << " with seq_num=" << pkt.seq_num 
-                  << " thread_id=" << pkt.thread_id 
-                  << std::endl;
+        std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                  << " queue_id=" << queue_id << " seq_num=" << pkt.seq_num
+                  << " thread_id=" << pkt.thread_id << std::endl;
     }
 
     void popper_thread() {
@@ -725,7 +730,7 @@ SC_MODULE(AxiNoC) {
     sc_in<bool>      ready_in;
 
     // fixed pipeline latency buffer & back-pressure generation
-    static const unsigned PIPE_LAT = NOC_STATIC_LATENCY; // latency cycles
+    static const unsigned PIPE_LAT = NOC_STATIC_LATENCY_ONE_WAY; // latency cycles
     AxiWord  pipe[PIPE_LAT];
     bool     pipe_valid[PIPE_LAT] = {false};
     unsigned pattern_ctr = 0;          // 0..NOC_PATTERN_LEN-1
@@ -744,8 +749,9 @@ SC_MODULE(AxiNoC) {
             if(valid_in.read() && ready_ok){
                 pipe[0] = axi_in.read();
                 pipe_valid[0] = true;
-
-                // nothing special to do; stall pattern is time-based
+                if (std::string(name()) == "AXI_NOC")
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " ingress seq_num=" << axi_to_tlp(pipe[0]).seq_num << std::endl;
             }
 
             pattern_ctr = (pattern_ctr + 1) % NOC_PATTERN_LEN;
@@ -754,7 +760,15 @@ SC_MODULE(AxiNoC) {
             if(pipe_valid[PIPE_LAT-1]){
                 valid_out.write(true);
                 axi_out.write(pipe[PIPE_LAT-1]);
-                if(ready_in.read()) pipe_valid[PIPE_LAT-1] = false;
+                if (std::string(name()) == "AXI_NOC")
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " EGRESS seq_num=" << axi_to_tlp(pipe[PIPE_LAT-1]).seq_num << std::endl;
+                if(ready_in.read()) {
+                    pipe_valid[PIPE_LAT-1] = false;
+                    if (std::string(name()) == "AXI_NOC")
+                        std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                                  << " ACCEPTED seq_num=" << axi_to_tlp(pipe[PIPE_LAT-1]).seq_num << std::endl;
+                }
             } else {
                 valid_out.write(false);
             }
@@ -766,6 +780,12 @@ SC_MODULE(AxiNoC) {
                     pipe_valid[i] = true;
                     pipe_valid[i-1] = false;
                 }
+            }
+
+            if(valid_in.read() && !ready_ok) {
+                if (std::string(name()) == "AXI_NOC")
+                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                              << " DROPPED seq_num=" << axi_to_tlp(axi_in.read()).seq_num << " (backpressure)" << std::endl;
             }
         }
     }
@@ -946,21 +966,28 @@ int sc_main(int argc, char* argv[]) {
     noc.ready_in(RX2NOC_ready);
 
     // traces – entire TX→NoC→RX path plus proxy credits
+    sc_trace(tf_tx, system_clk,         "system_clk");
+    sc_trace(tf_tx, reset_n,            "reset_n");
     sc_trace(tf_tx, RC2TX_raw_valid, "RC2TX_raw_valid");
     sc_trace(tf_tx, RC2TX_raw_tlp,  "RC2TX_raw_tlp");
     sc_trace(tf_tx, TX2NOC_valid,    "TX2NOC_valid");
-    sc_trace(tf_tx, NOC2TX_ready, "NOC_ready_to_TX");
+    sc_trace(tf_tx, NOC2TX_ready, "NOC2TX_ready");
     sc_trace(tf_tx, TX2NOC_axi,   "TX2NOC_axi");
     sc_trace(tf_tx, NOC2RX_valid,  "NOC2RX_valid");
     sc_trace(tf_tx, NOC2RX_axi,    "NOC2RX_axi");
-    sc_trace(tf_tx, RX2NOC_ready,  "RX_ready_to_NOC");
+    sc_trace(tf_tx, RX2NOC_ready,  "RX2NOC_ready");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
     sc_trace(tf_tx, RX2EP_tlp,   "RX2EP_tlp");
-    sc_trace(tf_tx, c_valid_tx, "credit_valid_tx");
-    sc_trace(tf_tx, c_ready_tx, "credit_ready_tx");
-    sc_trace(tf_tx, c_valid_rx, "credit_valid_rx");
-    sc_trace(tf_tx, credit_pkt2rc, "credit_pkt2rc");
-    sc_trace(tf_tx, credit_iEP2cTx, "credit_iEP2cTx");
+    // sc_trace(tf_tx, c_valid_tx, "credit_valid_tx");
+    // sc_trace(tf_tx, c_ready_tx, "credit_ready_tx");
+    // sc_trace(tf_tx, c_valid_rx, "credit_valid_rx");
+    // sc_trace(tf_tx, c_ready_rx, "credit_ready_rx");
+    // sc_trace(tf_tx, c_axi_tx,   "credit_axi_tx");
+    // sc_trace(tf_tx, c_axi_rx,   "credit_axi_rx");
+    // sc_trace(tf_tx, credit_pkt2rc, "credit_pkt2rc");
+    // sc_trace(tf_tx, credit_iEP2cTx, "credit_iEP2cTx");
+    // sc_trace(tf_tx, noc.stall_active_sig, "AXI_NOC_stall_active");
+    // sc_trace(tf_tx, noc.delta_cycle_ctr, "AXI_NOC_delta_cycle_ctr");
 
     // Duty cycle monitor instance
     CreditDutyMon mon("CreditMon");
@@ -975,8 +1002,16 @@ int sc_main(int argc, char* argv[]) {
     sc_start(20, SC_NS);
     reset_n.write(true);
     
-    // Run the simulation for longer to see the effects
-    sc_start(200, SC_US);
+    // Phase-1 : run for first half of sim_time_in_us with normal operation
+    const unsigned phase1_us = sim_time_in_us / 2;
+    sc_start(static_cast<double>(phase1_us), SC_US);
+
+    // Disable queue popping in iEP so that no new credits are generated
+    g_enable_popping = false;
+    std::cout << "*** Disabled iEP popping at " << sc_time_stamp() << " ***" << std::endl;
+
+    // Phase-2 : let pipeline drain for the remaining time
+    sc_start(static_cast<double>(sim_time_in_us - phase1_us), SC_US);
 
     // Print duty cycle stats
     mon.report();
