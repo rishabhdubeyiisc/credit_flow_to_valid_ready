@@ -8,6 +8,8 @@ from collections import defaultdict
 send_pattern = re.compile(r"(?P<time>\d+)\s+ns \[iRC(?P<tx>_tx)?\] Send seq=(?P<seq>\d+)")
 # pop pattern captures queue name so we can identify topology via prefix
 pop_pattern = re.compile(r"(?P<time>\d+)\s+ns \[(?P<queue>[^\]]+)\] Popping data: seq_num=(?P<seq>\d+)")
+# track FIFO occupancy prints
+depth_pattern = re.compile(r"\[(?P<which>[TR]X)_FIFO\] depth=(?P<d>\d+)")
 
 if len(sys.argv) != 2:
     print("Usage: python analyze_logs.py <sim_log.txt>  (use '-' for stdin)")
@@ -22,6 +24,8 @@ send_ts = {
 latencies = defaultdict(list)  # topology -> list of ns
 first_time = None
 last_time = 0
+# track FIFO occupancy prints
+max_depth = {'TX': 0, 'RX': 0}
 
 for line in source:
     line = line.strip()
@@ -53,6 +57,15 @@ for line in source:
         if first_time is None or t < first_time:
             first_time = t
         last_time = max(last_time, t)
+        continue
+
+    md = depth_pattern.search(line)
+    if md:
+        which = md.group('which')  # 'TX' or 'RX'
+        depth = int(md.group('d'))
+        if depth > max_depth[which]:
+            max_depth[which] = depth
+        continue
 
 if first_time is None:
     print("No events found – are you using the correct log?")
@@ -67,9 +80,14 @@ for topo in ('credit', 'ready'):
         print(f"{topo.capitalize()} path: no packets received")
         continue
     avg_latency = sum(latencies[topo]) / n
-    throughput_mpps = n / sim_duration_ns  # mega packets per ns (~packets/ns) convert later
-    throughput_mpps *= 1e3  # packets / us ~ Mpps
+    throughput_mpps = (n / (sim_duration_ns * 1e-9)) / 1e6  # packets/s -> Mpps
+    bandwidth_MBps = (n * 8) / (sim_duration_ns * 1e-9) / 1e6  # 8 bytes per packet
     print(f"{topo.capitalize()} path:")
     print(f"  Packets received : {n}")
     print(f"  Avg latency      : {avg_latency:.1f} ns")
-    print(f"  Throughput       : {throughput_mpps:.2f} Mpps\n") 
+    print(f"  Throughput       : {throughput_mpps:.2f} Mpps")
+    print(f"  Bandwidth        : {bandwidth_MBps:.2f} MB/s\n")
+
+# FIFO occupancy summary
+print(f"Max TX FIFO occupancy : {max_depth['TX']}")
+print(f"Max RX FIFO occupancy : {max_depth['RX']}\n") 

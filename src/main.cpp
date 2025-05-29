@@ -36,6 +36,43 @@ inline void debug_route(const char* mod, const RawTLP& pkt, int q) {
     std::cout << "["<<mod<<"] Route: seq_num="<<pkt.seq_num<<" tid="<<pkt.thread_id<<" -> queue "<<q << std::endl;
 }
 
+// ---------------- AXI Stream word used only between TX and RX ----------------
+struct AxiWord {
+    sc_uint<64> data{0};
+    bool        tlast{true};
+
+    bool operator==(const AxiWord& o) const { return data == o.data && tlast == o.tlast; }
+};
+
+inline std::ostream& operator<<(std::ostream& os, const AxiWord& w){
+    os << "AxiWord(data=" << w.data << ", tlast=" << w.tlast << ")"; return os;
+}
+
+inline void sc_trace(sc_trace_file* tf, const AxiWord& w, const std::string& n){
+    sc_trace(tf, w.data,   n+".data");
+    sc_trace(tf, w.tlast,  n+".tlast");
+}
+
+// -----------------------------------------------------------------------------
+// Conversion helpers used by TX/RX and any future network elements
+// -----------------------------------------------------------------------------
+
+inline AxiWord tlp_to_axi(const RawTLP& p){
+    AxiWord w; w.tlast = true;
+    sc_uint<64> d = p.seq_num;
+    d.range(33,32) = p.thread_id;
+    w.data = d;
+    return w;
+}
+
+inline RawTLP axi_to_tlp(const AxiWord& w){
+    RawTLP p; p.seq_num = w.data.range(31,0);
+    p.thread_id = w.data.range(33,32);
+    return p;
+}
+
+// -----------------------------------------------------------------------------
+
 SC_MODULE(Threaded_Queue) {
     sc_in<bool> clk;
     sc_in<bool> reset_n;
@@ -226,11 +263,10 @@ SC_MODULE(SimpleTxFIFO) {
     sc_in<RawTLP>      ingress_tlp;
     // egress toward RX (valid/ready)
     sc_out<bool>       egress_valid;
-    sc_out<RawTLP>     egress_tlp;
+    sc_out<AxiWord>    egress_axi;
     sc_in<bool>        egress_ready;
-    sc_out<unsigned>   occ_out;   // expose current occupancy (reg + fifo)
 
-    static const unsigned DEPTH = 1024;    // burst size
+    static const unsigned DEPTH = 48;    // 2 beats per TLP -> 24 packets
     sc_fifo<RawTLP> fifo;
     unsigned int max_occ = 0;
 
@@ -253,19 +289,20 @@ SC_MODULE(SimpleTxFIFO) {
                 std::cout << sc_time_stamp()
                           << " [TX_FIFO] depth=" << max_occ << std::endl;
             }
-            occ_out.write(cur_occ);
 
-            // fetch into holding register if empty
+            // fetch new packet when current TLP fully sent
             if (!holding && fifo.nb_read(held_pkt)) {
                 holding = true;
             }
 
             // drive outputs
             if (holding) {
-                egress_tlp.write(held_pkt);
+                AxiWord w = tlp_to_axi(held_pkt);
+                egress_axi.write(w);
                 egress_valid.write(true);
+
                 if (egress_ready.read()) {
-                    holding = false; // drop the packet
+                    holding = false;
                 }
             } else {
                 egress_valid.write(false);
@@ -288,12 +325,11 @@ SC_MODULE(SimpleRxFIFO) {
     sc_in<bool>        reset_n;
     // ingress from TX
     sc_in<bool>        valid_in;
-    sc_in<RawTLP>      tlp_in;
+    sc_in<AxiWord>     axi_in;
     sc_out<bool>       ready_out;
     // egress toward iEP_after_RX
     sc_out<bool>       valid_out;
     sc_out<RawTLP>     tlp_out;
-    sc_out<unsigned>   occ_out;
 
     static const unsigned DEPTH = 24;    // or 1 if you prefer true pass-through
     sc_fifo<RawTLP> fifo;
@@ -301,32 +337,23 @@ SC_MODULE(SimpleRxFIFO) {
 
     void main_thread() {
         wait(SC_ZERO_TIME);
-        bool holding = false;
-        RawTLP held_pkt;
         while (true) {
             wait(clk.posedge_event());
 
             ready_out.write(fifo.num_free() > 0);
 
             unsigned int occ = fifo.num_available();
-            if (occ > max_occ) {
-                max_occ = occ;
-                std::cout << sc_time_stamp() << " [RX_FIFO] depth=" << max_occ << std::endl;
-            }
-            occ_out.write(occ + (holding ? 1 : 0));
+            if (occ > max_occ) { max_occ = occ; std::cout << sc_time_stamp() << " [RX_FIFO] depth=" << max_occ << std::endl; }
 
             if (valid_in.read() && ready_out.read()) {
-                fifo.write(tlp_in.read());
+                AxiWord aw = axi_in.read();
+                fifo.write(axi_to_tlp(aw));
             }
 
-            if (!holding && fifo.nb_read(held_pkt)) {
-                holding = true;
-            }
-
-            if (holding) {
-                tlp_out.write(held_pkt);
+            RawTLP pkt;
+            if (fifo.nb_read(pkt)) {
+                tlp_out.write(pkt);
                 valid_out.write(true);
-                holding = false; // always pop after one cycle
             } else {
                 valid_out.write(false);
             }
@@ -623,13 +650,12 @@ int sc_main(int argc, char* argv[]) {
     sc_signal<bool>    raw_valid_iRC2TX;
     sc_signal<RawTLP>  raw_tlp_iRC2TX;
     sc_signal<bool>    TX2RX_valid;
-    sc_signal<RawTLP>  TX2RX_tlp;
+    sc_signal<AxiWord> TX2RX_axi;
     sc_signal<bool>    RX2TX_ready;
     sc_signal<bool>    RX2EP_valid;
     sc_signal<RawTLP>  RX2EP_tlp;
     sc_signal<sc_uint<3>> credit_proxy2iRC;
     sc_signal<sc_uint<3>> credit_iEP2proxy;
-    sc_signal<unsigned> tx_occ_sig, rx_occ_sig;
 
     // Create and connect TX path with single FIFO
     iRC rc_tx("iRC_tx");
@@ -644,20 +670,18 @@ int sc_main(int argc, char* argv[]) {
     tx_fifo.ingress_valid(raw_valid_iRC2TX);
     tx_fifo.ingress_tlp(raw_tlp_iRC2TX);
     tx_fifo.egress_valid(TX2RX_valid);
-    tx_fifo.egress_tlp(TX2RX_tlp);
+    tx_fifo.egress_axi(TX2RX_axi);
     tx_fifo.egress_ready(RX2TX_ready);
-    tx_fifo.occ_out(tx_occ_sig);
 
     // RX simple FIFO
     SimpleRxFIFO rx_fifo("RX");
     rx_fifo.clk(system_clk);
     rx_fifo.reset_n(reset_n);
     rx_fifo.valid_in(TX2RX_valid);
-    rx_fifo.tlp_in(TX2RX_tlp);
+    rx_fifo.axi_in(TX2RX_axi);
     rx_fifo.ready_out(RX2TX_ready);
     rx_fifo.valid_out(RX2EP_valid);
     rx_fifo.tlp_out(RX2EP_tlp);
-    rx_fifo.occ_out(rx_occ_sig);
 
     // iEP instance after RX (consumes TX path)
     iEP ep_rx("iEP_after_RX");
@@ -683,14 +707,12 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf_tx, raw_valid_iRC2TX, "raw_valid_iRC2TX");
     sc_trace(tf_tx, raw_tlp_iRC2TX, "raw_tlp_iRC2TX");
     sc_trace(tf_tx, TX2RX_valid, "TX2RX_valid");
-    sc_trace(tf_tx, TX2RX_tlp, "TX2RX_tlp");
+    sc_trace(tf_tx, TX2RX_axi, "TX2RX_axi");
     sc_trace(tf_tx, RX2TX_ready, "RX2TX_ready");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
     sc_trace(tf_tx, RX2EP_tlp, "RX2EP_tlp");
     sc_trace(tf_tx, credit_proxy2iRC, "credit_proxy2iRC");
     sc_trace(tf_tx, credit_iEP2proxy, "credit_iEP2proxy");
-    sc_trace(tf_tx, tx_occ_sig, "TX_FIFO_occ");
-    sc_trace(tf_tx, rx_occ_sig, "RX_FIFO_occ");
 
     // Initial values
     reset_n.write(false);
