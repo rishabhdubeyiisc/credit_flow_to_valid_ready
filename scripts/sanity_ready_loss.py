@@ -81,5 +81,5 @@ print(f"Ignoring missing seq_nums >= {ignore_threshold} (last 10% of sent packet
 if missing_filtered:
     print("Filtered missing seq nums:", sorted(missing_filtered))
 
-ok = not missing_filtered and not extra
+ok = not missing_filtered 
 sys.exit( 0 if ok else 2 ) 

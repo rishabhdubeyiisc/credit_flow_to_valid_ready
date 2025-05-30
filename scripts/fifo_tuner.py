@@ -6,7 +6,7 @@ ANALYZE = 'scripts/analyze_logs.py'
 SANITY = 'scripts/sanity_ready_loss.py'
 
 TX_DEPTHS = [2, 4, 8, 16, 24, 32, 64, 128, 256, 512, 1024]
-RX_DEPTHS = [2, 4]
+RX_DEPTHS = [1, 2, 4]
 TARGET_RATIO = 0.8  # ready throughput should be this fraction of credit throughput
 
 # Regexes to locate the TX and RX depth constexpr lines in main.cpp

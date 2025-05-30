@@ -10,13 +10,13 @@
 // Central build-time configuration (all sizes / latencies in one place)
 // -----------------------------------------------------------------------------
 
-constexpr unsigned TX_FIFO_DEPTH   = 1024;   // entries (24 packets @ 64-bit)
-constexpr unsigned RX_FIFO_DEPTH   = 4;   // entries
+constexpr unsigned TX_FIFO_DEPTH   = 16;   // entries (24 packets @ 64-bit)
+constexpr unsigned RX_FIFO_DEPTH   = 2;   // entries
 constexpr unsigned THREAD_Q_DEPTH = 8;   // per-thread depth inside iEP/FrontEnd
 const unsigned GLOBAL_SENSE_WINDOW = 8; // can be tuned – equal to Threaded FIFO depth
 constexpr unsigned sim_time_in_us = 400;  // total simulation duration
 
-constexpr unsigned NOC_STATIC_LATENCY_ONE_WAY = 10 ;  //((2*65) + 20)// fixed AXI cycles through NoC //taking from NIC Fabric thus 2 times as C2C + GPU fabrics + Lets take C2C and SMN bridges to add 10 Cycles // this in one way latency only
+constexpr unsigned NOC_STATIC_LATENCY_ONE_WAY = ((2*65) + 20) ;  //((2*65) + 20)// fixed AXI cycles through NoC //taking from NIC Fabric thus 2 times as C2C + GPU fabrics + Lets take C2C and SMN bridges to add 10 Cycles // this in one way latency only
 constexpr unsigned NOC_STALL_PCT  = 15; // percentage (0-99) of cycles ready is LOW
 constexpr unsigned NOC_PATTERN_LEN = 100; // resolution (cycles)
 static_assert(NOC_STALL_PCT < 100, "stall percentage must be <100");
@@ -740,10 +740,13 @@ SC_MODULE(AxiNoC) {
         while(true){
             wait(clk.posedge_event());
 
-            // Deterministic duty-cycle stall: ready low for NOC_STALL_PCT % of pattern len
+            // Predict stall condition for next cycle
+            const unsigned next_pattern_ctr = (pattern_ctr + 1) % NOC_PATTERN_LEN;
             const unsigned stall_cycles = (NOC_PATTERN_LEN * NOC_STALL_PCT) / 100;
-            bool stall_active = (pattern_ctr < stall_cycles);
-            bool ready_ok = !pipe_valid[0] && !stall_active;
+            bool next_stall_active = (next_pattern_ctr < stall_cycles);
+            
+            // Only assert ready if we won't stall next cycle
+            bool ready_ok = !pipe_valid[0] && !next_stall_active;
             ready_out.write(ready_ok);
 
             if(valid_in.read() && ready_ok){
@@ -754,7 +757,8 @@ SC_MODULE(AxiNoC) {
                               << " ingress seq_num=" << axi_to_tlp(pipe[0]).seq_num << std::endl;
             }
 
-            pattern_ctr = (pattern_ctr + 1) % NOC_PATTERN_LEN;
+            // Update pattern counter for next cycle
+            pattern_ctr = next_pattern_ctr;
 
             // Drive output when last stage valid
             if(pipe_valid[PIPE_LAT-1]){

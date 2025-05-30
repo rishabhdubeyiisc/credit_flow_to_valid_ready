@@ -1,6 +1,6 @@
-# Credit-Based vs Ready/Valid – SystemC Playground
+# SystemC-based Network-on-Chip (NoC) Simulation
 
-This repo is a **minimal yet complete** experiment-bed that lets you compare two flow-control philosophies side-by-side under the *same* traffic generator and consumer logic.
+This project implements a SystemC-based simulation of a Network-on-Chip (NoC) system with credit-based flow control. The system models a communication path between a Root Complex (RC) and an Endpoint (EP) with intermediate buffering and network elements.
 
 ```
 Direct credit path                            Hybrid (credit + ready/valid)
@@ -13,7 +13,7 @@ Direct credit path                            Hybrid (credit + ready/valid)
                                                  └──── credit bus via ProxyCreditGen ────────────────────────┘
 ```
 
-Both topologies share one clock and run for 20 µs; you can watch every wave in **GTKW** and mine every statistic with the included Python tools.
+Both topologies share one clock and run for 400 µs; you can watch every wave in **GTKW** and mine every statistic with the included Python tools.
 
 ---
 ## 1.  Modules (all in `src/main.cpp`)
@@ -23,10 +23,11 @@ Both topologies share one clock and run for 20 µs; you can watch every wave in 
 | `iRC` / `iRC_tx`  | Round-robin multi-thread sender. One credit counter per thread; prints `Send seq=n tid=t`. |
 | `Threaded_Queue`  | 8-deep FIFO + credit logic for **one** thread. Building block for iEP & front-ends. |
 | `ThreadedFrontEnd`| Router + **3×** `Threaded_Queue` + credit OR-combine. Re-used by both iEP flavours. |
-| `SimpleTxFIFO`    | *Single* FIFO that converts Raw-valid/TLP into ready/valid. Depth tunable (default 24). |
+| `SimpleTxFIFO`    | *Single* FIFO that converts Raw-valid/TLP into ready/valid. Depth tunable (default 16). |
 | `SimpleRxFIFO`    | Reverse converter (ready/valid → Raw-valid/TLP). Depth tunable (default 2). |
-| `ProxyCreditGen`  | "Leaky-bucket" proxy that **continues counting** credits while it emits buffered ones; 8-cycle stats window. Breaks the long credit loop safely. |
-| `AxiNoC`          | 12-stage pipeline that asserts `ready` low for `NOC_STALL_CYC` cycles and high for `NOC_READY_CYC` cycles, modelling round-robin arbitration. |
+| `CreditTx`        | Converts credit pulses to AXI packets for network transmission. |
+| `CreditRx`        | Converts AXI credit packets back to credit pulses. |
+| `AxiNoC`          | Pipeline with configurable latency that implements deterministic stall patterns. |
 | `iEP`             | Classical credit consumer. Pops one pkt/queue every 4 clks. |
 | `iEP_after_RX`    | Same as iEP but fed through TX/RX path. |
 
@@ -35,12 +36,13 @@ Both topologies share one clock and run for 20 µs; you can watch every wave in 
 
 | Symbol                                | Description | Default |
 |---------------------------------------|-------------|---------|
-| `GLOBAL_SENSE_WINDOW`                 | Statistics window in `ProxyCreditGen` (credits keep flowing even while sensing). | 8 |
-| `TX_FIFO_DEPTH`                       | Burst buffer at TX; ***should cover stall latency*** (48 fits 12-cycle NoC × 4 beats). | 48 |
-| `RX_FIFO_DEPTH`                       | Elasticity buffer after network. | 24 |
-| `NOC_STALL_CYC`/`NOC_READY_CYC`       | Deterministic ready-low / ready-high period in `AxiNoC`. | 6 / 6 |
-| `NOC_STALL_PCT`                       | Duty-cycle of ready-low in `AxiNoC` (0-99 %). | 10 % |
-| `Threaded_Queue::FIFO_CAPACITY`       | Per-thread depth in iEPs. | 8 |
+| `GLOBAL_SENSE_WINDOW`                 | Statistics window for credit accumulation. | 8 |
+| `TX_FIFO_DEPTH`                       | Burst buffer at TX; should cover network latency. | 16 |
+| `RX_FIFO_DEPTH`                       | Elasticity buffer after network. | 2 |
+| `NOC_STATIC_LATENCY_ONE_WAY`          | Fixed pipeline latency through NoC. | 150 |
+| `NOC_STALL_PCT`                       | Duty-cycle of ready-low in `AxiNoC` (0-99 %). | 15 % |
+| `NOC_PATTERN_LEN`                     | Resolution of stall pattern. | 100 |
+| `THREAD_Q_DEPTH`                      | Per-thread depth in iEPs. | 8 |
 | `g_enable_popping`                    | Runtime switch to pause the popper. | true |
 
 ---
@@ -100,17 +102,164 @@ Use the CSV in spreadsheets or feed the whole README back to an LLM for further 
 ---
 ## 6.  Typical experiments
 
-1. **Bandwidth-delay product** – raise `SimpleTxFIFO::DEPTH` while inserting artificial latency blocks between TX and RX.
+1. **Bandwidth-delay product** – raise `TX_FIFO_DEPTH` while adjusting `NOC_STATIC_LATENCY_ONE_WAY` to observe buffer requirements.
 2. **Congestion** – disable popping in `iEP_after_RX` to see credit starvation propagate back through the network.
 3. **Thread scaling** – widen `RawTLP.thread_id`, update loop bounds, and observe how credit bus width vs window sizing changes buffer requirements.
-4. **Algorithmic tuning** – change the emit rule in `ProxyCreditGen` (e.g. emit 2 credits/queue/clk) and compare results with the tuner.
+4. **Stall pattern tuning** – adjust `NOC_STALL_PCT` and `NOC_PATTERN_LEN` to observe impact on throughput and latency.
 
 ---
-### This README as an AI prompt
-The document now contains:
-* full architectural diagram
-* module cheat-sheet
-* all tunable parameters & defaults
-* how to build, run, analyse and sweep
+## 7. Implementation Details
 
-so pasting it into an LLM gives enough context to propose new modules or debug future changes without reading the entire codebase.
+### Packet Flow
+1. **RC to EP Direct Path**
+   - RawTLP packets flow directly with credit-based flow control
+   - Credits are returned immediately (1-cycle loop)
+   - No network latency or backpressure
+
+2. **RC to EP Through Network**
+   - RawTLP → AXI conversion at TX
+   - Network traversal with latency and backpressure
+   - AXI → RawTLP conversion at RX
+   - Credits travel through separate network path
+
+### Credit System
+1. **Credit Generation**
+   - Each thread queue generates credits independently
+   - Credits accumulate over GLOBAL_SENSE_WINDOW cycles
+   - Credits are converted to AXI packets for network transmission
+
+2. **Credit Consumption**
+   - RC maintains per-thread credit counters
+   - Round-robin scheduling across threads
+   - Credits consumed on packet transmission
+
+### NoC Implementation
+1. **Pipeline Structure**
+   - Fixed latency pipeline (NOC_STATIC_LATENCY_ONE_WAY stages)
+   - Each stage can hold one AXI word
+   - Non-blocking pipeline shifts
+
+2. **Backpressure Mechanism**
+   - Predicts stall conditions one cycle ahead
+   - Deterministic stall pattern based on NOC_STALL_PCT
+   - Prevents packet drops by looking ahead
+
+---
+## 8. Design Considerations
+
+### Buffer Sizing
+1. **TX FIFO**
+   - Must cover network latency (NOC_STATIC_LATENCY_ONE_WAY)
+   - Should handle burst traffic during stall periods
+   - Current size: 16 entries
+
+2. **RX FIFO**
+   - Provides elasticity after network
+   - Smaller size (2 entries) due to credit-based flow control
+   - Prevents credit starvation
+
+3. **Thread Queues**
+   - Fixed depth (8 entries) per thread
+   - Must handle credit round-trip latency
+   - Balances throughput and resource usage
+
+### Network Parameters
+1. **Latency**
+   - Fixed one-way latency: 150 cycles
+   - Accounts for C2C and GPU fabric delays
+   - Includes SMN bridge overhead
+
+2. **Stall Pattern**
+   - 15% stall duty cycle
+   - 100-cycle pattern length
+   - Deterministic for predictable behavior
+
+### Performance Metrics
+1. **Throughput**
+   - Measured in packets per second
+   - Affected by:
+     * Network latency
+     * Stall percentage
+     * Buffer depths
+     * Credit window size
+
+2. **Latency**
+   - End-to-end packet delay
+   - Components:
+     * Network traversal time
+     * Buffer queuing time
+     * Credit round-trip time
+
+---
+## 9. Debugging Guide
+
+### Common Issues
+1. **Credit Starvation**
+   - Symptoms: Low throughput, high latency
+   - Check: Credit window size, buffer depths
+   - Fix: Increase GLOBAL_SENSE_WINDOW or buffer sizes
+
+2. **Buffer Overflow**
+   - Symptoms: Packet drops, credit mismatch
+   - Check: TX/RX FIFO depths
+   - Fix: Increase buffer sizes or reduce traffic
+
+3. **Network Congestion**
+   - Symptoms: High latency, low throughput
+   - Check: NOC_STALL_PCT, pattern length
+   - Fix: Adjust stall parameters or increase buffers
+
+### Tracing
+1. **VCD Files**
+   - `irc_iep_flow.vcd`: Direct path signals
+   - `irc_tx_flow.vcd`: Network path signals
+   - Key signals to monitor:
+     * valid/ready handshakes
+     * credit pulses
+     * FIFO occupancy
+
+2. **Console Output**
+   - Packet sequence numbers
+   - Thread IDs
+   - FIFO depths
+   - Credit statistics
+
+---
+## 10. Future Enhancements
+
+### Potential Improvements
+1. **Dynamic Buffer Sizing**
+   - Adaptive TX/RX FIFO depths
+   - Based on traffic patterns
+   - Automatic credit window tuning
+
+2. **Advanced Flow Control**
+   - Priority-based scheduling
+   - Quality of Service (QoS) support
+   - Bandwidth reservation
+
+3. **Network Features**
+   - Multiple virtual channels
+   - Adaptive routing
+   - Error detection/correction
+
+4. **Monitoring**
+   - Real-time performance metrics
+   - Automatic bottleneck detection
+   - Predictive congestion avoidance
+
+### Research Directions
+1. **Credit System Optimization**
+   - Optimal credit window sizing
+   - Credit prediction algorithms
+   - Dynamic credit allocation
+
+2. **Buffer Management**
+   - Optimal buffer sizing
+   - Buffer sharing strategies
+   - Memory efficiency
+
+3. **Network Architecture**
+   - Topology optimization
+   - Routing algorithms
+   - Load balancing
