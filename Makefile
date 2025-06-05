@@ -28,5 +28,9 @@ clean:
 	rm -f irc_iep_flow.vcd
 	rm -f irc_tx_flow.vcd
 	rm -f sim*.txt
+	rm -f fifo_sweep_report.csv
+	rm -f auto_run.log
+	rm -f perf.txt
+	rm -f noc_sweep_report.csv
 
 .PHONY: clean 

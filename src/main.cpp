@@ -101,7 +101,7 @@ int sc_main(int argc, char* argv[]) {
     ep_rx.credit_out(credit_iEP2cTx);
 
     // Credit path over its own deterministic AXI NoC
-    CreditTx c_tx("CreditTx", GLOBAL_SENSE_WINDOW);
+    CreditTx c_tx("CreditTx", CREDIT_SENSE_WINDOW);
     c_tx.clk(system_clk);
     c_tx.reset_n(reset_n);
     c_tx.credit_in(credit_iEP2cTx);
@@ -110,7 +110,7 @@ int sc_main(int argc, char* argv[]) {
     c_tx.ready_in(c_ready_tx);
 
     // Use a separate NoC instance but same behaviour
-    AxiNoC c_noc("Credit_NOC", NOC_STATIC_LATENCY_ONE_WAY, NOC_PATTERN_LEN, NOC_STALL_PCT);
+    AxiNoC c_noc("Credit_NOC", CREDIT_NOC_LATENCY, NOC_PATTERN_LEN, CREDIT_NOC_STALL_PCT);
     c_noc.clk(system_clk);
     c_noc.reset_n(reset_n);
     c_noc.valid_in(c_valid_tx);
@@ -132,7 +132,7 @@ int sc_main(int argc, char* argv[]) {
     rc_tx.credit_in(credit_pkt2rc);
 
     // ------------------- Data path NoC (TX → RX) ---------------------------
-    AxiNoC noc("AXI_NOC", NOC_STATIC_LATENCY_ONE_WAY, NOC_PATTERN_LEN, NOC_STALL_PCT);
+    AxiNoC noc("AXI_NOC", DATA_NOC_LATENCY, NOC_PATTERN_LEN, DATA_NOC_STALL_PCT);
     noc.clk(system_clk);
     noc.reset_n(reset_n);
     noc.valid_in(TX2NOC_valid);
@@ -155,16 +155,19 @@ int sc_main(int argc, char* argv[]) {
     sc_trace(tf_tx, RX2NOC_ready,  "RX2NOC_ready");
     sc_trace(tf_tx, RX2EP_valid, "RX2EP_valid");
     sc_trace(tf_tx, RX2EP_tlp,   "RX2EP_tlp");
-    // sc_trace(tf_tx, c_valid_tx, "credit_valid_tx");
-    // sc_trace(tf_tx, c_ready_tx, "credit_ready_tx");
-    // sc_trace(tf_tx, c_valid_rx, "credit_valid_rx");
-    // sc_trace(tf_tx, c_ready_rx, "credit_ready_rx");
-    // sc_trace(tf_tx, c_axi_tx,   "credit_axi_tx");
-    // sc_trace(tf_tx, c_axi_rx,   "credit_axi_rx");
-    // sc_trace(tf_tx, credit_pkt2rc, "credit_pkt2rc");
-    // sc_trace(tf_tx, credit_iEP2cTx, "credit_iEP2cTx");
-    // sc_trace(tf_tx, noc.stall_active_sig, "AXI_NOC_stall_active");
-    // sc_trace(tf_tx, noc.delta_cycle_ctr, "AXI_NOC_delta_cycle_ctr");
+    // Credit path traces
+    sc_trace(tf_tx, c_valid_tx, "credit_valid_tx");
+    sc_trace(tf_tx, c_ready_tx, "credit_ready_tx");
+    sc_trace(tf_tx, c_valid_rx, "credit_valid_rx");
+    sc_trace(tf_tx, c_ready_rx, "credit_ready_rx");
+    sc_trace(tf_tx, c_axi_tx,   "credit_axi_tx");
+    sc_trace(tf_tx, c_axi_rx,   "credit_axi_rx");
+    sc_trace(tf_tx, credit_pkt2rc, "credit_pkt2rc");
+    sc_trace(tf_tx, credit_iEP2cTx, "credit_iEP2cTx");
+    sc_trace(tf_tx, c_noc.stall_active_sig, "CREDIT_NOC_stall_active");
+    sc_trace(tf_tx, c_noc.delta_cycle_ctr, "CREDIT_NOC_delta_cycle_ctr");
+    sc_trace(tf_tx, noc.stall_active_sig, "DATA_NOC_stall_active");
+    sc_trace(tf_tx, noc.delta_cycle_ctr, "DATA_NOC_delta_cycle_ctr");
 
     // Duty cycle monitor instance
     CreditDutyMon mon("CreditMon");
