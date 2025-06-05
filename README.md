@@ -2,6 +2,33 @@
 
 This project implements a SystemC-based simulation of a Network-on-Chip (NoC) system with credit-based flow control. The system models a communication path between a Root Complex (RC) and an Endpoint (EP) with intermediate buffering and network elements.
 
+## Table of Contents
+1. [Project Overview](#1-project-overview)
+2. [System Architecture](#2-system-architecture)
+3. [Project Structure](#3-project-structure)
+4. [Build & Run](#4-build--run)
+5. [Debugging](#5-debugging)
+6. [Performance Analysis](#6-performance-analysis)
+7. [Development Guide](#7-development-guide)
+
+## 1. Project Overview
+
+The project simulates two communication topologies:
+
+1. **Direct Credit Path**: Direct connection between RC and EP with immediate credit return
+2. **Hybrid Path**: Network-based connection with TX/RX FIFOs and credit flow control
+
+### Key Features
+- Multi-threaded packet generation
+- Credit-based flow control
+- Configurable network latency and backpressure
+- FIFO buffering with tunable depths
+- Comprehensive performance analysis tools
+
+## 2. System Architecture
+
+### Topology Diagrams
+
 ```
 Direct credit path                            Hybrid (credit + ready/valid)
 ───────────────────────                      ───────────────────────────────────────────────────────────────
@@ -13,203 +40,219 @@ Direct credit path                            Hybrid (credit + ready/valid)
                                                  └──── credit bus via ProxyCreditGen ────────────────────────┘
 ```
 
-Both topologies share one clock and run for 400 µs; you can watch every wave in **GTKW** and mine every statistic with the included Python tools.
-
----
-## 1.  Modules (all in `src/`)
-
-| Module            | Purpose / Notes |
-|-------------------|-----------------|
-| `iRC` / `iRC_tx`  | Round-robin multi-thread sender. One credit counter per thread; prints `Send seq=n tid=t`. |
-| `Threaded_Queue`  | 8-deep FIFO + credit logic for **one** thread. Building block for iEP & front-ends. |
-| `ThreadedFrontEnd`| Router + **3×** `Threaded_Queue` + credit OR-combine. Re-used by both iEP flavours. |
-| `SimpleTxFIFO`    | *Single* FIFO that converts Raw-valid/TLP into ready/valid. Depth tunable (default 16). |
-| `SimpleRxFIFO`    | Reverse converter (ready/valid → Raw-valid/TLP). Depth tunable (default 2). |
-| `CreditTx`        | Converts credit pulses to AXI packets for network transmission. |
-| `CreditRx`        | Converts AXI credit packets back to credit pulses. |
-| `AxiNoC`          | Pipeline with configurable latency that implements deterministic stall patterns. |
-| `iEP`             | Classical credit consumer. Pops one pkt/queue every 4 clks. |
-| `iEP_after_RX`    | Same as iEP but fed through TX/RX path. |
-
----
-## 2.  Key knobs
-
-| Symbol                                | Description | Default |
-|---------------------------------------|-------------|---------|
-| `GLOBAL_SENSE_WINDOW`                 | Statistics window for credit accumulation. | 8 |
-| `TX_FIFO_DEPTH`                       | Burst buffer at TX; should cover network latency. | 16 |
-| `RX_FIFO_DEPTH`                       | Elasticity buffer after network. | 2 |
-| `NOC_STATIC_LATENCY_ONE_WAY`          | Fixed pipeline latency through NoC. | 150 |
-| `NOC_STALL_PCT`                       | Duty-cycle of ready-low in `AxiNoC` (0-99 %). | 15 % |
-| `NOC_PATTERN_LEN`                     | Resolution of stall pattern. | 100 |
-| `THREAD_Q_DEPTH`                      | Per-thread depth in iEPs. | 8 |
-| `g_enable_popping`                    | Runtime switch to pause the popper. | true |
-
----
-## 3.  Build & run
-```bash
-make            # -> build/sim
-./build/sim     # generates irc_iep_flow.vcd  +  irc_tx_flow.vcd
+### Module Hierarchy
 ```
-Open either file in **GTKWave** to inspect both data & credit buses.
-
----
-## 4.  Post-run analysis
-
-### Log Analysis
-```bash
-python3 scripts/analyze_logs.py sim_log.txt
+System
+├── Direct Path
+│   ├── iRC (Root Complex)
+│   └── iEP (Endpoint)
+└── Network Path
+    ├── iRC_tx
+    ├── SimpleTxFIFO
+    ├── AxiNoC
+    ├── SimpleRxFIFO
+    └── iEP_after_RX
 ```
-prints packet count, average latency and throughput **per topology** by parsing the console log.
 
----
-## 5.  FIFO depth sweeper
-
-### `fifo_tuner.py` (auto-explorer)
-
-1. Iterates over `TX_DEPTHS × RX_DEPTHS` (config arrays inside the script).
-2. For every pair it:
-   • patches `TX_FIFO_DEPTH` / `RX_FIFO_DEPTH` in `src/main.cpp`
-   • `make` + simulation (console captured to `auto_run.log`)
-   • runs `analyze_logs.py` and grabs:
-     – credit & ready throughput / latency / packet count
-     – max FIFO occupancy (TX, RX)
-     – duty-cycle of both credit buses
-3. Writes a one-line status to the console and appends a full row to
-   `fifo_sweep_report.csv` with all metrics.
-
-CSV columns:
-
-| col | meaning |
-|-----|---------|
-| tx_depth, rx_depth | FIFO sizes under test |
-| credit_mpps / ready_mpps | sustained throughput |
-| credit_lat_ns / ready_lat_ns | average end-to-end latency |
-| credit_pkts / ready_pkts | packets delivered |
-| ratio | ready / credit throughput |
-| max_tx / max_rx | worst-case FIFO depth seen |
-| duty_direct_% / duty_hybrid_% | credit-bus duty cycle seen by monitor |
-| status | `OK` if ratio ≥ 0.9 (configurable) |
-
-Run it:
-
-```bash
-python3 scripts/fifo_tuner.py | tee fifo_tuner_output.txt
-cat fifo_sweep_report.csv | column -t -s,
+### Data Flow
 ```
-Automatically explores TX/RX FIFO depth combinations and generates a CSV report with performance metrics.
+Packet Flow:
+RC → RawTLP → TX FIFO → AXI → NoC → AXI → RX FIFO → RawTLP → EP
 
-### Ready Signal Analysis
-```bash
-python3 scripts/sanity_ready_loss.py
+Credit Flow:
+EP → Credit → CreditTx → AXI → NoC → AXI → CreditRx → Credit → RC
 ```
-Analyzes ready signal behavior and potential packet loss scenarios.
 
----
-## 5.  Performance Analysis
+## 3. Project Structure
 
-The project includes several tools for performance analysis:
+### Directory Layout
+```
+.
+├── src/                    # Source files
+│   ├── config.h           # Build-time configuration
+│   ├── main.cpp           # Main simulation entry
+│   ├── modules.h          # Module declarations
+│   ├── modules.cpp        # Module implementations
+│   └── payloads.h         # Packet and data structures
+├── scripts/               # Analysis and tuning tools
+│   ├── analyze_logs.py    # Log analysis
+│   ├── fifo_tuner.py      # FIFO depth optimization
+│   ├── noc_tuner.py       # NoC parameter tuning
+│   └── sanity_ready_loss.py # Ready signal analysis
+├── waves_reports/         # Waveform and analysis outputs
+├── Makefile              # Build configuration
+└── README.md             # This file
+```
 
-1. **Waveform Analysis**
-   - GTKWave visualization of both direct and network paths
-   - Credit bus monitoring
-   - FIFO occupancy tracking
+### Key Files
+| File | Purpose |
+|------|---------|
+| `src/config.h` | Configuration parameters and constants |
+| `src/main.cpp` | Simulation setup and module instantiation |
+| `src/modules.h` | Module interfaces and declarations |
+| `src/modules.cpp` | Module implementations |
+| `src/payloads.h` | Data structures and packet formats |
 
-2. **Statistical Analysis**
-   - Throughput measurements
-   - Latency analysis
-   - Credit utilization metrics
+## 4. Build & Run
 
-3. **Buffer Optimization**
-   - Automated FIFO depth tuning
-   - Performance vs. resource trade-offs
-   - CSV-based reporting
+### Prerequisites
+- SystemC 2.3.3 or later
+- C++17 compatible compiler
+- Python 3.6+ (for analysis scripts)
+- GTKWave (for waveform viewing)
 
----
-## 6.  Implementation Details
+### Build Steps
+```bash
+# Clone the repository
+git clone <repository-url>
+cd <project-directory>
 
-### Packet Flow
-1. **RC to EP Direct Path**
-   - RawTLP packets flow directly with credit-based flow control
-   - Credits are returned immediately (1-cycle loop)
-   - No network latency or backpressure
+# Build the project
+make clean  # Clean previous build
+make        # Build the simulation
 
-2. **RC to EP Through Network**
-   - RawTLP → AXI conversion at TX
-   - Network traversal with latency and backpressure
-   - AXI → RawTLP conversion at RX
-   - Credits travel through separate network path
+# Run the simulation
+./build/sim
+```
 
-### Credit System
-1. **Credit Generation**
-   - Each thread queue generates credits independently
-   - Credits accumulate over GLOBAL_SENSE_WINDOW cycles
-   - Credits are converted to AXI packets for network transmission
+### Output Files
+- `irc_iep_flow.vcd`: Direct path waveforms
+- `irc_tx_flow.vcd`: Network path waveforms
+- `auto_run.log`: Simulation console output
+- `fifo_sweep_report.csv`: FIFO tuning results
+- `noc_sweep_report.csv`: NoC parameter tuning results
 
-2. **Credit Consumption**
-   - RC maintains per-thread credit counters
-   - Round-robin scheduling across threads
-   - Credits consumed on packet transmission
+## 5. Debugging
 
-### NoC Implementation
-1. **Pipeline Structure**
-   - Fixed latency pipeline (NOC_STATIC_LATENCY_ONE_WAY stages)
-   - Each stage can hold one AXI word
-   - Non-blocking pipeline shifts
+### Waveform Analysis
+```bash
+# View direct path waveforms
+gtkwave irc_iep_flow.vcd
 
-2. **Backpressure Mechanism**
-   - Predicts stall conditions one cycle ahead
-   - Deterministic stall pattern based on NOC_STALL_PCT
-   - Prevents packet drops by looking ahead
+# View network path waveforms
+gtkwave irc_tx_flow.vcd
+```
 
----
-## 7.  Debugging Guide
+### Key Signals to Monitor
+1. **Data Path**
+   - `valid/ready` handshakes
+   - Packet sequence numbers
+   - FIFO occupancy
+
+2. **Credit Path**
+   - Credit pulses
+   - Credit counters
+   - Credit bus activity
 
 ### Common Issues
 1. **Credit Starvation**
-   - Symptoms: Low throughput, high latency
-   - Check: Credit window size, buffer depths
-   - Fix: Increase GLOBAL_SENSE_WINDOW or buffer sizes
+   - Check credit window size
+   - Monitor credit counter values
+   - Verify credit return path
 
 2. **Buffer Overflow**
-   - Symptoms: Packet drops, credit mismatch
-   - Check: TX/RX FIFO depths
-   - Fix: Increase buffer sizes or reduce traffic
+   - Monitor FIFO occupancy
+   - Check buffer depths
+   - Verify backpressure signals
 
 3. **Network Congestion**
-   - Symptoms: High latency, low throughput
-   - Check: NOC_STALL_PCT, pattern length
-   - Fix: Adjust stall parameters or increase buffers
+   - Check NoC latency settings
+   - Monitor stall patterns
+   - Verify buffer sizes
 
-### Tracing
-1. **VCD Files**
-   - `irc_iep_flow.vcd`: Direct path signals
-   - `irc_tx_flow.vcd`: Network path signals
-   - Key signals to monitor:
-     * valid/ready handshakes
-     * credit pulses
-     * FIFO occupancy
+## 6. Performance Analysis
 
-2. **Console Output**
-   - Packet sequence numbers
-   - Thread IDs
-   - FIFO depths
-   - Credit statistics
+### Analysis Tools
+1. **Log Analysis**
+```bash
+python3 scripts/analyze_logs.py sim_log.txt
+```
+Outputs:
+- Packet counts
+- Average latency
+- Throughput metrics
+- FIFO occupancy
 
----
-## 8.  Future Work
+2. **FIFO Tuning**
+```bash
+python3 scripts/fifo_tuner.py
+```
+Sweeps TX/RX FIFO depths and generates performance report.
 
+3. **NoC Parameter Tuning**
+```bash
+python3 scripts/noc_tuner.py
+```
+Sweeps NoC latency and stall parameters.
+
+### Performance Metrics
+1. **Throughput**
+   - Packets per second
+   - Bandwidth (MB/s)
+   - Credit utilization
+
+2. **Latency**
+   - End-to-end delay
+   - Network traversal time
+   - Credit return time
+
+3. **Resource Usage**
+   - Buffer occupancy
+   - Credit bus activity
+   - Network utilization
+
+## 7. Development Guide
+
+### Adding New Features
+1. **Module Development**
+   - Add interface in `modules.h`
+   - Implement in `modules.cpp`
+   - Update `main.cpp` for instantiation
+
+2. **Configuration Changes**
+   - Modify parameters in `config.h`
+   - Update build system if needed
+   - Add new analysis tools if required
+
+### Testing
+1. **Unit Testing**
+   - Test individual modules
+   - Verify interfaces
+   - Check timing constraints
+
+2. **Integration Testing**
+   - Verify module interactions
+   - Check system behavior
+   - Validate performance
+
+### Best Practices
+1. **Code Style**
+   - Follow SystemC coding guidelines
+   - Use consistent naming conventions
+   - Document interfaces and parameters
+
+2. **Performance**
+   - Monitor resource usage
+   - Optimize critical paths
+   - Profile system behavior
+
+3. **Debugging**
+   - Use waveform analysis
+   - Monitor key signals
+   - Check error conditions
+
+### Future Work
 1. **Performance Optimization**
    - Dynamic buffer sizing
-   - Adaptive credit window tuning
-   - Priority-based scheduling
+   - Adaptive credit window
+   - Priority scheduling
 
 2. **Feature Enhancements**
    - Multiple virtual channels
    - Error detection/correction
-   - Quality of Service (QoS) support
+   - QoS support
 
 3. **Analysis Tools**
-   - Real-time performance monitoring
-   - Automated bottleneck detection
-   - Predictive congestion avoidance
+   - Real-time monitoring
+   - Bottleneck detection
+   - Congestion prediction
