@@ -21,8 +21,11 @@ constexpr unsigned NOC_STALL_PCT  = 15; // percentage (0-99) of cycles ready is 
 constexpr unsigned NOC_PATTERN_LEN = 100; // resolution (cycles)
 static_assert(NOC_STALL_PCT < 100, "stall percentage must be <100");
 
-// Global control for FIFO popping
-bool g_enable_popping = true;
+// Configuration structure for global settings
+struct GlobalConfig {
+    static bool enable_popping;
+};
+bool GlobalConfig::enable_popping = true;
 
 // Simple Raw TLP packet
 struct RawTLP {
@@ -682,7 +685,7 @@ SC_MODULE(iEP) {
             }
 
             // Pop from queues when enabled
-            if (g_enable_popping) {
+            if (GlobalConfig::enable_popping) {
                 std::cout << sc_time_stamp() << " [iEP popper] counter=" << pop_counter << std::endl;
                 if (pop_counter == 3) {  // Pop on every 4th cycle
                     // Try to pop from each queue
@@ -734,9 +737,10 @@ SC_MODULE(AxiNoC) {
     AxiWord  pipe[PIPE_LAT];
     bool     pipe_valid[PIPE_LAT] = {false};
     unsigned pattern_ctr = 0;          // 0..NOC_PATTERN_LEN-1
+    bool     is_main_noc;              // Flag to identify main NoC instance
 
     void main_thread(){
-            wait(SC_ZERO_TIME);
+        wait(SC_ZERO_TIME);
         while(true){
             wait(clk.posedge_event());
 
@@ -752,7 +756,7 @@ SC_MODULE(AxiNoC) {
             if(valid_in.read() && ready_ok){
                 pipe[0] = axi_in.read();
                 pipe_valid[0] = true;
-                if (std::string(name()) == "AXI_NOC")
+                if (is_main_noc)
                     std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
                               << " ingress seq_num=" << axi_to_tlp(pipe[0]).seq_num << std::endl;
             }
@@ -764,12 +768,12 @@ SC_MODULE(AxiNoC) {
             if(pipe_valid[PIPE_LAT-1]){
                 valid_out.write(true);
                 axi_out.write(pipe[PIPE_LAT-1]);
-                if (std::string(name()) == "AXI_NOC")
+                if (is_main_noc)
                     std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
                               << " EGRESS seq_num=" << axi_to_tlp(pipe[PIPE_LAT-1]).seq_num << std::endl;
                 if(ready_in.read()) {
                     pipe_valid[PIPE_LAT-1] = false;
-                    if (std::string(name()) == "AXI_NOC")
+                    if (is_main_noc)
                         std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
                                   << " ACCEPTED seq_num=" << axi_to_tlp(pipe[PIPE_LAT-1]).seq_num << std::endl;
                 }
@@ -786,15 +790,14 @@ SC_MODULE(AxiNoC) {
                 }
             }
 
-            if(valid_in.read() && !ready_ok) {
-                if (std::string(name()) == "AXI_NOC")
-                    std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
-                              << " DROPPED seq_num=" << axi_to_tlp(axi_in.read()).seq_num << " (backpressure)" << std::endl;
+            if(valid_in.read() && !ready_ok && is_main_noc) {
+                std::cout << sc_time_stamp() << " [" << name() << "] " << __FUNCTION__
+                          << " DROPPED seq_num=" << axi_to_tlp(axi_in.read()).seq_num << " (backpressure)" << std::endl;
             }
         }
     }
 
-    SC_CTOR(AxiNoC) {
+    SC_CTOR(AxiNoC) : is_main_noc(std::string(name()) == "AXI_NOC") {
         SC_THREAD(main_thread);
         sensitive<<clk.pos();
     }
@@ -1011,7 +1014,7 @@ int sc_main(int argc, char* argv[]) {
     sc_start(static_cast<double>(phase1_us), SC_US);
 
     // Disable queue popping in iEP so that no new credits are generated
-    g_enable_popping = false;
+    GlobalConfig::enable_popping = false;
     std::cout << "*** Disabled iEP popping at " << sc_time_stamp() << " ***" << std::endl;
 
     // Phase-2 : let pipeline drain for the remaining time
