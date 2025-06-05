@@ -16,7 +16,7 @@ Direct credit path                            Hybrid (credit + ready/valid)
 Both topologies share one clock and run for 400 µs; you can watch every wave in **GTKW** and mine every statistic with the included Python tools.
 
 ---
-## 1.  Modules (all in `src/main.cpp`)
+## 1.  Modules (all in `src/`)
 
 | Module            | Purpose / Notes |
 |-------------------|-----------------|
@@ -56,7 +56,8 @@ Open either file in **GTKWave** to inspect both data & credit buses.
 ---
 ## 4.  Post-run analysis
 
-```
+### Log Analysis
+```bash
 python3 scripts/analyze_logs.py sim_log.txt
 ```
 prints packet count, average latency and throughput **per topology** by parsing the console log.
@@ -96,19 +97,36 @@ Run it:
 python3 scripts/fifo_tuner.py | tee fifo_tuner_output.txt
 cat fifo_sweep_report.csv | column -t -s,
 ```
+Automatically explores TX/RX FIFO depth combinations and generates a CSV report with performance metrics.
 
-Use the CSV in spreadsheets or feed the whole README back to an LLM for further design space exploration.
-
----
-## 6.  Typical experiments
-
-1. **Bandwidth-delay product** – raise `TX_FIFO_DEPTH` while adjusting `NOC_STATIC_LATENCY_ONE_WAY` to observe buffer requirements.
-2. **Congestion** – disable popping in `iEP_after_RX` to see credit starvation propagate back through the network.
-3. **Thread scaling** – widen `RawTLP.thread_id`, update loop bounds, and observe how credit bus width vs window sizing changes buffer requirements.
-4. **Stall pattern tuning** – adjust `NOC_STALL_PCT` and `NOC_PATTERN_LEN` to observe impact on throughput and latency.
+### Ready Signal Analysis
+```bash
+python3 scripts/sanity_ready_loss.py
+```
+Analyzes ready signal behavior and potential packet loss scenarios.
 
 ---
-## 7. Implementation Details
+## 5.  Performance Analysis
+
+The project includes several tools for performance analysis:
+
+1. **Waveform Analysis**
+   - GTKWave visualization of both direct and network paths
+   - Credit bus monitoring
+   - FIFO occupancy tracking
+
+2. **Statistical Analysis**
+   - Throughput measurements
+   - Latency analysis
+   - Credit utilization metrics
+
+3. **Buffer Optimization**
+   - Automated FIFO depth tuning
+   - Performance vs. resource trade-offs
+   - CSV-based reporting
+
+---
+## 6.  Implementation Details
 
 ### Packet Flow
 1. **RC to EP Direct Path**
@@ -145,53 +163,7 @@ Use the CSV in spreadsheets or feed the whole README back to an LLM for further 
    - Prevents packet drops by looking ahead
 
 ---
-## 8. Design Considerations
-
-### Buffer Sizing
-1. **TX FIFO**
-   - Must cover network latency (NOC_STATIC_LATENCY_ONE_WAY)
-   - Should handle burst traffic during stall periods
-   - Current size: 16 entries
-
-2. **RX FIFO**
-   - Provides elasticity after network
-   - Smaller size (2 entries) due to credit-based flow control
-   - Prevents credit starvation
-
-3. **Thread Queues**
-   - Fixed depth (8 entries) per thread
-   - Must handle credit round-trip latency
-   - Balances throughput and resource usage
-
-### Network Parameters
-1. **Latency**
-   - Fixed one-way latency: 150 cycles
-   - Accounts for C2C and GPU fabric delays
-   - Includes SMN bridge overhead
-
-2. **Stall Pattern**
-   - 15% stall duty cycle
-   - 100-cycle pattern length
-   - Deterministic for predictable behavior
-
-### Performance Metrics
-1. **Throughput**
-   - Measured in packets per second
-   - Affected by:
-     * Network latency
-     * Stall percentage
-     * Buffer depths
-     * Credit window size
-
-2. **Latency**
-   - End-to-end packet delay
-   - Components:
-     * Network traversal time
-     * Buffer queuing time
-     * Credit round-trip time
-
----
-## 9. Debugging Guide
+## 7.  Debugging Guide
 
 ### Common Issues
 1. **Credit Starvation**
@@ -225,41 +197,19 @@ Use the CSV in spreadsheets or feed the whole README back to an LLM for further 
    - Credit statistics
 
 ---
-## 10. Future Enhancements
+## 8.  Future Work
 
-### Potential Improvements
-1. **Dynamic Buffer Sizing**
-   - Adaptive TX/RX FIFO depths
-   - Based on traffic patterns
-   - Automatic credit window tuning
-
-2. **Advanced Flow Control**
+1. **Performance Optimization**
+   - Dynamic buffer sizing
+   - Adaptive credit window tuning
    - Priority-based scheduling
-   - Quality of Service (QoS) support
-   - Bandwidth reservation
 
-3. **Network Features**
+2. **Feature Enhancements**
    - Multiple virtual channels
-   - Adaptive routing
    - Error detection/correction
+   - Quality of Service (QoS) support
 
-4. **Monitoring**
-   - Real-time performance metrics
-   - Automatic bottleneck detection
+3. **Analysis Tools**
+   - Real-time performance monitoring
+   - Automated bottleneck detection
    - Predictive congestion avoidance
-
-### Research Directions
-1. **Credit System Optimization**
-   - Optimal credit window sizing
-   - Credit prediction algorithms
-   - Dynamic credit allocation
-
-2. **Buffer Management**
-   - Optimal buffer sizing
-   - Buffer sharing strategies
-   - Memory efficiency
-
-3. **Network Architecture**
-   - Topology optimization
-   - Routing algorithms
-   - Load balancing

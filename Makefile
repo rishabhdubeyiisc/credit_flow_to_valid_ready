@@ -9,6 +9,7 @@ LDFLAGS = -L$(SYSTEMC_LIB)
 LIBS = -lsystemc -lpthread
 
 SRCS = src/main.cpp
+SRCS += src/modules.cpp
 
 BUILD_DIR = build
 OBJS = $(SRCS:src/%.cpp=$(BUILD_DIR)/%.o)
