@@ -156,8 +156,8 @@ void SimpleTxFIFO::main_thread()
             fifo.write(ingress_tlp.read());
         }
 
-        // track occupancy
-        unsigned cur_occ = fifo.num_available() + (holding ? 1 : 0);
+        // track occupancy - only count actual FIFO entries
+        unsigned cur_occ = fifo.num_available();
         if (cur_occ > max_occ)
         {
             max_occ = cur_occ;

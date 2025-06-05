@@ -5,7 +5,7 @@ LOG_FILE = 'auto_run.log'
 ANALYZE = 'scripts/analyze_logs.py'
 SANITY = 'scripts/sanity_ready_loss.py'
 
-STALL_PCTS = [25, ,15, ,5, 1]
+STALL_PCTS = [25 , 15, 5, 1]
 LATENCIES = [1, 20, 40, 60, 80]
 TARGET_RATIO = 0.5  # RXTX throughput should be this fraction of Direct throughput
 PACKET_SIZE_BYTES = 8  # 64-bit packets
@@ -173,7 +173,7 @@ def sweep():
                 continue
 
             ratio = rxtx_bw / direct_bw
-            status = 'OK' if abs(ratio - TARGET_RATIO) <= 0.1 else 'FAIL'  # Allow 10% tolerance
+            status = 'OK' if ratio >= TARGET_RATIO else 'FAIL'  # Pass if ratio is >= 50%
             print(f"{latency:7d} {stall:7d}   {rxtx_bw:8.2f}    {direct_bw:8.2f}    {ratio:5.2f} {status}")
             results.append((latency, stall,
                            rxtx_bw, direct_bw,

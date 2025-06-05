@@ -183,7 +183,16 @@ Sweeps TX/RX FIFO depths and generates performance report.
 ```bash
 python3 scripts/noc_tuner.py
 ```
-Sweeps NoC latency and stall parameters.
+Sweeps through NOC latency and stall percentage combinations to find optimal parameters. The script:
+- Tests combinations of latencies [1, 20, 40, 60, 80] and stall percentages [25, 15, 5, 1]
+- Verifies that the RXTX path achieves at least 50% of the Direct path's bandwidth
+- Generates a CSV report with bandwidth measurements in MB/s
+- Uses the same simulation run to compare both topologies (Direct and RXTX)
+
+Usage:
+```bash
+python3 scripts/noc_tuner.py
+```
 
 ### Performance Metrics
 1. **Throughput**
