@@ -20,13 +20,14 @@ $(BUILD_DIR)/$(TARGET): $(OBJS)
 
 $(BUILD_DIR)/%.o: src/%.cpp
 	@mkdir -p $(BUILD_DIR)
+	@mkdir -p module_traces
 	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $< -o $@
 
 clean:
 	rm -rf src/*.o build
+	rm -rf module_traces
 	rm -f logs
-	rm -f irc_iep_flow.vcd
-	rm -f irc_tx_flow.vcd
+	rm -f *.vcd
 	rm -f sim*.txt
 	rm -f fifo_sweep_report.csv
 	rm -f auto_run.log

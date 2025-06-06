@@ -19,7 +19,12 @@ SC_MODULE(Threaded_Queue) {
     unsigned int credits;
     bool credit_pending;
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     void main_thread();
+    void setup_tracing(bool enable = true);
 
     // Method to check if data is available
     bool has_data() const ;
@@ -27,9 +32,15 @@ SC_MODULE(Threaded_Queue) {
     // Method to pop data from FIFO
     bool pop_data(RawTLP& pkt) ;
 
-    SC_CTOR(Threaded_Queue, unsigned int capacity) : fifo(capacity), capacity(capacity) {
+    SC_CTOR(Threaded_Queue, unsigned int capacity) : fifo(capacity), capacity(capacity), trace_file(nullptr), enable_tracing(false) {
         SC_THREAD(main_thread);
         sensitive << clk.pos();
+    }
+
+    ~Threaded_Queue() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -105,11 +116,22 @@ SC_MODULE(SimpleTxFIFO) {
     sc_fifo<RawTLP> fifo;
     unsigned int max_occ = 0;
 
-    void main_thread();
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
 
-    SC_CTOR(SimpleTxFIFO, unsigned depth) : fifo(depth) {
+    void main_thread();
+    void setup_tracing(bool enable = true);
+
+    SC_CTOR(SimpleTxFIFO, unsigned depth) : fifo(depth), trace_file(nullptr), enable_tracing(false) {
         SC_THREAD(main_thread);
         sensitive << clk.pos();
+    }
+
+    ~SimpleTxFIFO() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -132,11 +154,22 @@ SC_MODULE(SimpleRxFIFO) {
     sc_fifo<RawTLP> fifo;
     unsigned int max_occ = 0;
 
-    void main_thread() ;
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
 
-    SC_CTOR(SimpleRxFIFO, unsigned depth) : fifo(depth) {
+    void main_thread() ;
+    void setup_tracing(bool enable = true);
+
+    SC_CTOR(SimpleRxFIFO, unsigned depth) : fifo(depth), trace_file(nullptr), enable_tracing(false) {
         SC_THREAD(main_thread);
         sensitive << clk.pos();
+    }
+
+    ~SimpleRxFIFO() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -159,11 +192,22 @@ SC_MODULE(CreditTx){
     AxiWord pending;
     const unsigned window_size;
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     void main_thread();
+    void setup_tracing(bool enable = true);
     
-    SC_CTOR(CreditTx, unsigned window) : window_size(window) {
+    SC_CTOR(CreditTx, unsigned window) : window_size(window), trace_file(nullptr), enable_tracing(false) {
         SC_THREAD(main_thread);
         sensitive<<clk.pos();
+    }
+
+    ~CreditTx() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -183,11 +227,22 @@ SC_MODULE(CreditRx){
 
     sc_uint<16> emit_cnt[3] = {0,0,0};
 
-    void main_thread();
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
 
-    SC_CTOR(CreditRx){
+    void main_thread();
+    void setup_tracing(bool enable = true);
+
+    SC_CTOR(CreditRx) : trace_file(nullptr), enable_tracing(false) {
         SC_THREAD(main_thread);
         sensitive<<clk.pos();
+    }
+
+    ~CreditRx() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -208,19 +263,30 @@ SC_MODULE(iRC) {
     int credit_counter[3];  // Array of credit counters for each thread
     sc_event credit_event;  // Event to signal when any credit is received
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     // Thread for monitoring credit pulses
     void credit_monitor_thread() ;
 
     // Thread for sending TLPs
     void sender_thread() ;
+    void setup_tracing(bool enable = true);
     
-    SC_CTOR(iRC) {
+    SC_CTOR(iRC) : trace_file(nullptr), enable_tracing(false) {
         // Register the threads
         SC_THREAD(credit_monitor_thread);
         sensitive << clk.pos() << credit_in;;  // Only sensitive to clock edges
         
         SC_THREAD(sender_thread);
         sensitive << clk.pos() << credit_event;
+    }
+
+    ~iRC() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -234,12 +300,17 @@ SC_MODULE(iEP) {
 
     ThreadedFrontEnd* threaded_queues;
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     // Method to process popped data
     void process_popped_data(const RawTLP& pkt, int queue_id) ;
 
     void popper_thread() ;
+    void setup_tracing(bool enable = true);
 
-    SC_CTOR(iEP, unsigned queue_capacity) {
+    SC_CTOR(iEP, unsigned queue_capacity) : trace_file(nullptr), enable_tracing(false) {
         threaded_queues = new ThreadedFrontEnd((std::string(name()) + "_front").c_str(), queue_capacity);
         threaded_queues->clk(clk);
         threaded_queues->reset_n(reset_n);
@@ -249,6 +320,12 @@ SC_MODULE(iEP) {
 
         SC_THREAD(popper_thread);
         sensitive << clk.pos() << reset_n;
+    }
+
+    ~iEP() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -281,11 +358,16 @@ SC_MODULE(AxiNoC) {
     const unsigned NOC_PATTERN_LEN;
     const unsigned NOC_STALL_PCT;
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     void main_thread();
+    void setup_tracing(bool enable = true);
 
     SC_CTOR(AxiNoC, unsigned latency, unsigned pattern_len = 100, unsigned stall_pct = 15) 
         : PIPE_LAT(latency), is_main_noc(std::string(name()) == "AXI_NOC"),
-          NOC_PATTERN_LEN(pattern_len), NOC_STALL_PCT(stall_pct) {
+          NOC_PATTERN_LEN(pattern_len), NOC_STALL_PCT(stall_pct), trace_file(nullptr), enable_tracing(false) {
         pipe = new AxiWord[PIPE_LAT];
         pipe_valid = new bool[PIPE_LAT];
         for(unsigned i = 0; i < PIPE_LAT; i++) {
@@ -298,6 +380,9 @@ SC_MODULE(AxiNoC) {
     ~AxiNoC() {
         delete[] pipe;
         delete[] pipe_valid;
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 
@@ -315,14 +400,24 @@ SC_MODULE(CreditDutyMon){
     sc_uint<64> hi_direct  = 0;
     sc_uint<64> hi_hybrid  = 0;
 
+    // Tracing support
+    sc_trace_file* trace_file;
+    bool enable_tracing;
+
     void sample();
-
     void report();
+    void setup_tracing(bool enable = true);
 
-    SC_CTOR(CreditDutyMon){
+    SC_CTOR(CreditDutyMon) : trace_file(nullptr), enable_tracing(false) {
         SC_METHOD(sample);
         sensitive << clk.pos();
         dont_initialize();
+    }
+
+    ~CreditDutyMon() {
+        if (trace_file) {
+            sc_close_vcd_trace_file(trace_file);
+        }
     }
 };
 

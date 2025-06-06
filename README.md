@@ -19,10 +19,11 @@ The project simulates two communication topologies:
 2. **Hybrid Path**: Network-based connection with TX/RX FIFOs and credit flow control
 
 ### Key Features
-- Multi-threaded packet generation
-- Credit-based flow control
-- Configurable network latency and backpressure
+- Multi-threaded packet generation with randomized queue scheduling
+- Credit-based flow control with robust AXI handshake implementation
+- Configurable network latency and backpressure with stall tracking
 - FIFO buffering with tunable depths
+- Per-module tracing infrastructure for detailed debugging
 - Comprehensive performance analysis tools
 
 ## 2. System Architecture
@@ -46,12 +47,16 @@ System
 ├── Direct Path
 │   ├── iRC (Root Complex)
 │   └── iEP (Endpoint)
-└── Network Path
-    ├── iRC_tx
-    ├── SimpleTxFIFO
-    ├── AxiNoC
-    ├── SimpleRxFIFO
-    └── iEP_after_RX
+├── Network Path
+│   ├── iRC_tx
+│   ├── SimpleTxFIFO
+│   ├── AxiNoC (Data)
+│   ├── SimpleRxFIFO
+│   └── iEP_after_RX
+└── Credit Path
+    ├── Credit_packer
+    ├── CNOC (Credit Network)
+    └── Credit_Pulser
 ```
 
 ### Data Flow
@@ -60,7 +65,7 @@ Packet Flow:
 RC → RawTLP → TX FIFO → AXI → NoC → AXI → RX FIFO → RawTLP → EP
 
 Credit Flow:
-EP → Credit → CreditTx → AXI → NoC → AXI → CreditRx → Credit → RC
+EP → Credit → Credit_packer → AXI → CNOC → AXI → Credit_Pulser → Credit → RC
 ```
 
 ## 3. Project Structure
@@ -116,9 +121,10 @@ make        # Build the simulation
 ```
 
 ### Output Files
-- `irc_iep_flow.vcd`: Direct path waveforms
-- `irc_tx_flow.vcd`: Network path waveforms
-- `auto_run.log`: Simulation console output
+- `irc_iep.vcd`: Direct path waveforms
+- `noc_flow.vcd`: Network path waveforms
+- `module_traces/`: Per-module detailed trace files
+- Simulation console output
 - `fifo_sweep_report.csv`: FIFO tuning results
 - `noc_sweep_report.csv`: NoC parameter tuning results
 
@@ -127,10 +133,15 @@ make        # Build the simulation
 ### Waveform Analysis
 ```bash
 # View direct path waveforms
-gtkwave irc_iep_flow.vcd
+gtkwave irc_iep.vcd
 
 # View network path waveforms
-gtkwave irc_tx_flow.vcd
+gtkwave noc_flow.vcd
+
+# View detailed per-module traces
+gtkwave module_traces/iRC_trace.vcd
+gtkwave module_traces/CNOC_trace.vcd
+# ... additional module traces available
 ```
 
 ### Key Signals to Monitor
@@ -138,11 +149,17 @@ gtkwave irc_tx_flow.vcd
    - `valid/ready` handshakes
    - Packet sequence numbers
    - FIFO occupancy
+   - NoC stall tracking signals
 
 2. **Credit Path**
-   - Credit pulses
-   - Credit counters
-   - Credit bus activity
+   - Credit pulses and packet flow
+   - Credit counters and windows
+   - Credit bus activity and duty cycle
+
+3. **Network Monitoring**
+   - Stall active signals
+   - Delta cycle counters
+   - Pipeline utilization
 
 ### Common Issues
 1. **Credit Starvation**
@@ -160,6 +177,11 @@ gtkwave irc_tx_flow.vcd
    - Monitor stall patterns
    - Verify buffer sizes
 
+4. **AXI Handshake Issues**
+   - Verify ready/valid timing
+   - Check for duplicate transactions
+   - Monitor credit packet flow
+
 ## 6. Performance Analysis
 
 ### Analysis Tools
@@ -172,6 +194,7 @@ Outputs:
 - Average latency
 - Throughput metrics
 - FIFO occupancy
+- Credit flow analysis
 
 2. **FIFO Tuning**
 ```bash
@@ -249,6 +272,22 @@ python3 scripts/noc_tuner.py
    - Use waveform analysis
    - Monitor key signals
    - Check error conditions
+
+### Recent Improvements
+1. **Reliability Enhancements**
+   - Fixed AXI handshake race conditions
+   - Robust credit flow control
+   - Accurate stall tracking implementation
+
+2. **Debugging Infrastructure** 
+   - Per-module tracing capabilities
+   - Enhanced credit packet flow monitoring
+   - Comprehensive signal visibility
+
+3. **System Optimizations**
+   - Randomized queue scheduling
+   - Improved pipeline utilization
+   - Better credit window management
 
 ### Future Work
 1. **Performance Optimization**

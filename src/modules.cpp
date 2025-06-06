@@ -316,10 +316,8 @@ void CreditRx::main_thread()
         // Default outputs
         credit_out.write(0);
 
+        // Emit phase FIRST
         bool empty = (emit_cnt[0] == 0 && emit_cnt[1] == 0 && emit_cnt[2] == 0);
-        ready_out.write(empty); // accept new packet only when previous drained
-
-        // Emit phase
         if (!empty)
         {
             sc_uint<3> pulse = 0;
@@ -334,14 +332,23 @@ void CreditRx::main_thread()
             credit_out.write(pulse);
         }
 
-        // Acceptance of new packet
-        if (valid_in.read() && ready_out.read())
+        // Update empty status after emit phase
+        empty = (emit_cnt[0] == 0 && emit_cnt[1] == 0 && emit_cnt[2] == 0);
+        
+        // Acceptance of new packet - only when truly empty
+        if (valid_in.read() && empty)
         {
             sc_uint<16> cnt0, cnt1, cnt2;
             axi_to_credits(axi_in.read(), cnt0, cnt1, cnt2);
             emit_cnt[0] = cnt0;
             emit_cnt[1] = cnt1;
             emit_cnt[2] = cnt2;
+            ready_out.write(false); // Deassert ready immediately when packet accepted
+        }
+        else
+        {
+            // Set ready for next cycle based on current empty status
+            ready_out.write(empty);
         }
     }
 }
@@ -475,16 +482,21 @@ void iEP::popper_thread()
         if (GlobalConfig::enable_popping)
         {
             std::cout << sc_time_stamp() << " [iEP popper] counter=" << pop_counter << std::endl;
+            RawTLP pkt_temp;
+            threaded_queues->pop_data(0, pkt_temp);
+            process_popped_data(pkt_temp, 0);    
+            threaded_queues->pop_data(1, pkt_temp);
+            process_popped_data(pkt_temp, 1);
+            threaded_queues->pop_data(2, pkt_temp);
+            process_popped_data(pkt_temp, 2);
             if (pop_counter == 3)
             { // Pop on every 4th cycle
-                // Try to pop from each queue
-                for (int i = 0; i < 3; i++)
+                // Randomly select a queue to pop from
+                int random_queue = rand() % 3;
+                RawTLP pkt;
+                if (threaded_queues->pop_data(random_queue, pkt))
                 {
-                    RawTLP pkt;
-                    if (threaded_queues->pop_data(i, pkt))
-                    {
-                        process_popped_data(pkt, i);
-                    }
+                    process_popped_data(pkt, random_queue);
                 }
             }
             pop_counter = (pop_counter + 1) % 4; // Cycle counter 0-3
@@ -499,10 +511,31 @@ void AxiNoC::main_thread()
     {
         wait(clk.posedge_event());
 
+        if (!reset_n.read()) {
+            // Reset stall tracking signals
+            stall_active_sig = false;
+            delta_cycle_ctr = 0;
+            pattern_ctr = 0;
+            ready_out.write(false);
+            valid_out.write(false);
+            for(unsigned i = 0; i < PIPE_LAT; i++) {
+                pipe_valid[i] = false;
+            }
+            continue;
+        }
+
         // Predict stall condition for next cycle
         const unsigned next_pattern_ctr = (pattern_ctr + 1) % NOC_PATTERN_LEN;
         const unsigned stall_cycles = (NOC_PATTERN_LEN * NOC_STALL_PCT) / 100;
         bool next_stall_active = (next_pattern_ctr < stall_cycles);
+
+        // Update stall tracking signals
+        stall_active_sig = next_stall_active;
+        if (stall_active_sig) {
+            delta_cycle_ctr++;
+        } else {
+            delta_cycle_ctr = 0;  // Reset counter when not stalling
+        }
 
         // Only assert ready if we won't stall next cycle
         bool ready_ok = !pipe_valid[0] && !next_stall_active;
@@ -581,4 +614,171 @@ void CreditDutyMon::report()
     { return 100.0 * static_cast<double>(hi) / static_cast<double>(total); };
     std::cout << "Direct bus : " << pct(hi_direct) << " %\n";
     std::cout << "Hybrid bus : " << pct(hi_hybrid) << " %\n";
+}
+
+// ============================================================================
+// TRACING IMPLEMENTATIONS
+// ============================================================================
+
+void Threaded_Queue::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        // Trace all ports and key internal signals
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, valid_in, "valid_in");
+        sc_trace(trace_file, raw_tlp_in, "raw_tlp_in");
+        sc_trace(trace_file, credit_out, "credit_out");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void SimpleTxFIFO::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, ingress_valid, "ingress_valid");
+        sc_trace(trace_file, ingress_tlp, "ingress_tlp");
+        sc_trace(trace_file, egress_valid, "egress_valid");
+        sc_trace(trace_file, egress_axi, "egress_axi");
+        sc_trace(trace_file, egress_ready, "egress_ready");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void SimpleRxFIFO::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, valid_in, "valid_in");
+        sc_trace(trace_file, axi_in, "axi_in");
+        sc_trace(trace_file, ready_out, "ready_out");
+        sc_trace(trace_file, valid_out, "valid_out");
+        sc_trace(trace_file, tlp_out, "tlp_out");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void CreditTx::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, credit_in, "credit_in");
+        sc_trace(trace_file, valid_out, "valid_out");
+        sc_trace(trace_file, axi_out, "axi_out");
+        sc_trace(trace_file, ready_in, "ready_in");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void CreditRx::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, valid_in, "valid_in");
+        sc_trace(trace_file, axi_in, "axi_in");
+        sc_trace(trace_file, ready_out, "ready_out");
+        sc_trace(trace_file, credit_out, "credit_out");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void iRC::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, credit_in, "credit_in");
+        sc_trace(trace_file, raw_valid, "raw_valid");
+        sc_trace(trace_file, raw_tlp, "raw_tlp");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void iEP::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, raw_valid, "raw_valid");
+        sc_trace(trace_file, raw_tlp, "raw_tlp");
+        sc_trace(trace_file, credit_out, "credit_out");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void AxiNoC::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, reset_n, "reset_n");
+        sc_trace(trace_file, valid_in, "valid_in");
+        sc_trace(trace_file, axi_in, "axi_in");
+        sc_trace(trace_file, ready_out, "ready_out");
+        sc_trace(trace_file, valid_out, "valid_out");
+        sc_trace(trace_file, axi_out, "axi_out");
+        sc_trace(trace_file, ready_in, "ready_in");
+        sc_trace(trace_file, stall_active_sig, "stall_active_sig");
+        sc_trace(trace_file, delta_cycle_ctr, "delta_cycle_ctr");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
+}
+
+void CreditDutyMon::setup_tracing(bool enable) {
+    enable_tracing = enable;
+    if (enable_tracing && !trace_file) {
+        std::string trace_name = "module_traces/" + std::string(name()) + "_trace";
+        trace_file = sc_create_vcd_trace_file(trace_name.c_str());
+        trace_file->set_time_unit(1, SC_NS);
+        
+        sc_trace(trace_file, clk, "clk");
+        sc_trace(trace_file, bus_direct, "bus_direct");
+        sc_trace(trace_file, bus_hybrid, "bus_hybrid");
+        
+        std::cout << "Created trace file: " << trace_name << ".vcd for " << name() << std::endl;
+    }
 }
